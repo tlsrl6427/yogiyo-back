@@ -1,11 +1,11 @@
 package toy.yogiyo.core.shop.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
+import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.shop.DeliveryPrice;
 import toy.yogiyo.core.shop.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
@@ -25,7 +25,6 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
-    private final Environment env;
 
 
     // TODO : * Owner 가져오는 로직 변경해야함 *
@@ -34,10 +33,8 @@ public class ShopService {
     public Long register(ShopRegisterRequest request) throws IOException {
         validateDuplicateName(request.getName());
 
-        String imagePath = "/" + env.getProperty("image.path") + "/";
-
-        String iconStoredName = imagePath + imageFileHandler.store(request.getIcon());
-        String bannerStoredName = imagePath + imageFileHandler.store(request.getBanner());
+        String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(request.getIcon()));
+        String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(request.getBanner()));
 
         Shop shop = request.toEntity(iconStoredName, bannerStoredName);
 
@@ -89,10 +86,10 @@ public class ShopService {
             throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
         }
 
-        if (!imageFileHandler.remove(getFilename(shop.getIcon()))) {
+        if (!imageFileHandler.remove(ImageFileUtil.extractFilename(shop.getIcon()))) {
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
-        if (!imageFileHandler.remove(getFilename(shop.getBanner()))) {
+        if (!imageFileHandler.remove(ImageFileUtil.extractFilename(shop.getBanner()))) {
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
 
@@ -104,10 +101,6 @@ public class ShopService {
         if (shopRepository.existsByName(name)) {
             throw new EntityExistsException(ErrorCode.SHOP_ALREADY_EXIST);
         }
-    }
-
-    private String getFilename(String filenameWithPath) {
-        return filenameWithPath.substring(filenameWithPath.lastIndexOf("/") + 1);
     }
 
 }

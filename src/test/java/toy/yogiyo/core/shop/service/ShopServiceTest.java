@@ -1,19 +1,17 @@
 package toy.yogiyo.core.shop.service;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockMultipartFile;
 import toy.yogiyo.common.exception.AccessDeniedException;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
+import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.shop.DeliveryPrice;
 import toy.yogiyo.core.shop.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
@@ -42,8 +40,10 @@ class ShopServiceTest {
     @Mock
     ImageFileHandler imageFileHandler;
 
-    @Mock
-    Environment env;
+    @BeforeAll
+    static void beforeAll() {
+        new ImageFileUtil().setPath("/image/");
+    }
 
     @Nested
     @DisplayName("가게 입점")
@@ -55,12 +55,10 @@ class ShopServiceTest {
             // given
             ShopRegisterRequest registerRequest = getRegisterRequest();
 
-            when(env.getProperty("image.path")).thenReturn("images");
             when(imageFileHandler.store(registerRequest.getIcon()))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(registerRequest.getBanner()))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
-
 
             Shop shop = registerRequest.toEntity(
                     imageFileHandler.store(registerRequest.getIcon()),

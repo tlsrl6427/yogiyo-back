@@ -1,22 +1,17 @@
 package toy.yogiyo.core.shop;
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import toy.yogiyo.common.domain.BaseTimeEntity;
 import toy.yogiyo.core.category.CategoryShop;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
-@ToString
 @Entity
-public class Shop {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Shop extends BaseTimeEntity {
 
     @Id @GeneratedValue
     @Column(name = "shop_id")
@@ -55,11 +50,6 @@ public class Shop {
     private String orderTypes;
     private int deliveryPrice;
     private int packagingPrice;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     //TODO : 연관관계 편의 메서드 작성
     @OneToMany(mappedBy = "shop")
@@ -119,3 +109,5 @@ public class Shop {
         }
     }
 }
+
+

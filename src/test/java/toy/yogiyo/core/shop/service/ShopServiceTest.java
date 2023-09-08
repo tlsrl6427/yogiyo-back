@@ -14,7 +14,9 @@ import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
+import toy.yogiyo.core.shop.DeliveryPrice;
 import toy.yogiyo.core.shop.Shop;
+import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
 import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
@@ -22,6 +24,7 @@ import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -98,10 +101,12 @@ class ShopServiceTest {
             registerRequest.setCallNumber("010-1234-5678");
             registerRequest.setAddress("서울 강남구 영동대로 513");
             registerRequest.setDeliveryTime(30);
-            registerRequest.setLeastOrderPrice(15000);
             registerRequest.setOrderTypes("가게배달, 포장");
-            registerRequest.setDeliveryPrice(3000);
             registerRequest.setPackagingPrice(0);
+            registerRequest.setDeliveryPriceDtos(Arrays.asList(
+                    new DeliveryPriceDto(10000, 5000),
+                    new DeliveryPriceDto(20000, 4000),
+                    new DeliveryPriceDto(30000, 3000)));
 
             return registerRequest;
         }
@@ -129,18 +134,23 @@ class ShopServiceTest {
                 ShopDetailsResponse response = shopService.getDetailInfo(shop.getId());
 
                 // then
-                assertThat(response.getName()).isEqualTo("롯데리아");
-                assertThat(response.getIcon()).isEqualTo("/images/692c0741-f234-448e-ba3f-35b5a394f33d.png");
-                assertThat(response.getBanner()).isEqualTo("/images/692c0741-f234-448e-ba3f-35b5a394f33d.png");
-                assertThat(response.getOwnerNotice()).isEqualTo("사장님 공지");
-                assertThat(response.getBusinessHours()).isEqualTo("오전 10시 ~ 오후 10시");
-                assertThat(response.getCallNumber()).isEqualTo("010-1234-5678");
-                assertThat(response.getAddress()).isEqualTo("서울 강남구 영동대로 513");
-                assertThat(response.getDeliveryTime()).isEqualTo(30);
-                assertThat(response.getLeastOrderPrice()).isEqualTo(15000);
-                assertThat(response.getOrderTypes()).isEqualTo("가게배달, 포장");
-                assertThat(response.getDeliveryPrice()).isEqualTo(3000);
-                assertThat(response.getPackagingPrice()).isEqualTo(0);
+                assertThat(response.getName()).isEqualTo(shop.getName());
+                assertThat(response.getIcon()).isEqualTo(shop.getIcon());
+                assertThat(response.getBanner()).isEqualTo(shop.getBanner());
+                assertThat(response.getOwnerNotice()).isEqualTo(shop.getOwnerNotice());
+                assertThat(response.getBusinessHours()).isEqualTo(shop.getBusinessHours());
+                assertThat(response.getCallNumber()).isEqualTo(shop.getCallNumber());
+                assertThat(response.getAddress()).isEqualTo(shop.getAddress());
+                assertThat(response.getDeliveryTime()).isEqualTo(shop.getDeliveryTime());
+                assertThat(response.getOrderTypes()).isEqualTo(shop.getOrderTypes());
+                assertThat(response.getPackagingPrice()).isEqualTo(shop.getPackagingPrice());
+
+                for (int i = 0; i < response.getDeliveryPriceDtos().size(); i++) {
+                    DeliveryPriceDto deliveryPriceDto = response.getDeliveryPriceDtos().get(i);
+                    DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
+                    assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPrice.getDeliveryPrice());
+                    assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPrice.getOrderPrice());
+                }
             }
 
             @Test
@@ -180,10 +190,15 @@ class ShopServiceTest {
                 assertThat(shop.getCallNumber()).isEqualTo(updateRequest.getCallNumber());
                 assertThat(shop.getAddress()).isEqualTo(updateRequest.getAddress());
                 assertThat(shop.getDeliveryTime()).isEqualTo(updateRequest.getDeliveryTime());
-                assertThat(shop.getLeastOrderPrice()).isEqualTo(updateRequest.getLeastOrderPrice());
                 assertThat(shop.getOrderTypes()).isEqualTo(updateRequest.getOrderTypes());
-                assertThat(shop.getDeliveryPrice()).isEqualTo(updateRequest.getDeliveryPrice());
                 assertThat(shop.getPackagingPrice()).isEqualTo(updateRequest.getPackagingPrice());
+
+                for (int i = 0; i < shop.getDeliveryPrices().size(); i++) {
+                    DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
+                    DeliveryPriceDto deliveryPriceDto = updateRequest.getDeliveryPriceDtos().get(i);
+                    assertThat(deliveryPrice.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
+                    assertThat(deliveryPrice.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
+                }
             }
 
             @Test
@@ -225,10 +240,12 @@ class ShopServiceTest {
             updateRequest.setCallNumber("010-1234-5678 (수정됨)");
             updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
             updateRequest.setDeliveryTime(60);
-            updateRequest.setLeastOrderPrice(17000);
             updateRequest.setOrderTypes("가게배달, 포장 (수정됨)");
-            updateRequest.setDeliveryPrice(4000);
             updateRequest.setPackagingPrice(1000);
+            updateRequest.setDeliveryPriceDtos(Arrays.asList(
+                    new DeliveryPriceDto(15000, 4500),
+                    new DeliveryPriceDto(25000, 3500),
+                    new DeliveryPriceDto(35000, 2500)));
 
             return updateRequest;
         }
@@ -303,18 +320,23 @@ class ShopServiceTest {
     }
 
     private Shop getShop() {
-        return new Shop("롯데리아",
-                "/images/692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "/images/692c0741-f234-448e-ba3f-35b5a394f33d.png",
+        Shop shop = new Shop("롯데리아",
+                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
+                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
                 "사장님 공지",
                 "오전 10시 ~ 오후 10시",
                 "010-1234-5678",
                 "서울 강남구 영동대로 513",
                 30,
-                15000,
                 "가게배달, 포장",
-                3000,
                 0);
+
+        shop.changeDeliveryPrices(Arrays.asList(
+                new DeliveryPrice(10000, 5000),
+                new DeliveryPrice(20000, 4000),
+                new DeliveryPrice(30000, 3000)));
+
+        return shop;
     }
 
     private Shop getShopWithOwner(Long ownerId) {

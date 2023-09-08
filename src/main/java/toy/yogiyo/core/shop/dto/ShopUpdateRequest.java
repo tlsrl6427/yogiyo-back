@@ -4,6 +4,8 @@ package toy.yogiyo.core.shop.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter @Setter
 public class ShopUpdateRequest {
 
@@ -18,9 +20,8 @@ public class ShopUpdateRequest {
     private String address;
 
     private int deliveryTime;
-    private int leastOrderPrice;
     private String orderTypes;
-    private int deliveryPrice;
     private int packagingPrice;
+    private List<DeliveryPriceDto> deliveryPriceDtos;
 
 }

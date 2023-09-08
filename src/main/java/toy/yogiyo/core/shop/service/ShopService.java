@@ -6,14 +6,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
+import toy.yogiyo.core.shop.DeliveryPrice;
 import toy.yogiyo.core.shop.Shop;
+import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
 import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -60,16 +64,20 @@ public class ShopService {
             throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
         }
 
+        // 배달 정보 Dto -> Entity
+        List<DeliveryPrice> deliveryPrices = request.getDeliveryPriceDtos().stream()
+                .map(DeliveryPriceDto::toEntity)
+                .collect(Collectors.toList());
+
         shop.changeInfo(request.getName(),
                 request.getOwnerNotice(),
                 request.getBusinessHours(),
                 request.getCallNumber(),
                 request.getAddress(),
                 request.getDeliveryTime(),
-                request.getLeastOrderPrice(),
                 request.getOrderTypes(),
-                request.getDeliveryPrice(),
-                request.getPackagingPrice());
+                request.getPackagingPrice(),
+                deliveryPrices);
     }
 
     @Transactional

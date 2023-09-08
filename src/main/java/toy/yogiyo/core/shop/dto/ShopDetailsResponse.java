@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import toy.yogiyo.core.shop.Shop;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter @Setter
 public class ShopDetailsResponse {
     private Long id;
@@ -28,10 +31,9 @@ public class ShopDetailsResponse {
     private String address;
 
     private int deliveryTime;
-    private int leastOrderPrice;
     private String orderTypes;
-    private int deliveryPrice;
     private int packagingPrice;
+    private List<DeliveryPriceDto> deliveryPriceDtos;
 
     public static ShopDetailsResponse from(Shop shop) {
         ShopDetailsResponse response = new ShopDetailsResponse();
@@ -51,10 +53,12 @@ public class ShopDetailsResponse {
         response.setCallNumber(shop.getCallNumber());
         response.setAddress(shop.getAddress());
         response.setDeliveryTime(shop.getDeliveryTime());
-        response.setLeastOrderPrice(shop.getLeastOrderPrice());
         response.setOrderTypes(shop.getOrderTypes());
-        response.setDeliveryPrice(shop.getDeliveryPrice());
         response.setPackagingPrice(shop.getPackagingPrice());
+
+        response.setDeliveryPriceDtos(shop.getDeliveryPrices().stream()
+                .map(d -> new DeliveryPriceDto(d.getOrderPrice(), d.getDeliveryPrice()))
+                .collect(Collectors.toList()));
 
         return response;
     }

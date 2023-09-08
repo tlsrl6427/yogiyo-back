@@ -45,22 +45,24 @@ public class Shop extends BaseTimeEntity {
 
 
     private int deliveryTime;
-    private int leastOrderPrice;
     @Column(nullable = false)
     private String orderTypes;
-    private int deliveryPrice;
     private int packagingPrice;
 
     //TODO : 연관관계 편의 메서드 작성
     @OneToMany(mappedBy = "shop")
     private List<CategoryShop> categoryShop = new ArrayList<>();
 
+    //TODO : Owner 변경되면 nullable = false 달기
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id")
     private Owner owner;
 
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DeliveryPrice> deliveryPrices = new ArrayList<>();
 
-    public Shop(String name, String icon, String banner, String ownerNotice, String businessHours, String callNumber, String address, int deliveryTime, int leastOrderPrice, String orderTypes, int deliveryPrice, int packagingPrice) {
+
+    public Shop(String name, String icon, String banner, String ownerNotice, String businessHours, String callNumber, String address, int deliveryTime, String orderTypes, int packagingPrice) {
         this.name = name;
         this.icon = icon;
         this.banner = banner;
@@ -69,9 +71,7 @@ public class Shop extends BaseTimeEntity {
         this.callNumber = callNumber;
         this.address = address;
         this.deliveryTime = deliveryTime;
-        this.leastOrderPrice = leastOrderPrice;
         this.orderTypes = orderTypes;
-        this.deliveryPrice = deliveryPrice;
         this.packagingPrice = packagingPrice;
     }
 
@@ -80,17 +80,24 @@ public class Shop extends BaseTimeEntity {
     }
 
     public void changeInfo(String name, String ownerNotice, String businessHours, String callNumber, String address,
-                           int deliveryTime, int leastOrderPrice, String orderTypes, int deliveryPrice, int packagingPrice) {
+                           int deliveryTime, String orderTypes, int packagingPrice, List<DeliveryPrice> deliveryPrices) {
         this.name = name;
         this.ownerNotice = ownerNotice;
         this.businessHours = businessHours;
         this.callNumber = callNumber;
         this.address = address;
         this.deliveryTime = deliveryTime;
-        this.leastOrderPrice = leastOrderPrice;
         this.orderTypes = orderTypes;
-        this.deliveryPrice = deliveryPrice;
         this.packagingPrice = packagingPrice;
+        changeDeliveryPrices(deliveryPrices);
+    }
+
+    public void changeDeliveryPrices(List<DeliveryPrice> deliveryPrices) {
+        this.deliveryPrices.clear();
+        for (DeliveryPrice deliveryPrice : deliveryPrices) {
+            this.deliveryPrices.add(deliveryPrice);
+            deliveryPrice.setShop(this);
+        }
     }
 
 

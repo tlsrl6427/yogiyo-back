@@ -7,17 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import toy.yogiyo.common.exception.EntityExistsException;
-import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.MemberJoinRequest;
-import toy.yogiyo.core.Member.domain.MemberMypageResponse;
-import toy.yogiyo.core.Member.domain.MemberUpdateRequest;
+import toy.yogiyo.core.Member.dto.MemberJoinRequest;
+import toy.yogiyo.core.Member.dto.MemberMypageResponse;
+import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.repository.MemberRepository;
 
 import java.util.Optional;
-import java.util.OptionalDouble;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;

@@ -2,9 +2,9 @@ package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import toy.yogiyo.core.Member.domain.MemberJoinRequest;
-import toy.yogiyo.core.Member.domain.MemberMypageResponse;
-import toy.yogiyo.core.Member.domain.MemberUpdateRequest;
+import toy.yogiyo.core.Member.dto.MemberJoinRequest;
+import toy.yogiyo.core.Member.dto.MemberMypageResponse;
+import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.service.MemberService;
 
 @RestController

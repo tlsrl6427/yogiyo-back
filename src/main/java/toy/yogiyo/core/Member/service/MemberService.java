@@ -6,10 +6,10 @@ import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.MemberMypageResponse;
-import toy.yogiyo.core.Member.domain.MemberUpdateRequest;
+import toy.yogiyo.core.Member.dto.MemberMypageResponse;
+import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.repository.MemberRepository;
-import toy.yogiyo.core.Member.domain.MemberJoinRequest;
+import toy.yogiyo.core.Member.dto.MemberJoinRequest;
 
 @Service
 @RequiredArgsConstructor

@@ -13,17 +13,6 @@ public class ShopDetailsResponse {
 
     private String name;
 
-    private long wishNum;
-    private long reviewNum;
-    private long ownerReplyNum;
-
-    private double tasteScore;
-    private double quantityScore;
-    private double deliveryScore;
-
-    private String icon;
-    private String banner;
-
     private String ownerNotice;
     private String businessHours;
 
@@ -33,21 +22,13 @@ public class ShopDetailsResponse {
     private int deliveryTime;
     private String orderTypes;
     private int packagingPrice;
-    private List<DeliveryPriceDto> deliveryPriceDtos;
+    private List<DeliveryPriceDto> deliveryPrices;
 
     public static ShopDetailsResponse from(Shop shop) {
         ShopDetailsResponse response = new ShopDetailsResponse();
 
         response.setId(shop.getId());
         response.setName(shop.getName());
-        response.setWishNum(shop.getWishNum());
-        response.setReviewNum(shop.getReviewNum());
-        response.setOwnerReplyNum(shop.getOwnerReplyNum());
-        response.setTasteScore(shop.getTasteScore());
-        response.setQuantityScore(shop.getQuantityScore());
-        response.setDeliveryScore(shop.getDeliveryScore());
-        response.setIcon(shop.getIcon());
-        response.setBanner(shop.getBanner());
         response.setOwnerNotice(shop.getOwnerNotice());
         response.setBusinessHours(shop.getBusinessHours());
         response.setCallNumber(shop.getCallNumber());
@@ -56,7 +37,7 @@ public class ShopDetailsResponse {
         response.setOrderTypes(shop.getOrderTypes());
         response.setPackagingPrice(shop.getPackagingPrice());
 
-        response.setDeliveryPriceDtos(shop.getDeliveryPrices().stream()
+        response.setDeliveryPrices(shop.getDeliveryPrices().stream()
                 .map(d -> new DeliveryPriceDto(d.getOrderPrice(), d.getDeliveryPrice()))
                 .collect(Collectors.toList()));
 

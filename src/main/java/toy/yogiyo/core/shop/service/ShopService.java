@@ -3,10 +3,10 @@ package toy.yogiyo.core.shop.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
-import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -27,22 +27,19 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
-    private final CategoryShopService categoryShopService;
     private final OwnerService ownerService;
 
 
     @Transactional
-    public Long register(ShopRegisterRequest request, Long ownerId) throws IOException {
+    public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Long ownerId) throws IOException {
         validateDuplicateName(request.getName());
 
-        String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(request.getIcon()));
-        String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(request.getBanner()));
+        String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(icon));
+        String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
 
         Shop shop = request.toEntity(iconStoredName, bannerStoredName);
 
-        shop.changeOwner(ownerService.findOne(ownerId));
-
-        categoryShopService.save(request.getCategoryDtos(), shop);
+        shop.changeOwner(ownerService.findOneTemp(ownerId));
 
         return shopRepository.save(shop).getId();
     }
@@ -56,9 +53,9 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateInfo(ShopUpdateRequest request, Long ownerId) {
+    public void updateInfo(Long shopId, Long ownerId, ShopUpdateRequest request) {
 
-        Shop shop = shopRepository.findById(request.getId())
+        Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
         if (!Objects.equals(shop.getOwner().getId(), ownerId)) {
@@ -66,7 +63,7 @@ public class ShopService {
         }
 
         // 배달 정보 Dto -> Entity
-        List<DeliveryPrice> deliveryPrices = request.getDeliveryPriceDtos().stream()
+        List<DeliveryPrice> deliveryPrices = request.getDeliveryPrices().stream()
                 .map(DeliveryPriceDto::toEntity)
                 .collect(Collectors.toList());
 
@@ -79,8 +76,6 @@ public class ShopService {
                 request.getOrderTypes(),
                 request.getPackagingPrice(),
                 deliveryPrices);
-
-        categoryShopService.changeCategory(request.getCategoryDtos(), shop);
     }
 
     @Transactional

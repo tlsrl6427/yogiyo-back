@@ -3,13 +3,12 @@ package toy.yogiyo.core.shop.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import toy.yogiyo.core.category.dto.CategoryDto;
 
 import java.util.List;
 
 @Getter @Setter
 public class ShopUpdateRequest {
-
-    private Long id;
 
     private String name;
 
@@ -22,6 +21,7 @@ public class ShopUpdateRequest {
     private int deliveryTime;
     private String orderTypes;
     private int packagingPrice;
-    private List<DeliveryPriceDto> deliveryPriceDtos;
+    private List<DeliveryPriceDto> deliveryPrices;
+    private List<CategoryDto> categories;
 
 }

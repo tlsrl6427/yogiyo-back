@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import toy.yogiyo.common.exception.AccessDeniedException;
 import toy.yogiyo.common.exception.EntityExistsException;
@@ -13,7 +14,6 @@ import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.dto.CategoryDto;
-import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
@@ -24,7 +24,6 @@ import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
@@ -45,9 +44,6 @@ class ShopServiceTest {
     ImageFileHandler imageFileHandler;
 
     @Mock
-    CategoryShopService categoryShopService;
-
-    @Mock
     OwnerService ownerService;
 
     @BeforeAll
@@ -63,24 +59,24 @@ class ShopServiceTest {
         @DisplayName("성공")
         void success() throws Exception {
             // given
-            ShopRegisterRequest registerRequest = getRegisterRequest();
+            ShopRegisterRequest registerRequest = givenRegisterRequest();
+            MockMultipartFile icon = givenIcon();
+            MockMultipartFile banner = givenBanner();
 
-            when(ownerService.findOne(anyLong())).thenReturn(new Owner());
-            when(imageFileHandler.store(registerRequest.getIcon()))
+            when(ownerService.findOneTemp(anyLong())).thenReturn(new Owner());
+            when(imageFileHandler.store(icon))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
-            when(imageFileHandler.store(registerRequest.getBanner()))
+            when(imageFileHandler.store(banner))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
 
-            doNothing().when(categoryShopService).save(eq(registerRequest.getCategoryDtos()), any());
-
             Shop shop = registerRequest.toEntity(
-                    imageFileHandler.store(registerRequest.getIcon()),
-                    imageFileHandler.store(registerRequest.getBanner()));
+                    imageFileHandler.store(icon),
+                    imageFileHandler.store(banner));
 
             when(shopRepository.save(any())).thenReturn(shop);
 
             // when
-            Long createdId = shopService.register(registerRequest, anyLong());
+            Long createdId = shopService.register(registerRequest, icon, banner, anyLong());
 
             // then
             assertThat(createdId).isEqualTo(shop.getId());
@@ -90,23 +86,31 @@ class ShopServiceTest {
         @DisplayName("가게명 중복이면 예외 발생")
         void registerFailDuplicateName() throws Exception {
             // given
-            ShopRegisterRequest registerRequest = getRegisterRequest();
+            ShopRegisterRequest registerRequest = givenRegisterRequest();
+            MockMultipartFile icon = givenIcon();
+            MockMultipartFile banner = givenBanner();
             when(shopRepository.existsByName(registerRequest.getName()))
                     .thenReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> shopService.register(registerRequest, anyLong()))
+            assertThatThrownBy(() -> shopService.register(registerRequest, icon, banner, anyLong()))
                     .isInstanceOf(EntityExistsException.class);
         }
 
-        private ShopRegisterRequest getRegisterRequest() throws IOException {
-            MockMultipartFile icon = new MockMultipartFile("picture", "images.png", "png", new FileInputStream("D:\\workspace\\personal\\store\\test-resources\\images.png"));
-            MockMultipartFile banner = new MockMultipartFile("picture", "images.png", "png", new FileInputStream("D:\\workspace\\personal\\store\\test-resources\\images.png"));
+
+        private MockMultipartFile givenIcon() throws IOException {
+            return new MockMultipartFile("icon", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+        }
+
+        private MockMultipartFile givenBanner() throws IOException {
+            return new MockMultipartFile("banner", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+        }
+
+
+        private ShopRegisterRequest givenRegisterRequest() throws IOException {
 
             ShopRegisterRequest registerRequest = new ShopRegisterRequest();
             registerRequest.setName("롯데리아");
-            registerRequest.setIcon(icon);
-            registerRequest.setBanner(banner);
             registerRequest.setOwnerNotice("사장님 공지");
             registerRequest.setBusinessHours("오전 10시 ~ 오후 10시");
             registerRequest.setCallNumber("010-1234-5678");
@@ -114,11 +118,11 @@ class ShopServiceTest {
             registerRequest.setDeliveryTime(30);
             registerRequest.setOrderTypes("가게배달, 포장");
             registerRequest.setPackagingPrice(0);
-            registerRequest.setDeliveryPriceDtos(Arrays.asList(
+            registerRequest.setDeliveryPrices(Arrays.asList(
                     new DeliveryPriceDto(10000, 5000),
                     new DeliveryPriceDto(20000, 4000),
                     new DeliveryPriceDto(30000, 3000)));
-            registerRequest.setCategoryDtos(Arrays.asList(
+            registerRequest.setCategories(Arrays.asList(
                     new CategoryDto(1L, "치킨", "picture.png"),
                     new CategoryDto(2L, "피자", "picture.png"),
                     new CategoryDto(3L, "분식", "picture.png")));
@@ -150,8 +154,6 @@ class ShopServiceTest {
 
                 // then
                 assertThat(response.getName()).isEqualTo(shop.getName());
-                assertThat(response.getIcon()).isEqualTo(shop.getIcon());
-                assertThat(response.getBanner()).isEqualTo(shop.getBanner());
                 assertThat(response.getOwnerNotice()).isEqualTo(shop.getOwnerNotice());
                 assertThat(response.getBusinessHours()).isEqualTo(shop.getBusinessHours());
                 assertThat(response.getCallNumber()).isEqualTo(shop.getCallNumber());
@@ -160,8 +162,8 @@ class ShopServiceTest {
                 assertThat(response.getOrderTypes()).isEqualTo(shop.getOrderTypes());
                 assertThat(response.getPackagingPrice()).isEqualTo(shop.getPackagingPrice());
 
-                for (int i = 0; i < response.getDeliveryPriceDtos().size(); i++) {
-                    DeliveryPriceDto deliveryPriceDto = response.getDeliveryPriceDtos().get(i);
+                for (int i = 0; i < response.getDeliveryPrices().size(); i++) {
+                    DeliveryPriceDto deliveryPriceDto = response.getDeliveryPrices().get(i);
                     DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
                     assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPrice.getDeliveryPrice());
                     assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPrice.getOrderPrice());
@@ -194,10 +196,9 @@ class ShopServiceTest {
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
                 ShopUpdateRequest updateRequest = getUpdateRequest();
-                doNothing().when(categoryShopService).changeCategory(updateRequest.getCategoryDtos(), shop);
 
                 // when
-                shopService.updateInfo(updateRequest, 1L);
+                shopService.updateInfo(shop.getId(), 1L, updateRequest);
 
                 // then
                 assertThat(shop.getName()).isEqualTo(updateRequest.getName());
@@ -211,12 +212,11 @@ class ShopServiceTest {
 
                 for (int i = 0; i < shop.getDeliveryPrices().size(); i++) {
                     DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
-                    DeliveryPriceDto deliveryPriceDto = updateRequest.getDeliveryPriceDtos().get(i);
+                    DeliveryPriceDto deliveryPriceDto = updateRequest.getDeliveryPrices().get(i);
                     assertThat(deliveryPrice.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
                     assertThat(deliveryPrice.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
 
-                verify(categoryShopService).changeCategory(updateRequest.getCategoryDtos(), shop);
             }
 
             @Test
@@ -228,7 +228,7 @@ class ShopServiceTest {
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.empty());
 
                 // when & then
-                assertThatThrownBy(() -> shopService.updateInfo(updateRequest, shop.getOwner().getId()))
+                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), shop.getOwner().getId(), updateRequest))
                         .isInstanceOf(EntityNotFoundException.class);
             }
 
@@ -241,35 +241,35 @@ class ShopServiceTest {
                 ShopUpdateRequest updateRequest = getUpdateRequest();
 
                 // when & then
-                assertThatThrownBy(() -> shopService.updateInfo(updateRequest, 2L))
+                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), 2L, updateRequest))
                         .isInstanceOf(AccessDeniedException.class);
 
                 // then
-                verify(shopRepository, times(1)).findById(shop.getId());
+                verify(shopRepository).findById(shop.getId());
             }
 
-        }
+            private ShopUpdateRequest getUpdateRequest() {
+                ShopUpdateRequest updateRequest = new ShopUpdateRequest();
+                updateRequest.setName("롯데리아 (수정됨)");
+                updateRequest.setOwnerNotice("사장님 공지 (수정됨)");
+                updateRequest.setBusinessHours("오전 10시 ~ 오후 10시 (수정됨)");
+                updateRequest.setCallNumber("010-1234-5678 (수정됨)");
+                updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
+                updateRequest.setDeliveryTime(60);
+                updateRequest.setOrderTypes("가게배달, 포장 (수정됨)");
+                updateRequest.setPackagingPrice(1000);
+                updateRequest.setDeliveryPrices(Arrays.asList(
+                        new DeliveryPriceDto(15000, 4500),
+                        new DeliveryPriceDto(25000, 3500),
+                        new DeliveryPriceDto(35000, 2500)));
+                updateRequest.setCategories(Arrays.asList(
+                        new CategoryDto(1L, "치킨", "picture.png"),
+                        new CategoryDto(2L, "피자", "picture.png"),
+                        new CategoryDto(3L, "분식", "picture.png")));
 
-        private ShopUpdateRequest getUpdateRequest() {
-            ShopUpdateRequest updateRequest = new ShopUpdateRequest();
-            updateRequest.setName("롯데리아 (수정됨)");
-            updateRequest.setOwnerNotice("사장님 공지 (수정됨)");
-            updateRequest.setBusinessHours("오전 10시 ~ 오후 10시 (수정됨)");
-            updateRequest.setCallNumber("010-1234-5678 (수정됨)");
-            updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-            updateRequest.setDeliveryTime(60);
-            updateRequest.setOrderTypes("가게배달, 포장 (수정됨)");
-            updateRequest.setPackagingPrice(1000);
-            updateRequest.setDeliveryPriceDtos(Arrays.asList(
-                    new DeliveryPriceDto(15000, 4500),
-                    new DeliveryPriceDto(25000, 3500),
-                    new DeliveryPriceDto(35000, 2500)));
-            updateRequest.setCategoryDtos(Arrays.asList(
-                    new CategoryDto(1L, "치킨", "picture.png"),
-                    new CategoryDto(2L, "피자", "picture.png"),
-                    new CategoryDto(3L, "분식", "picture.png")));
+                return updateRequest;
+            }
 
-            return updateRequest;
         }
 
     }
@@ -292,8 +292,8 @@ class ShopServiceTest {
 
             // then
             verify(imageFileHandler, times(2)).remove(anyString());
-            verify(shopRepository, times(1)).findById(shop.getId());
-            verify(shopRepository, times(1)).delete(shop);
+            verify(shopRepository).findById(shop.getId());
+            verify(shopRepository).delete(shop);
         }
 
         @Test
@@ -308,7 +308,7 @@ class ShopServiceTest {
                     .isInstanceOf(AccessDeniedException.class);
 
             // then
-            verify(shopRepository, times(1)).findById(shop.getId());
+            verify(shopRepository).findById(shop.getId());
         }
 
         @Test
@@ -324,7 +324,7 @@ class ShopServiceTest {
                     .isInstanceOf(FileIOException.class);
 
             // then
-            verify(imageFileHandler, times(1)).remove(anyString());
+            verify(imageFileHandler).remove(anyString());
         }
 
         @Test

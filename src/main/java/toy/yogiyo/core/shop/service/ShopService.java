@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.category.service.CategoryShopService;
+import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
@@ -25,12 +27,12 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
+    private final CategoryShopService categoryShopService;
+    private final OwnerService ownerService;
 
 
-    // TODO : * Owner 가져오는 로직 변경해야함 *
-    //  일단 임의로 Owner만들어서 사용중
     @Transactional
-    public Long register(ShopRegisterRequest request) throws IOException {
+    public Long register(ShopRegisterRequest request, Long ownerId) throws IOException {
         validateDuplicateName(request.getName());
 
         String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(request.getIcon()));
@@ -38,7 +40,9 @@ public class ShopService {
 
         Shop shop = request.toEntity(iconStoredName, bannerStoredName);
 
-        shop.changeOwner(new Shop.Owner());
+        shop.changeOwner(ownerService.findOne(ownerId));
+
+        categoryShopService.save(request.getCategoryDtos(), shop);
 
         return shopRepository.save(shop).getId();
     }
@@ -75,6 +79,8 @@ public class ShopService {
                 request.getOrderTypes(),
                 request.getPackagingPrice(),
                 deliveryPrices);
+
+        categoryShopService.changeCategory(request.getCategoryDtos(), shop);
     }
 
     @Transactional

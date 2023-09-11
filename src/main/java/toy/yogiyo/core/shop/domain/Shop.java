@@ -3,6 +3,7 @@ package toy.yogiyo.core.shop.domain;
 import lombok.*;
 import toy.yogiyo.common.domain.BaseTimeEntity;
 import toy.yogiyo.core.category.domain.CategoryShop;
+import toy.yogiyo.core.owner.domain.Owner;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -49,7 +50,6 @@ public class Shop extends BaseTimeEntity {
     private String orderTypes;
     private int packagingPrice;
 
-    //TODO : 연관관계 편의 메서드 작성
     @OneToMany(mappedBy = "shop")
     private List<CategoryShop> categoryShop = new ArrayList<>();
 
@@ -97,22 +97,6 @@ public class Shop extends BaseTimeEntity {
         for (DeliveryPrice deliveryPrice : deliveryPrices) {
             this.deliveryPrices.add(deliveryPrice);
             deliveryPrice.setShop(this);
-        }
-    }
-
-
-    @Getter @Setter
-    @Entity
-    public static class Owner {
-
-        @Id @GeneratedValue
-        private Long id;
-
-        public Owner() {
-        }
-
-        public Owner(Long id) {
-            this.id = id;
         }
     }
 }

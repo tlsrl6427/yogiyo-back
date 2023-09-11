@@ -12,6 +12,10 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.category.dto.CategoryDto;
+import toy.yogiyo.core.category.service.CategoryShopService;
+import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
@@ -40,6 +44,12 @@ class ShopServiceTest {
     @Mock
     ImageFileHandler imageFileHandler;
 
+    @Mock
+    CategoryShopService categoryShopService;
+
+    @Mock
+    OwnerService ownerService;
+
     @BeforeAll
     static void beforeAll() {
         new ImageFileUtil().setPath("/image/");
@@ -55,10 +65,13 @@ class ShopServiceTest {
             // given
             ShopRegisterRequest registerRequest = getRegisterRequest();
 
+            when(ownerService.findOne(anyLong())).thenReturn(new Owner());
             when(imageFileHandler.store(registerRequest.getIcon()))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(registerRequest.getBanner()))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
+
+            doNothing().when(categoryShopService).save(eq(registerRequest.getCategoryDtos()), any());
 
             Shop shop = registerRequest.toEntity(
                     imageFileHandler.store(registerRequest.getIcon()),
@@ -67,7 +80,7 @@ class ShopServiceTest {
             when(shopRepository.save(any())).thenReturn(shop);
 
             // when
-            Long createdId = shopService.register(registerRequest);
+            Long createdId = shopService.register(registerRequest, anyLong());
 
             // then
             assertThat(createdId).isEqualTo(shop.getId());
@@ -82,7 +95,7 @@ class ShopServiceTest {
                     .thenReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> shopService.register(registerRequest))
+            assertThatThrownBy(() -> shopService.register(registerRequest, anyLong()))
                     .isInstanceOf(EntityExistsException.class);
         }
 
@@ -105,6 +118,10 @@ class ShopServiceTest {
                     new DeliveryPriceDto(10000, 5000),
                     new DeliveryPriceDto(20000, 4000),
                     new DeliveryPriceDto(30000, 3000)));
+            registerRequest.setCategoryDtos(Arrays.asList(
+                    new CategoryDto(1L, "치킨", "picture.png"),
+                    new CategoryDto(2L, "피자", "picture.png"),
+                    new CategoryDto(3L, "분식", "picture.png")));
 
             return registerRequest;
         }
@@ -177,6 +194,7 @@ class ShopServiceTest {
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
                 ShopUpdateRequest updateRequest = getUpdateRequest();
+                doNothing().when(categoryShopService).changeCategory(updateRequest.getCategoryDtos(), shop);
 
                 // when
                 shopService.updateInfo(updateRequest, 1L);
@@ -197,6 +215,8 @@ class ShopServiceTest {
                     assertThat(deliveryPrice.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
                     assertThat(deliveryPrice.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
+
+                verify(categoryShopService).changeCategory(updateRequest.getCategoryDtos(), shop);
             }
 
             @Test
@@ -244,6 +264,10 @@ class ShopServiceTest {
                     new DeliveryPriceDto(15000, 4500),
                     new DeliveryPriceDto(25000, 3500),
                     new DeliveryPriceDto(35000, 2500)));
+            updateRequest.setCategoryDtos(Arrays.asList(
+                    new CategoryDto(1L, "치킨", "picture.png"),
+                    new CategoryDto(2L, "피자", "picture.png"),
+                    new CategoryDto(3L, "분식", "picture.png")));
 
             return updateRequest;
         }
@@ -339,7 +363,7 @@ class ShopServiceTest {
 
     private Shop getShopWithOwner(Long ownerId) {
         Shop shop = getShop();
-        shop.changeOwner(new Shop.Owner(ownerId));
+        shop.changeOwner(new Owner(ownerId));
         return shop;
     }
 }

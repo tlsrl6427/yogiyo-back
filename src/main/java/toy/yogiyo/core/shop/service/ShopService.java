@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -27,6 +28,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
+    private final CategoryShopService categoryShopService;
     private final OwnerService ownerService;
 
 
@@ -40,6 +42,8 @@ public class ShopService {
         Shop shop = request.toEntity(iconStoredName, bannerStoredName);
 
         shop.changeOwner(ownerService.findOneTemp(ownerId));
+
+        categoryShopService.save(request.getCategories(), shop);
 
         return shopRepository.save(shop).getId();
     }
@@ -76,6 +80,8 @@ public class ShopService {
                 request.getOrderTypes(),
                 request.getPackagingPrice(),
                 deliveryPrices);
+
+        categoryShopService.changeCategory(request.getCategories(), shop);
     }
 
     @Transactional

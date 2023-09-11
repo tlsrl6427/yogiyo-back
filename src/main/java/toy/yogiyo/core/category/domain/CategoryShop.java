@@ -1,9 +1,11 @@
 package toy.yogiyo.core.category.domain;
 
+import lombok.Getter;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 public class CategoryShop {
 
@@ -19,4 +21,11 @@ public class CategoryShop {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    public void setCategory(Category category, Shop shop) {
+        this.category = category;
+        this.shop = shop;
+
+        shop.getCategoryShop().add(this);
+    }
 }

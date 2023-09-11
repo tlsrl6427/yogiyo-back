@@ -14,6 +14,7 @@ import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.dto.CategoryDto;
+import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPrice;
@@ -44,6 +45,9 @@ class ShopServiceTest {
     ImageFileHandler imageFileHandler;
 
     @Mock
+    CategoryShopService categoryShopService;
+
+    @Mock
     OwnerService ownerService;
 
     @BeforeAll
@@ -68,6 +72,8 @@ class ShopServiceTest {
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(banner))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
+
+            doNothing().when(categoryShopService).save(eq(registerRequest.getCategories()), any());
 
             Shop shop = registerRequest.toEntity(
                     imageFileHandler.store(icon),
@@ -196,6 +202,7 @@ class ShopServiceTest {
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
                 ShopUpdateRequest updateRequest = getUpdateRequest();
+                doNothing().when(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
 
                 // when
                 shopService.updateInfo(shop.getId(), 1L, updateRequest);
@@ -217,6 +224,7 @@ class ShopServiceTest {
                     assertThat(deliveryPrice.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
 
+                verify(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
             }
 
             @Test

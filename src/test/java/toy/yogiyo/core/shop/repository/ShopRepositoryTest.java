@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-import toy.yogiyo.core.shop.DeliveryPrice;
-import toy.yogiyo.core.shop.Shop;
+import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
 

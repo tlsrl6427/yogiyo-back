@@ -1,4 +1,4 @@
-package toy.yogiyo.core.category;
+package toy.yogiyo.core.category.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

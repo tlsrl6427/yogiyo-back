@@ -4,8 +4,8 @@ package toy.yogiyo.core.shop.dto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
-import toy.yogiyo.core.shop.DeliveryPrice;
-import toy.yogiyo.core.shop.Shop;
+import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
 import java.util.stream.Collectors;

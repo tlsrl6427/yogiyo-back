@@ -1,8 +1,8 @@
-package toy.yogiyo.core.shop;
+package toy.yogiyo.core.shop.domain;
 
 import lombok.*;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.category.CategoryShop;
+import toy.yogiyo.core.category.domain.CategoryShop;
 
 import javax.persistence.*;
 import java.util.ArrayList;

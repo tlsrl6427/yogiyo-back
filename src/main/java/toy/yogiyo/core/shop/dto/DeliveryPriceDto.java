@@ -2,7 +2,7 @@ package toy.yogiyo.core.shop.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import toy.yogiyo.core.shop.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPrice;
 
 @Getter @Setter
 public class DeliveryPriceDto {

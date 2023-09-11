@@ -1,4 +1,4 @@
-package toy.yogiyo.core.shop;
+package toy.yogiyo.core.shop.domain;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
-package toy.yogiyo.core.category;
+package toy.yogiyo.core.category.domain;
 
-import toy.yogiyo.core.shop.Shop;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
 

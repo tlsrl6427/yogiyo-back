@@ -32,4 +32,12 @@ public class Category {
         this.name = name;
         this.picture = picture;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changePicture(String picture) {
+        this.picture = picture;
+    }
 }

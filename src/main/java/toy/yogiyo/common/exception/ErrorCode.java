@@ -10,6 +10,7 @@ public enum ErrorCode {
     SHOP_ALREADY_EXIST(400, "SH_003", "이미 존재하는 가게명 입니다."),
 
     CATEGORY_NOT_FOUND(400, "C_001", "카테고리를 찾을 수 없습니다."),
+    CATEGORY_ALREADY_EXIST(400, "C_002", "이미 존재하는 카테고리명 입니다."),
 
     FILE_NOT_REMOVED(400, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다.");

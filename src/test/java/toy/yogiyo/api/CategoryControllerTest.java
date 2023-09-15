@@ -54,14 +54,15 @@ class CategoryControllerTest {
         when(categoryService.createCategory(any())).thenReturn(1L);
 
         // when
-        mockMvc.perform(multipart("/category/create")
+        ResultActions result = mockMvc.perform(
+                multipart("/category/create")
                         .file((MockMultipartFile) request.getPicture())
-                        .param("name", request.getName()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("1"))
-                .andDo(print());
+                        .param("name", request.getName()));
 
         // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(print());
         verify(categoryService).createCategory(any());
     }
 
@@ -74,14 +75,15 @@ class CategoryControllerTest {
 
 
         // when
-        mockMvc.perform(get("/category/{categoryId}", category.getId()))
-                .andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(
+                get("/category/{categoryId}", category.getId()));
+
+        // then
+        result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()))
                 .andExpect(jsonPath("$.picture").value(category.getPicture()))
                 .andDo(print());
-
-        // then
         verify(categoryService).findCategory(category.getId());
     }
 
@@ -95,16 +97,16 @@ class CategoryControllerTest {
         when(categoryService.getCategories()).thenReturn(categoryResponses);
 
         // when
-        ResultActions actions = mockMvc.perform(get("/category/all"))
-                .andDo(print());
-
-        for (int i = 0; i < categoryResponses.size(); i++) {
-            actions.andExpect(jsonPath("$.[%s].id", i).value(categoryResponses.get(i).getId()));
-            actions.andExpect(jsonPath("$.[%s].name", i).value(categoryResponses.get(i).getName()));
-            actions.andExpect(jsonPath("$.[%s].picture", i).value(categoryResponses.get(i).getPicture()));
-        }
+        ResultActions result = mockMvc.perform(
+                get("/category/all"));
 
         // then
+        for (int i = 0; i < categoryResponses.size(); i++) {
+            result.andExpect(jsonPath("$.[%s].id", i).value(categoryResponses.get(i).getId()));
+            result.andExpect(jsonPath("$.[%s].name", i).value(categoryResponses.get(i).getName()));
+            result.andExpect(jsonPath("$.[%s].picture", i).value(categoryResponses.get(i).getPicture()));
+        }
+        result.andDo(print());
         verify(categoryService).getCategories();
     }
 
@@ -115,12 +117,13 @@ class CategoryControllerTest {
         doNothing().when(categoryService).update(anyLong(), any());
 
         // when
-        mockMvc.perform(patch("/category/{categoryId}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().string("success"))
-                .andDo(print());
+        ResultActions result = mockMvc.perform(
+                patch("/category/{categoryId}", 1L));
 
         // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
         verify(categoryService).update(anyLong(), any());
     }
 
@@ -131,12 +134,12 @@ class CategoryControllerTest {
         doNothing().when(categoryService).delete(anyLong());
 
         // when
-        mockMvc.perform(delete("/category/{categoryId}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().string("success"))
-                .andDo(print());
+        ResultActions result = mockMvc.perform(delete("/category/{categoryId}", 1L));
 
         // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
         verify(categoryService).delete(anyLong());
     }
 

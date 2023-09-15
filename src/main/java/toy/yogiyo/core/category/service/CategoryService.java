@@ -11,11 +11,13 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.CategoryCreateRequest;
+import toy.yogiyo.core.category.dto.CategoryResponse;
 import toy.yogiyo.core.category.dto.CategoryUpdateRequest;
 import toy.yogiyo.core.category.repository.CategoryRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +54,12 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getCategories() {
+        List<Category> categories = categoryRepository.findAll();
+
+        return categories.stream()
+                .map(CategoryResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

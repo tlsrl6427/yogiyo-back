@@ -17,6 +17,7 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.CategoryCreateRequest;
+import toy.yogiyo.core.category.dto.CategoryResponse;
 import toy.yogiyo.core.category.dto.CategoryUpdateRequest;
 import toy.yogiyo.core.category.repository.CategoryRepository;
 
@@ -185,7 +186,7 @@ class CategoryServiceTest {
             when(categoryRepository.findAll()).thenReturn(categories);
 
             // when
-            List<Category> findCategories = categoryService.getCategories();
+            List<CategoryResponse> findCategories = categoryService.getCategories();
 
             // then
             assertThat(findCategories.size()).isEqualTo(categories.size());

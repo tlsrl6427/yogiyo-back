@@ -44,6 +44,8 @@ public class Shop extends BaseTimeEntity {
     @Column(nullable = false)
     private String address;
 
+    private Double longitude;
+    private Double latitude;
 
     private int deliveryTime;
     @Column(nullable = false)

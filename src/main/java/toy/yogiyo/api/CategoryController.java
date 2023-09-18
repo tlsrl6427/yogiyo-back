@@ -1,12 +1,13 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.category.domain.Category;
-import toy.yogiyo.core.category.dto.CategoryCreateRequest;
-import toy.yogiyo.core.category.dto.CategoryResponse;
-import toy.yogiyo.core.category.dto.CategoryUpdateRequest;
+import toy.yogiyo.core.category.dto.*;
 import toy.yogiyo.core.category.service.CategoryService;
+import toy.yogiyo.core.category.service.CategoryShopService;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategoryShopService categoryShopService;
 
     @PostMapping("/create")
     public Long create(@ModelAttribute CategoryCreateRequest request) throws IOException {
@@ -44,5 +46,13 @@ public class CategoryController {
     public String delete(@PathVariable("categoryId") Long categoryId) {
         categoryService.delete(categoryId);
         return "success";
+    }
+
+    @GetMapping("/{categoryId}/shop")
+    public Slice<CategoryShopResponse> findAroundShop(@PathVariable("categoryId") Long categoryId,
+                                                      @ModelAttribute CategoryShopCondition condition,
+                                                      Pageable pageable) {
+
+        return categoryShopService.findShop(categoryId, condition, pageable);
     }
 }

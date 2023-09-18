@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.dto.CategoryShopCondition;
 
@@ -26,11 +27,11 @@ public class CategoryShopQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public SliceImpl<CategoryShop> findAround(CategoryShopCondition condition, Pageable pageable) {
+    public SliceImpl<CategoryShop> findAround(Long categoryId, CategoryShopCondition condition, Pageable pageable) {
         List<CategoryShop> result = queryFactory
                 .selectFrom(categoryShop)
                 .join(categoryShop.shop, shop).fetchJoin()
-                .where(categoryEq(condition.getCategoryId()),
+                .where(categoryEq(categoryId),
                         shopNameContains(condition.getKeyword()),
                         shopDistanceLt(condition.getLatitude(), condition.getLongitude(), 2000))
                 .offset(pageable.getOffset())
@@ -51,7 +52,7 @@ public class CategoryShopQueryRepository {
     }
 
     private BooleanExpression shopNameContains(String keyword) {
-        return keyword == null ? null : categoryShop.shop.name.contains(keyword);
+        return StringUtils.hasText(keyword) ? categoryShop.shop.name.contains(keyword) : null;
     }
 
     private BooleanExpression shopDistanceLt(double latitude, double longitude, double meter) {

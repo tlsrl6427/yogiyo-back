@@ -9,15 +9,14 @@ public class CategoryShopCondition {
     private Double latitude;
     private Double longitude;
 
-    private Long categoryId;
-
     private String keyword;
 
+    public CategoryShopCondition() {
+    }
 
-    public CategoryShopCondition(Double latitude, Double longitude, Long categoryId, String keyword) {
+    public CategoryShopCondition(Double latitude, Double longitude, String keyword) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.categoryId = categoryId;
         this.keyword = keyword;
     }
 }

@@ -99,17 +99,17 @@ class CategoryShopServiceTest {
         }
 
         PageRequest pageRequest = PageRequest.of(0, 10);
-        CategoryShopCondition condition = new CategoryShopCondition(36.6732, 127.4491, category.getId(), null);
+        CategoryShopCondition condition = new CategoryShopCondition(36.6732, 127.4491, null);
 
-        when(categoryShopQueryRepository.findAround(condition, pageRequest))
+        when(categoryShopQueryRepository.findAround(category.getId(), condition, pageRequest))
                 .thenReturn(new SliceImpl<>(categoryShops, pageRequest, false));
 
 
         // when
-        Slice<CategoryShopResponse> result = categoryShopService.findShop(condition, pageRequest);
+        Slice<CategoryShopResponse> result = categoryShopService.findShop(category.getId(), condition, pageRequest);
 
         // then
-        verify(categoryShopQueryRepository).findAround(condition, pageRequest);
+        verify(categoryShopQueryRepository).findAround(category.getId(), condition, pageRequest);
 
         CategoryShopResponse categoryShopResponse = result.getContent().get(0);
         assertThat(categoryShopResponse.getName()).isEqualTo(shop.getName());

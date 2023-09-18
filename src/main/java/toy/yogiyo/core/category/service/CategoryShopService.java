@@ -50,8 +50,8 @@ public class CategoryShopService {
         save(categoryDto, shop);
     }
 
-    public Slice<CategoryShopResponse> findShop(CategoryShopCondition condition, Pageable pageable) {
-        Slice<CategoryShop> result = categoryShopQueryRepository.findAround(condition, pageable);
+    public Slice<CategoryShopResponse> findShop(Long categoryId, CategoryShopCondition condition, Pageable pageable) {
+        Slice<CategoryShop> result = categoryShopQueryRepository.findAround(categoryId, condition, pageable);
 
         return result.map(categoryShop -> new CategoryShopResponse(
                 categoryShop,

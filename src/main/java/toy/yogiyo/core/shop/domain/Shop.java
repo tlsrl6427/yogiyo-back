@@ -101,6 +101,11 @@ public class Shop extends BaseTimeEntity {
             deliveryPrice.setShop(this);
         }
     }
+
+    public void changeLatLng(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
 
 

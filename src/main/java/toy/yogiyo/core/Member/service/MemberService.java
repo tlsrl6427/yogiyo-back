@@ -1,7 +1,10 @@
 package toy.yogiyo.core.Member.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
@@ -11,10 +14,15 @@ import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.repository.MemberRepository;
 import toy.yogiyo.core.Member.dto.MemberJoinRequest;
 
+import javax.persistence.EntityManager;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final EntityManager em;
 
     public Long join(MemberJoinRequest memberJoinRequest){
         memberRepository.findByEmailAndProvider(memberJoinRequest.getEmail(), memberJoinRequest.getProviderType())
@@ -23,19 +31,20 @@ public class MemberService {
         return memberRepository.save(memberJoinRequest.toMember()).getId();
     }
 
-    public MemberMypageResponse findOne(Long id){
-        Member findMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        return MemberMypageResponse.of(findMember);
+    @Transactional(readOnly = true)
+    public MemberMypageResponse findOne(Member member){
+        if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        return MemberMypageResponse.of(member);
     }
 
-    public void update(Long id, MemberUpdateRequest memberUpdateRequest){
-        Member findMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        findMember.update(memberUpdateRequest.toMember());
+    public void update(Member member, MemberUpdateRequest memberUpdateRequest){
+        if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        member.update(memberUpdateRequest.toMember());
     }
 
-    public void delete(Long id){
-        Member findMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        memberRepository.delete(findMember);
+    public void delete(Member member){
+        if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        memberRepository.delete(member);
     }
 
 

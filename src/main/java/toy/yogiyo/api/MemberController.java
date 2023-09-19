@@ -1,7 +1,10 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import toy.yogiyo.common.login.LoginUser;
+import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.dto.MemberJoinRequest;
 import toy.yogiyo.core.Member.dto.MemberMypageResponse;
 import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
@@ -10,28 +13,29 @@ import toy.yogiyo.core.Member.service.MemberService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public Long join(MemberJoinRequest memberJoinRequest){
+    public Long join(@RequestBody MemberJoinRequest memberJoinRequest){
         return memberService.join(memberJoinRequest);
     }
 
-    @GetMapping("/mypage/{id}")
-    public MemberMypageResponse showMypage(@PathVariable Long id){
-        return memberService.findOne(id);
+    @GetMapping("/mypage")
+    public MemberMypageResponse showMypage(@LoginUser Member member){
+        return memberService.findOne(member);
     }
 
-    @PatchMapping("/{id}")
-    public String update(@PathVariable("id") Long id, MemberUpdateRequest memberUpdateRequest){
-        memberService.update(id, memberUpdateRequest);
+    @PatchMapping("/update")
+    public String update(@LoginUser Member member, @RequestBody MemberUpdateRequest memberUpdateRequest){
+        memberService.update(member, memberUpdateRequest);
         return "update success";
     }
 
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") Long id){
-        memberService.delete(id);
+    @DeleteMapping("/delete")
+    public String delete(@LoginUser Member member){
+        memberService.delete(member);
         return "delete success";
     }
 }

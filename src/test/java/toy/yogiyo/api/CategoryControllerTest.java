@@ -23,7 +23,7 @@ import toy.yogiyo.core.category.dto.CategoryShopCondition;
 import toy.yogiyo.core.category.dto.CategoryShopResponse;
 import toy.yogiyo.core.category.service.CategoryService;
 import toy.yogiyo.core.category.service.CategoryShopService;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.ArrayList;
@@ -243,9 +243,9 @@ class CategoryControllerTest {
                 0);
 
         shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPrice(10000, 5000),
-                new DeliveryPrice(20000, 4000),
-                new DeliveryPrice(30000, 3000)));
+                new DeliveryPriceInfo(10000, 5000),
+                new DeliveryPriceInfo(20000, 4000),
+                new DeliveryPriceInfo(30000, 3000)));
 
         shop.changeLatLng(36.674648, 127.448544);
 

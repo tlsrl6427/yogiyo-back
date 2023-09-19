@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
@@ -48,15 +48,15 @@ class ShopRepositoryTest {
         void saveShopDeliveryPrice() throws Exception {
             // given
             Shop shop = getShop();
-            shop.changeDeliveryPrices(Arrays.asList(new DeliveryPrice(), new DeliveryPrice(), new DeliveryPrice()));
+            shop.changeDeliveryPrices(Arrays.asList(new DeliveryPriceInfo(), new DeliveryPriceInfo(), new DeliveryPriceInfo()));
 
             // when
             shopRepository.save(shop);
 
             // then
-            for (DeliveryPrice deliveryPrice : shop.getDeliveryPrices()) {
-                DeliveryPrice findDeliveryPrice = em.find(DeliveryPrice.class, deliveryPrice.getId());
-                assertThat(findDeliveryPrice).isEqualTo(deliveryPrice);
+            for (DeliveryPriceInfo deliveryPriceInfo : shop.getDeliveryPriceInfos()) {
+                DeliveryPriceInfo findDeliveryPriceInfo = em.find(DeliveryPriceInfo.class, deliveryPriceInfo.getId());
+                assertThat(findDeliveryPriceInfo).isEqualTo(deliveryPriceInfo);
             }
         }
 
@@ -65,7 +65,7 @@ class ShopRepositoryTest {
         void deleteShopDeliveryPrice() throws Exception {
             // given
             Shop shop = getShop();
-            shop.changeDeliveryPrices(Arrays.asList(new DeliveryPrice(), new DeliveryPrice(), new DeliveryPrice()));
+            shop.changeDeliveryPrices(Arrays.asList(new DeliveryPriceInfo(), new DeliveryPriceInfo(), new DeliveryPriceInfo()));
 
             shopRepository.save(shop);
 
@@ -73,9 +73,9 @@ class ShopRepositoryTest {
             shopRepository.delete(shop);
 
             // then
-            for (DeliveryPrice deliveryPrice : shop.getDeliveryPrices()) {
-                DeliveryPrice findDeliveryPrice = em.find(DeliveryPrice.class, deliveryPrice.getId());
-                assertThat(findDeliveryPrice).isNull();
+            for (DeliveryPriceInfo deliveryPriceInfo : shop.getDeliveryPriceInfos()) {
+                DeliveryPriceInfo findDeliveryPriceInfo = em.find(DeliveryPriceInfo.class, deliveryPriceInfo.getId());
+                assertThat(findDeliveryPriceInfo).isNull();
             }
         }
 
@@ -84,23 +84,23 @@ class ShopRepositoryTest {
         void shopChangeDeliveryPrices() throws Exception {
             // given
             Shop shop = getShop();
-            List<DeliveryPrice> deliveryPrices = Arrays.asList(new DeliveryPrice(), new DeliveryPrice(), new DeliveryPrice());
-            List<DeliveryPrice> newDeliveryPrices = Arrays.asList(new DeliveryPrice(), new DeliveryPrice(), new DeliveryPrice());
+            List<DeliveryPriceInfo> deliveryPriceInfos = Arrays.asList(new DeliveryPriceInfo(), new DeliveryPriceInfo(), new DeliveryPriceInfo());
+            List<DeliveryPriceInfo> newDeliveryPriceInfos = Arrays.asList(new DeliveryPriceInfo(), new DeliveryPriceInfo(), new DeliveryPriceInfo());
 
-            shop.changeDeliveryPrices(deliveryPrices);
+            shop.changeDeliveryPrices(deliveryPriceInfos);
             shopRepository.save(shop);
             em.flush();
 
             // when
-            shop.changeDeliveryPrices(newDeliveryPrices);
+            shop.changeDeliveryPrices(newDeliveryPriceInfos);
             em.flush();
 
             // then
-            for (DeliveryPrice deliveryPrice : deliveryPrices) {
-                assertThat(em.find(DeliveryPrice.class, deliveryPrice.getId())).isNull();
+            for (DeliveryPriceInfo deliveryPriceInfo : deliveryPriceInfos) {
+                assertThat(em.find(DeliveryPriceInfo.class, deliveryPriceInfo.getId())).isNull();
             }
-            for (DeliveryPrice newDeliveryPrice : newDeliveryPrices) {
-                assertThat(em.find(DeliveryPrice.class, newDeliveryPrice.getId())).isNotNull();
+            for (DeliveryPriceInfo newDeliveryPriceInfo : newDeliveryPriceInfos) {
+                assertThat(em.find(DeliveryPriceInfo.class, newDeliveryPriceInfo.getId())).isNotNull();
             }
         }
     }

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-public class DeliveryPrice {
+public class DeliveryPriceInfo {
 
     @Id
     @GeneratedValue
@@ -22,10 +22,10 @@ public class DeliveryPrice {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    public DeliveryPrice() {
+    public DeliveryPriceInfo() {
     }
 
-    public DeliveryPrice(int orderPrice, int deliveryPrice) {
+    public DeliveryPriceInfo(int orderPrice, int deliveryPrice) {
         this.orderPrice = orderPrice;
         this.deliveryPrice = deliveryPrice;
     }

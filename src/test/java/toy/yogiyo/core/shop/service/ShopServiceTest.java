@@ -17,7 +17,7 @@ import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.service.OwnerService;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
 import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
@@ -170,9 +170,9 @@ class ShopServiceTest {
 
                 for (int i = 0; i < response.getDeliveryPrices().size(); i++) {
                     DeliveryPriceDto deliveryPriceDto = response.getDeliveryPrices().get(i);
-                    DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
-                    assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPrice.getDeliveryPrice());
-                    assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPrice.getOrderPrice());
+                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
+                    assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPriceInfo.getDeliveryPrice());
+                    assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPriceInfo.getOrderPrice());
                 }
             }
 
@@ -217,11 +217,11 @@ class ShopServiceTest {
                 assertThat(shop.getOrderTypes()).isEqualTo(updateRequest.getOrderTypes());
                 assertThat(shop.getPackagingPrice()).isEqualTo(updateRequest.getPackagingPrice());
 
-                for (int i = 0; i < shop.getDeliveryPrices().size(); i++) {
-                    DeliveryPrice deliveryPrice = shop.getDeliveryPrices().get(i);
+                for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
+                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
                     DeliveryPriceDto deliveryPriceDto = updateRequest.getDeliveryPrices().get(i);
-                    assertThat(deliveryPrice.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
-                    assertThat(deliveryPrice.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
+                    assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
+                    assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
 
                 verify(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
@@ -362,9 +362,9 @@ class ShopServiceTest {
                 0);
 
         shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPrice(10000, 5000),
-                new DeliveryPrice(20000, 4000),
-                new DeliveryPrice(30000, 3000)));
+                new DeliveryPriceInfo(10000, 5000),
+                new DeliveryPriceInfo(20000, 4000),
+                new DeliveryPriceInfo(30000, 3000)));
 
         return shop;
     }

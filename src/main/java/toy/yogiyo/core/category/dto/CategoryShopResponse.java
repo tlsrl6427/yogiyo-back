@@ -2,7 +2,7 @@ package toy.yogiyo.core.category.dto;
 
 import lombok.Getter;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class CategoryShopResponse {
     private double stars;
     private long reviewNum;
     private int deliveryTime;
-    private List<Integer> deliveryPrices;
+    private List<Integer> deliveryPriceInfos;
 
     public CategoryShopResponse(CategoryShop categoryShop, int distance) {
         Shop shop = categoryShop.getShop();
@@ -30,8 +30,8 @@ public class CategoryShopResponse {
                 shop.getQuantityScore()) / 3;
         this.reviewNum = shop.getReviewNum();
         this.deliveryTime = shop.getDeliveryTime();
-        this.deliveryPrices = shop.getDeliveryPrices().stream()
-                .map(DeliveryPrice::getDeliveryPrice)
+        this.deliveryPriceInfos = shop.getDeliveryPriceInfos().stream()
+                .map(DeliveryPriceInfo::getDeliveryPrice)
                 .collect(Collectors.toList());
     }
 

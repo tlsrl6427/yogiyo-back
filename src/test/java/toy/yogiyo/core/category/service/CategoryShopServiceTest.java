@@ -16,7 +16,7 @@ import toy.yogiyo.core.category.dto.CategoryShopCondition;
 import toy.yogiyo.core.category.dto.CategoryShopResponse;
 import toy.yogiyo.core.category.repository.CategoryShopQueryRepository;
 import toy.yogiyo.core.category.repository.CategoryShopRepository;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.ArrayList;
@@ -118,8 +118,8 @@ class CategoryShopServiceTest {
         assertThat(categoryShopResponse.getDistance()).isBetween(165, 170);
         assertThat(categoryShopResponse.getStars()).isEqualTo((shop.getDeliveryScore() + shop.getQuantityScore() + shop.getTasteScore()) / 3);
         assertThat(categoryShopResponse.getReviewNum()).isEqualTo(shop.getReviewNum());
-        assertThat(categoryShopResponse.getDeliveryPrices()).containsAll(shop.getDeliveryPrices().stream()
-                .map(DeliveryPrice::getDeliveryPrice)
+        assertThat(categoryShopResponse.getDeliveryPriceInfos()).containsAll(shop.getDeliveryPriceInfos().stream()
+                .map(DeliveryPriceInfo::getDeliveryPrice)
                 .collect(Collectors.toList()));
     }
 
@@ -136,9 +136,9 @@ class CategoryShopServiceTest {
                 0);
 
         shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPrice(10000, 5000),
-                new DeliveryPrice(20000, 4000),
-                new DeliveryPrice(30000, 3000)));
+                new DeliveryPriceInfo(10000, 5000),
+                new DeliveryPriceInfo(20000, 4000),
+                new DeliveryPriceInfo(30000, 3000)));
 
         shop.changeLatLng(36.674648, 127.448544);
 

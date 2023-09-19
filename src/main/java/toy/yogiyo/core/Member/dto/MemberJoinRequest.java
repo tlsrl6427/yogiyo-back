@@ -6,6 +6,8 @@ import toy.yogiyo.core.Member.domain.ProviderType;
 
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberJoinRequest {
 
     private String nickname;

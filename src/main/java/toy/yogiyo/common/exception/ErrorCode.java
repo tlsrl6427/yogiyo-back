@@ -2,8 +2,16 @@ package toy.yogiyo.common.exception;
 
 public enum ErrorCode {
 
-    MEMBER_NOT_FOUND(400, "U_001", "고객을 찾을 수 없습니다."),
-    MEMBER_ALREADY_EXIST(400, "U_002", "이미 존재하는 이메일입니다");
+    MEMBER_NOT_FOUND(400, "M_001", "고객을 찾을 수 없습니다."),
+    MEMBER_ALREADY_EXIST(400, "M_002", "이미 존재하는 이메일입니다"),
+    MEMBER_UNAUTHORIZATION(403, "M_003", "권한이 없습니다"),
+
+    JWT_EXPIRED(401, "J_001", "토큰 인증기간이 만료되었습니다"),
+    JWT_UNSUPPORTED(401, "J_002", "토큰의 포맷이 맞지 않습니다"),
+    JWT_MALFORMED(401, "J_003", "잘못된 형식의 토큰입니다"),
+    JWT_SIGNATURE_FAILED(401, "J_004", "서명 검증에 실패하였습니다"),
+    JWT_ILLEGAL_ARGUMENT(401, "J_005", "잘못된 인자입니다");
+
 
     private final int status;
     private final String code;

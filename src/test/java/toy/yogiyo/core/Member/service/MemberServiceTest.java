@@ -83,7 +83,7 @@ class MemberServiceTest {
     void findOne(){
         given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
 
-        MemberMypageResponse response = memberService.findOne(1L);
+        MemberMypageResponse response = memberService.findOne(member);
 
         assertAll(
             () -> assertThat(response.getNickname()).isEqualTo(member.getNickname()),
@@ -100,7 +100,7 @@ class MemberServiceTest {
 
         given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
 
-        memberService.update(1L, memberUpdateRequest);
+        memberService.update(member, memberUpdateRequest);
 
         assertAll(
                 () -> assertThat(member.getNickname()).isEqualTo(memberUpdateRequest.getNickname())
@@ -112,7 +112,7 @@ class MemberServiceTest {
     void delete() {
         given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
 
-        memberService.delete(member.getId());
+        memberService.delete(member);
 
         verify(memberRepository).delete(member);
     }

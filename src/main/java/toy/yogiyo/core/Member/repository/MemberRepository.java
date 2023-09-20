@@ -10,7 +10,14 @@ import toy.yogiyo.core.Member.domain.ProviderType;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    @Query("select m from Member m where m.email = :email and m.providerType = :providerType")
+    @Query("select m from Member m " +
+            "where m.email=:email " +
+            "and m.providerType=:providerType")
     Optional<Member> findByEmailAndProvider(@Param("email") String email, @Param("providerType") ProviderType providerType);
 
+    @Query("select m from Member m " +
+            "where m.email=:email " +
+            "and m.password=:password " +
+            "and m.providerType='DEFAULT'")
+    Optional<Member> findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 }

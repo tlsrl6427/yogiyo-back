@@ -1,11 +1,12 @@
 package toy.yogiyo.core.Member.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import toy.yogiyo.core.Member.domain.Member;
 
 @Getter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberUpdateRequest {
 
     private String nickname;

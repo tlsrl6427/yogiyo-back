@@ -4,13 +4,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.Order.domain.Order;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +21,8 @@ public class Member extends BaseTimeEntity {
     private String nickname;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private ProviderType providerType;
-
-    @OneToMany(mappedBy = "member")
-    private List<Order> orders = new ArrayList<>();
 
     @Builder
     public Member(Long id, String nickname, String email, String password, ProviderType providerType) {
@@ -39,6 +34,6 @@ public class Member extends BaseTimeEntity {
     }
 
     public void update(Member member){
-        if(member.getNickname() != null) this.nickname = member.getNickname();
+        if(this.nickname != member.getNickname()) this.nickname = member.getNickname();
     }
 }

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.dto.MemberJoinRequest;
@@ -21,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -85,7 +88,7 @@ class MemberControllerTest {
         given(memberService.findOne(any())).willReturn(memberMypageResponse);
 
         mockMvc.perform(
-                    get("/member/mypage/{id}", 1L)
+                    get("/member/mypage")
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nickname").value(member.getNickname()))
@@ -103,7 +106,7 @@ class MemberControllerTest {
                 .build();
 
         mockMvc.perform(
-                    patch("/member/{id}", 1L)
+                    patch("/member/update")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(memberUpdateRequest))
                 )
@@ -116,7 +119,7 @@ class MemberControllerTest {
     @Test
     void delete_member() throws Exception{
         mockMvc.perform(
-                    delete("/member/{id}", 1L)
+                    delete("/member/delete")
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string("delete success"))

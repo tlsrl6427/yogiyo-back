@@ -82,8 +82,6 @@ class MemberServiceTest {
     @DisplayName("마이페이지 조회")
     @Test
     void findOne(){
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         MemberMypageResponse response = memberService.findOne(member);
 
         assertAll(
@@ -99,8 +97,6 @@ class MemberServiceTest {
                 .nickname("test")
                 .build();
 
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         memberService.update(member, memberUpdateRequest);
 
         assertAll(
@@ -111,8 +107,6 @@ class MemberServiceTest {
     @DisplayName("멤버 삭제")
     @Test
     void delete() {
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         memberService.delete(member);
 
         verify(memberRepository).delete(member);

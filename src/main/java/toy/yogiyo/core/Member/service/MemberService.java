@@ -9,6 +9,7 @@ import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.Member.dto.MemberJoinResponse;
 import toy.yogiyo.core.Member.dto.MemberMypageResponse;
 import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.repository.MemberRepository;
@@ -24,11 +25,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final EntityManager em;
 
-    public Long join(MemberJoinRequest memberJoinRequest){
+    public MemberJoinResponse join(MemberJoinRequest memberJoinRequest){
         memberRepository.findByEmailAndProvider(memberJoinRequest.getEmail(), memberJoinRequest.getProviderType())
                 .ifPresent(member -> {throw new EntityExistsException(ErrorCode.MEMBER_ALREADY_EXIST);});
 
-        return memberRepository.save(memberJoinRequest.toMember()).getId();
+        Member savedMember = memberRepository.save(memberJoinRequest.toMember());
+        return MemberJoinResponse.of(savedMember);
     }
 
     @Transactional(readOnly = true)

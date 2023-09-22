@@ -3,7 +3,7 @@ package toy.yogiyo.core.shop.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.category.dto.CategoryDto;
 
@@ -31,11 +31,11 @@ public class ShopRegisterRequest {
         Shop shop = new Shop(name, iconStoredName, bannerStoredName, ownerNotice, businessHours, callNumber,
                 address, deliveryTime, orderTypes, packagingPrice);
 
-        List<DeliveryPrice> deliveryPrices = this.deliveryPrices.stream()
+        List<DeliveryPriceInfo> deliveryPriceInfos = this.deliveryPrices.stream()
                 .map(DeliveryPriceDto::toEntity)
                 .collect(Collectors.toList());
 
-        shop.changeDeliveryPrices(deliveryPrices);
+        shop.changeDeliveryPrices(deliveryPriceInfos);
 
         return shop;
     }

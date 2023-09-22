@@ -57,6 +57,10 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
 tasks.named('test') {
     useJUnitPlatform()
     outputs.dir snippetsDir
@@ -87,9 +91,6 @@ compileQuerydsl {
 //querydsl 추가 끝
 
 //asciidoctor 추가
-ext {
-    snippetsDir = file('build/generated-snippets')
-}
 
 asciidoctor {
     configurations 'asciidoctorExt'
@@ -98,16 +99,9 @@ asciidoctor {
     dependsOn test
 }
 
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-
-task copyDocument(type: Copy) {
+bootJar {
     dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-
-build {
-    dependsOn copyDocument
+    from ("${asciidoctor.outputDir}") {
+        into 'static/'
+    }
 }

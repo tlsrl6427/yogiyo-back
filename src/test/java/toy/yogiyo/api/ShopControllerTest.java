@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.category.dto.CategoryDto;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
@@ -153,9 +153,9 @@ class ShopControllerTest {
                 0);
 
         shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPrice(10000, 5000),
-                new DeliveryPrice(20000, 4000),
-                new DeliveryPrice(30000, 3000)));
+                new DeliveryPriceInfo(10000, 5000),
+                new DeliveryPriceInfo(20000, 4000),
+                new DeliveryPriceInfo(30000, 3000)));
 
         return shop;
     }

@@ -44,6 +44,8 @@ public class Shop extends BaseTimeEntity {
     @Column(nullable = false)
     private String address;
 
+    private Double longitude;
+    private Double latitude;
 
     private int deliveryTime;
     @Column(nullable = false)
@@ -59,7 +61,7 @@ public class Shop extends BaseTimeEntity {
     private Owner owner;
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeliveryPrice> deliveryPrices = new ArrayList<>();
+    private List<DeliveryPriceInfo> deliveryPriceInfos = new ArrayList<>();
 
 
     public Shop(String name, String icon, String banner, String ownerNotice, String businessHours, String callNumber, String address, int deliveryTime, String orderTypes, int packagingPrice) {
@@ -80,7 +82,7 @@ public class Shop extends BaseTimeEntity {
     }
 
     public void changeInfo(String name, String ownerNotice, String businessHours, String callNumber, String address,
-                           int deliveryTime, String orderTypes, int packagingPrice, List<DeliveryPrice> deliveryPrices) {
+                           int deliveryTime, String orderTypes, int packagingPrice, List<DeliveryPriceInfo> deliveryPriceInfos) {
         this.name = name;
         this.ownerNotice = ownerNotice;
         this.businessHours = businessHours;
@@ -89,15 +91,20 @@ public class Shop extends BaseTimeEntity {
         this.deliveryTime = deliveryTime;
         this.orderTypes = orderTypes;
         this.packagingPrice = packagingPrice;
-        changeDeliveryPrices(deliveryPrices);
+        changeDeliveryPrices(deliveryPriceInfos);
     }
 
-    public void changeDeliveryPrices(List<DeliveryPrice> deliveryPrices) {
-        this.deliveryPrices.clear();
-        for (DeliveryPrice deliveryPrice : deliveryPrices) {
-            this.deliveryPrices.add(deliveryPrice);
-            deliveryPrice.setShop(this);
+    public void changeDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {
+        this.deliveryPriceInfos.clear();
+        for (DeliveryPriceInfo deliveryPriceInfo : deliveryPriceInfos) {
+            this.deliveryPriceInfos.add(deliveryPriceInfo);
+            deliveryPriceInfo.setShop(this);
         }
+    }
+
+    public void changeLatLng(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
 

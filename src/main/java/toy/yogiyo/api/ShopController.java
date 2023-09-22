@@ -34,7 +34,7 @@ public class ShopController {
 
     // TODO : Owner id 가져오는 로직 수정
     @PatchMapping("/{shopId}")
-    public String update(@PathVariable("shopId") Long shopId, ShopUpdateRequest request) {
+    public String update(@PathVariable("shopId") Long shopId, @RequestBody ShopUpdateRequest request) {
         shopService.updateInfo(shopId, 1L, request);
         return "success";
     }

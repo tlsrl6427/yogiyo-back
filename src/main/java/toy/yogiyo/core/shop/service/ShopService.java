@@ -9,7 +9,7 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.service.OwnerService;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
 import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
@@ -67,7 +67,7 @@ public class ShopService {
         }
 
         // 배달 정보 Dto -> Entity
-        List<DeliveryPrice> deliveryPrices = request.getDeliveryPrices().stream()
+        List<DeliveryPriceInfo> deliveryPriceInfos = request.getDeliveryPrices().stream()
                 .map(DeliveryPriceDto::toEntity)
                 .collect(Collectors.toList());
 
@@ -79,7 +79,7 @@ public class ShopService {
                 request.getDeliveryTime(),
                 request.getOrderTypes(),
                 request.getPackagingPrice(),
-                deliveryPrices);
+                deliveryPriceInfos);
 
         categoryShopService.changeCategory(request.getCategories(), shop);
     }

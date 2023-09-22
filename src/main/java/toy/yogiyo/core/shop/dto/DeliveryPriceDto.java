@@ -2,7 +2,7 @@ package toy.yogiyo.core.shop.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import toy.yogiyo.core.shop.domain.DeliveryPrice;
+import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 
 @Getter @Setter
 public class DeliveryPriceDto {
@@ -18,10 +18,10 @@ public class DeliveryPriceDto {
         this.deliveryPrice = deliveryPrice;
     }
 
-    public DeliveryPrice toEntity() {
-        DeliveryPrice deliveryPrice = new DeliveryPrice();
-        deliveryPrice.setOrderPrice(this.orderPrice);
-        deliveryPrice.setDeliveryPrice(this.deliveryPrice);
-        return deliveryPrice;
+    public DeliveryPriceInfo toEntity() {
+        DeliveryPriceInfo deliveryPriceInfo = new DeliveryPriceInfo();
+        deliveryPriceInfo.setOrderPrice(this.orderPrice);
+        deliveryPriceInfo.setDeliveryPrice(this.deliveryPrice);
+        return deliveryPriceInfo;
     }
 }

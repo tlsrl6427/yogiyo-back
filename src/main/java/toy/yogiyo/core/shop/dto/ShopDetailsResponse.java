@@ -37,7 +37,7 @@ public class ShopDetailsResponse {
         response.setOrderTypes(shop.getOrderTypes());
         response.setPackagingPrice(shop.getPackagingPrice());
 
-        response.setDeliveryPrices(shop.getDeliveryPrices().stream()
+        response.setDeliveryPrices(shop.getDeliveryPriceInfos().stream()
                 .map(d -> new DeliveryPriceDto(d.getOrderPrice(), d.getDeliveryPrice()))
                 .collect(Collectors.toList()));
 

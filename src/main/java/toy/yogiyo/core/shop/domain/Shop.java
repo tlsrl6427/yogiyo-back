@@ -11,6 +11,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Shop extends BaseTimeEntity {
 

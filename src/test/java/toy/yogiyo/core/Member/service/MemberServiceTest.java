@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.dto.MemberJoinRequest;
+import toy.yogiyo.core.Member.dto.MemberJoinResponse;
 import toy.yogiyo.core.Member.dto.MemberMypageResponse;
 import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.repository.MemberRepository;
@@ -55,12 +56,12 @@ class MemberServiceTest {
         given(memberRepository.findByEmailAndProvider(any(), any())).willReturn(Optional.empty());
         given(memberRepository.save(any())).willReturn(member);
 
-        Long id = memberService.join(memberJoinRequest);
+        MemberJoinResponse memberJoinResponse = memberService.join(memberJoinRequest);
 
         assertAll(
                 () -> verify(memberRepository).findByEmailAndProvider(any(), any()),
                 () -> verify(memberRepository).save(any()),
-                () -> assertThat(id).isEqualTo(member.getId())
+                () -> assertThat(memberJoinResponse.getId()).isEqualTo(member.getId())
         );
     }
 
@@ -81,8 +82,6 @@ class MemberServiceTest {
     @DisplayName("마이페이지 조회")
     @Test
     void findOne(){
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         MemberMypageResponse response = memberService.findOne(member);
 
         assertAll(
@@ -98,8 +97,6 @@ class MemberServiceTest {
                 .nickname("test")
                 .build();
 
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         memberService.update(member, memberUpdateRequest);
 
         assertAll(
@@ -110,8 +107,6 @@ class MemberServiceTest {
     @DisplayName("멤버 삭제")
     @Test
     void delete() {
-        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
-
         memberService.delete(member);
 
         verify(memberRepository).delete(member);

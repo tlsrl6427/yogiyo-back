@@ -1,12 +1,10 @@
 package toy.yogiyo.common.login.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import toy.yogiyo.core.Member.domain.ProviderType;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class LoginRequest {

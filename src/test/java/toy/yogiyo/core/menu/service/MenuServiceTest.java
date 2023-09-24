@@ -1,4 +1,4 @@
-package toy.yogiyo.core.food.service;
+package toy.yogiyo.core.menu.service;
 
 
 import org.junit.jupiter.api.BeforeAll;
@@ -15,8 +15,8 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
-import toy.yogiyo.core.food.domain.Food;
-import toy.yogiyo.core.food.repository.FoodRepository;
+import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.repository.MenuRepository;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.Optional;
@@ -25,13 +25,13 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FoodServiceTest {
+class MenuServiceTest {
 
     @InjectMocks
-    FoodService foodService;
+    MenuService menuService;
 
     @Mock
-    FoodRepository foodRepository;
+    MenuRepository menuRepository;
 
     @Mock
     ImageFileHandler imageFileHandler;
@@ -44,10 +44,10 @@ class FoodServiceTest {
 
 
     @Test
-    @DisplayName("음식 추가")
+    @DisplayName("메뉴 추가")
     void add() throws Exception {
         // given
-        Food food = Food.builder()
+        Menu menu = Menu.builder()
                 .id(1L)
                 .name("피자")
                 .content("피자 설명")
@@ -56,21 +56,21 @@ class FoodServiceTest {
                 .build();
 
 
-        given(foodRepository.save(any())).willReturn(food);
+        given(menuRepository.save(any())).willReturn(menu);
 
         // when
-        Long savedId = foodService.add(food);
+        Long savedId = menuService.add(menu);
 
         // then
         assertThat(savedId).isEqualTo(1L);
-        then(foodRepository).should().save(food);
+        then(menuRepository).should().save(menu);
     }
 
     @Test
-    @DisplayName("음식 사진 교체")
+    @DisplayName("메뉴 사진 교체")
     void changePicture() throws Exception {
         // given
-        Food food = Food.builder()
+        Menu menu = Menu.builder()
                 .id(1L)
                 .name("피자")
                 .content("피자 설명")
@@ -81,25 +81,25 @@ class FoodServiceTest {
         MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
         given(imageFileHandler.remove(anyString())).willReturn(true);
         given(imageFileHandler.store(any())).willReturn("new_picture.png");
-        given(foodRepository.findById(anyLong())).willReturn(Optional.of(food));
+        given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
         // when
-        foodService.changePicture(1L, picture);
+        menuService.changePicture(1L, picture);
 
         // then
-        assertThat(food.getPicture()).isEqualTo("/images/new_picture.png");
+        assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
         then(imageFileHandler).should().store(picture);
     }
 
     @Nested
-    @DisplayName("음식 조회")
+    @DisplayName("메뉴 조회")
     class Find {
 
         @Test
-        @DisplayName("음식 조회 성공")
+        @DisplayName("메뉴 조회 성공")
         void success() throws Exception {
             // given
-            Food food = Food.builder()
+            Menu menu = Menu.builder()
                     .id(1L)
                     .name("피자")
                     .content("피자 설명")
@@ -107,33 +107,33 @@ class FoodServiceTest {
                     .shop(Shop.builder().id(1L).build())
                     .build();
 
-            given(foodRepository.findById(anyLong())).willReturn(Optional.of(food));
+            given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
             // when
-            Food findFood = foodService.find(1L);
+            Menu findMenu = menuService.find(1L);
 
             // then
-            assertThat(findFood.getId()).isEqualTo(1L);
-            assertThat(findFood.getName()).isEqualTo("피자");
+            assertThat(findMenu.getId()).isEqualTo(1L);
+            assertThat(findMenu.getName()).isEqualTo("피자");
         }
 
         @Test
-        @DisplayName("음식 조회 실패")
+        @DisplayName("메뉴 조회 실패")
         void fail() throws Exception {
             // given
-            given(foodRepository.findById(anyLong())).willReturn(Optional.empty());
+            given(menuRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> foodService.find(1L))
+            assertThatThrownBy(() -> menuService.find(1L))
                     .isInstanceOf(EntityNotFoundException.class);
         }
     }
 
     @Test
-    @DisplayName("음식 정보 수정")
+    @DisplayName("메뉴 정보 수정")
     void update() throws Exception {
         // given
-        Food food = Food.builder()
+        Menu menu = Menu.builder()
                 .id(1L)
                 .name("피자")
                 .content("피자 설명")
@@ -141,7 +141,7 @@ class FoodServiceTest {
                 .shop(Shop.builder().id(1L).build())
                 .build();
 
-        Food updateParam = Food.builder()
+        Menu updateParam = Menu.builder()
                 .id(1L)
                 .name("치킨")
                 .content("치킨 설명")
@@ -149,26 +149,26 @@ class FoodServiceTest {
                 .shop(Shop.builder().id(1L).build())
                 .build();
 
-        given(foodRepository.findById(any())).willReturn(Optional.of(food));
+        given(menuRepository.findById(any())).willReturn(Optional.of(menu));
 
         // when
-        foodService.update(updateParam);
+        menuService.update(updateParam);
 
         // then
-        assertThat(food.getName()).isEqualTo("치킨");
-        assertThat(food.getContent()).isEqualTo("치킨 설명");
-        assertThat(food.getPrice()).isEqualTo(19000);
+        assertThat(menu.getName()).isEqualTo("치킨");
+        assertThat(menu.getContent()).isEqualTo("치킨 설명");
+        assertThat(menu.getPrice()).isEqualTo(19000);
     }
 
     @Nested
-    @DisplayName("음식 삭제")
+    @DisplayName("메뉴 삭제")
     class Delete {
 
         @Test
-        @DisplayName("음식 삭제 성공")
+        @DisplayName("메뉴 삭제 성공")
         void success() throws Exception {
             // given
-            Food food = Food.builder()
+            Menu menu = Menu.builder()
                     .id(1L)
                     .name("피자")
                     .content("피자 설명")
@@ -176,26 +176,26 @@ class FoodServiceTest {
                     .price(20000)
                     .build();
 
-            Food deleteParam = Food.builder()
+            Menu deleteParam = Menu.builder()
                     .id(1L)
                     .build();
 
-            given(foodRepository.findById(anyLong())).willReturn(Optional.of(food));
+            given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
             given(imageFileHandler.remove(anyString())).willReturn(true);
-            doNothing().when(foodRepository).delete(any());
+            doNothing().when(menuRepository).delete(any());
 
             // when
-            foodService.delete(deleteParam);
+            menuService.delete(deleteParam);
 
             // then
-            then(foodRepository).should().delete(food);
+            then(menuRepository).should().delete(menu);
         }
 
         @Test
         @DisplayName("이미지가 삭제되지 않으면 예외 발생")
         void failPicture() throws Exception {
             // given
-            Food food = Food.builder()
+            Menu menu = Menu.builder()
                     .id(1L)
                     .name("피자")
                     .content("피자 설명")
@@ -203,15 +203,15 @@ class FoodServiceTest {
                     .price(20000)
                     .build();
 
-            Food deleteParam = Food.builder()
+            Menu deleteParam = Menu.builder()
                     .id(1L)
                     .build();
 
-            given(foodRepository.findById(anyLong())).willReturn(Optional.of(food));
+            given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
             given(imageFileHandler.remove(anyString())).willReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> foodService.delete(deleteParam))
+            assertThatThrownBy(() -> menuService.delete(deleteParam))
                     .isInstanceOf(FileIOException.class);
         }
     }

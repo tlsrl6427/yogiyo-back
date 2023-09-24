@@ -19,7 +19,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(400, "C_001", "카테고리를 찾을 수 없습니다."),
     CATEGORY_ALREADY_EXIST(400, "C_002", "이미 존재하는 카테고리명 입니다."),
 
-    FOOD_NOT_FOUND(400, "FD_001", "음식을 찾을 수 없습니다."),
+    MENU_NOT_FOUND(400, "M_001", "메뉴를 찾을 수 없습니다."),
 
     FILE_NOT_REMOVED(400, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다.");

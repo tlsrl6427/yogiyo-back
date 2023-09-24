@@ -14,7 +14,7 @@ public class MenuGroup {
 
     @Id
     @GeneratedValue
-    @Column(name = "food_section_id")
+    @Column(name = "menu_group_id")
     private Long id;
 
     private String name;

@@ -39,7 +39,7 @@ class FoodServiceTest {
 
     @BeforeAll
     static void beforeAll() {
-        new ImageFileUtil().setPath("/images/");
+        new ImageFileUtil().setPath("images");
     }
 
 
@@ -55,17 +55,39 @@ class FoodServiceTest {
                 .shop(Shop.builder().id(1L).build())
                 .build();
 
-        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
 
         given(foodRepository.save(any())).willReturn(food);
-        given(imageFileHandler.store(any())).willReturn("/images/picture.png");
 
         // when
-        Long savedId = foodService.add(food, picture);
+        Long savedId = foodService.add(food);
 
         // then
         assertThat(savedId).isEqualTo(1L);
         then(foodRepository).should().save(food);
+    }
+
+    @Test
+    @DisplayName("음식 사진 교체")
+    void changePicture() throws Exception {
+        // given
+        Food food = Food.builder()
+                .id(1L)
+                .name("피자")
+                .content("피자 설명")
+                .price(20000)
+                .picture("/images/picture.png")
+                .build();
+
+        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+        given(imageFileHandler.remove(anyString())).willReturn(true);
+        given(imageFileHandler.store(any())).willReturn("new_picture.png");
+        given(foodRepository.findById(anyLong())).willReturn(Optional.of(food));
+
+        // when
+        foodService.changePicture(1L, picture);
+
+        // then
+        assertThat(food.getPicture()).isEqualTo("/images/new_picture.png");
         then(imageFileHandler).should().store(picture);
     }
 

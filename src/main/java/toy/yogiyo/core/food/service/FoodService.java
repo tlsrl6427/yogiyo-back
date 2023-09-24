@@ -22,11 +22,20 @@ public class FoodService {
     private final ImageFileHandler imageFileHandler;
 
     @Transactional
-    public Long add(Food food, MultipartFile picture) throws IOException {
-        food.changePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+    public Long add(Food food) {
         foodRepository.save(food);
-
         return food.getId();
+    }
+
+    @Transactional
+    public void changePicture(Long foodId, MultipartFile picture) throws IOException {
+        Food food = find(foodId);
+
+        if(null != food.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(food.getPicture()))){
+            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+        }
+
+        food.changePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
     }
 
     @Transactional(readOnly = true)

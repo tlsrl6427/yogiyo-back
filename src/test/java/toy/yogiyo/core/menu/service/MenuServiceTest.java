@@ -17,7 +17,6 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.repository.MenuRepository;
-import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.Optional;
 
@@ -52,7 +51,6 @@ class MenuServiceTest {
                 .name("피자")
                 .content("피자 설명")
                 .price(20000)
-                .shop(Shop.builder().id(1L).build())
                 .build();
 
 
@@ -104,7 +102,6 @@ class MenuServiceTest {
                     .name("피자")
                     .content("피자 설명")
                     .price(20000)
-                    .shop(Shop.builder().id(1L).build())
                     .build();
 
             given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
@@ -138,7 +135,6 @@ class MenuServiceTest {
                 .name("피자")
                 .content("피자 설명")
                 .price(20000)
-                .shop(Shop.builder().id(1L).build())
                 .build();
 
         Menu updateParam = Menu.builder()
@@ -146,7 +142,6 @@ class MenuServiceTest {
                 .name("치킨")
                 .content("치킨 설명")
                 .price(19000)
-                .shop(Shop.builder().id(1L).build())
                 .build();
 
         given(menuRepository.findById(any())).willReturn(Optional.of(menu));

@@ -1,7 +1,6 @@
 package toy.yogiyo.core.menu.domain;
 
 import lombok.*;
-import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
 
@@ -20,10 +19,6 @@ public class Menu {
     private String content;
     private String picture;
     private Integer price;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
-    private Shop shop;
 
     public void changePicture(String picture) {
         this.picture = picture;

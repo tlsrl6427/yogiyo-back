@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.dto.MemberJoinRequest;
+import toy.yogiyo.core.Member.dto.MemberJoinResponse;
 import toy.yogiyo.core.Member.dto.MemberMypageResponse;
 import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.service.MemberService;
@@ -18,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public Long join(@RequestBody MemberJoinRequest memberJoinRequest){
+    public MemberJoinResponse join(@RequestBody MemberJoinRequest memberJoinRequest){
         return memberService.join(memberJoinRequest);
     }
 

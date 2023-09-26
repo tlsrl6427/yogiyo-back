@@ -191,7 +191,7 @@ class CategoryControllerTest {
             result.andExpect(jsonPath("$.content[%s].stars", i).value(categoryShopResponses.get(i).getStars()));
             result.andExpect(jsonPath("$.content[%s].reviewNum", i).value(categoryShopResponses.get(i).getReviewNum()));
             result.andExpect(jsonPath("$.content[%s].deliveryTime", i).value(categoryShopResponses.get(i).getDeliveryTime()));
-            result.andExpect(jsonPath("$.content[%s].deliveryPrices", i).isArray());
+            result.andExpect(jsonPath("$.content[%s].deliveryPriceInfos", i).isArray());
         }
 
         result.andExpect(status().isOk())

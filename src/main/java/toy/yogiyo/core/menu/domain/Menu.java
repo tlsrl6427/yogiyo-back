@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Menu {
 
     @Id @GeneratedValue
-    @Column(name = "food_id")
+    @Column(name = "menu_id")
     private Long id;
 
     private String name;

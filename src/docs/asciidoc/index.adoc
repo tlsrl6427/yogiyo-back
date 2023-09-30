@@ -6,3 +6,4 @@
 :toclevels: 2
 
 include::Member-API.adoc[]
+include::MenuGroup-API.adoc[]

@@ -239,11 +239,11 @@ class MenuGroupServiceTest {
             }
 
             List<MenuGroupItem> params = Arrays.asList(
-                    MenuGroupItem.builder().id(1L).position(5).menu(Menu.builder().id(1L).build()).build(),
-                    MenuGroupItem.builder().id(2L).position(4).menu(Menu.builder().id(2L).build()).build(),
-                    MenuGroupItem.builder().id(3L).position(3).menu(Menu.builder().id(3L).build()).build(),
-                    MenuGroupItem.builder().id(4L).position(2).menu(Menu.builder().id(4L).build()).build(),
-                    MenuGroupItem.builder().id(5L).position(1).menu(Menu.builder().id(5L).build()).build()
+                    MenuGroupItem.builder().id(5L).menu(Menu.builder().id(5L).build()).build(),
+                    MenuGroupItem.builder().id(4L).menu(Menu.builder().id(4L).build()).build(),
+                    MenuGroupItem.builder().id(3L).menu(Menu.builder().id(3L).build()).build(),
+                    MenuGroupItem.builder().id(2L).menu(Menu.builder().id(2L).build()).build(),
+                    MenuGroupItem.builder().id(1L).menu(Menu.builder().id(1L).build()).build()
             );
 
             // when

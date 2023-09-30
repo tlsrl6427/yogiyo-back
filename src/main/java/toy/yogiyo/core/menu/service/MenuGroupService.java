@@ -48,6 +48,9 @@ public class MenuGroupService {
     @Transactional
     public void delete(MenuGroup deleteParam) {
         MenuGroup menuGroup = find(deleteParam.getId());
+        List<MenuGroupItem> menus = findMenus(deleteParam.getId());
+
+        menus.forEach(this::deleteMenu);
         menuGroupRepository.delete(menuGroup);
     }
 
@@ -59,7 +62,7 @@ public class MenuGroupService {
         menuGroupItemRepository.save(menuGroupItem);
         menuService.add(menuGroupItem.getMenu());
 
-        return menuGroupItem.getId();
+        return menuGroupItem.getMenu().getId();
     }
 
     @Transactional
@@ -78,11 +81,11 @@ public class MenuGroupService {
 
     @Transactional
     public void changeMenuOrder(List<MenuGroupItem> params) {
-        for (MenuGroupItem param : params) {
-            MenuGroupItem menuGroupItem = menuGroupItemRepository.findByMenuId(param.getMenu().getId())
+        for (int i = 0; i < params.size(); i++) {
+            MenuGroupItem menuGroupItem = menuGroupItemRepository.findByMenuId(params.get(i).getMenu().getId())
                     .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUGROUPITEM_NOT_FOUND));
 
-            menuGroupItem.changePosition(param.getPosition());
+            menuGroupItem.changePosition(i + 1);
         }
     }
 

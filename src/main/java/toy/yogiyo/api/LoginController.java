@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import toy.yogiyo.common.login.UserType;
 import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.common.login.service.LoginService;
@@ -18,11 +19,24 @@ public class LoginController {
     private final LoginService loginService;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest){
+    @PostMapping("/memberLogin")
+    public ResponseEntity<LoginResponse> memberLogin(@RequestBody LoginRequest loginRequest){
 
-        LoginResponse loginResponse = loginService.login(loginRequest);
-        String accessToken = jwtProvider.createToken(loginRequest.getEmail(), loginRequest.getProviderType());
+        LoginResponse loginResponse = loginService.memberLogin(loginRequest);
+        String accessToken = jwtProvider.createToken(loginRequest.getEmail(), loginRequest.getProviderType(), UserType.Member);
+
+        //Authorization Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", BEARER + accessToken);
+
+        return new ResponseEntity<>(loginResponse, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/ownerLogin")
+    public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest loginRequest){
+
+        LoginResponse loginResponse = loginService.ownerLogin(loginRequest);
+        String accessToken = jwtProvider.createToken(loginRequest.getEmail(), loginRequest.getProviderType(), UserType.Owner);
 
         //Authorization Header
         HttpHeaders headers = new HttpHeaders();

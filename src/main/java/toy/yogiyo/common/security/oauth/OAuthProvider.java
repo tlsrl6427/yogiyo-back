@@ -4,5 +4,6 @@ import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 
 public interface OAuthProvider {
-    LoginResponse getUserInfo(LoginRequest request);
+    LoginResponse getMemberInfo(LoginRequest request);
+    LoginResponse getOwnerInfo(LoginRequest request);
 }

@@ -7,6 +7,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.common.exception.ErrorResponse;
+import toy.yogiyo.common.exception.IllegalArgumentException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,11 +21,23 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (AuthenticationException e) {
-            setErrorResponse(response, e);
+            setAuthErrorResponse(response, e);
+        } catch (IllegalArgumentException e){
+            setIllegalArguResponse(response, e);
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response, AuthenticationException e) throws IOException {
+    private void setIllegalArguResponse(HttpServletResponse response, IllegalArgumentException e) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        ErrorCode errorCode = e.getErrorCode();
+        ErrorResponse errorResponse = ErrorResponse.of(errorCode);
+        response.setStatus(errorCode.getStatus());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(om.writeValueAsString(errorResponse));
+    }
+
+    private void setAuthErrorResponse(HttpServletResponse response, AuthenticationException e) throws IOException {
         ObjectMapper om = new ObjectMapper();
         ErrorCode errorCode = e.getErrorCode();
         ErrorResponse errorResponse = ErrorResponse.of(errorCode);

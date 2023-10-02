@@ -41,7 +41,7 @@ public class ShopService {
 
         Shop shop = request.toEntity(iconStoredName, bannerStoredName);
 
-        shop.changeOwner(ownerService.findOneTemp(ownerId));
+        shop.changeOwner(ownerService.findOne(ownerId));
 
         categoryShopService.save(request.getCategories(), shop);
 

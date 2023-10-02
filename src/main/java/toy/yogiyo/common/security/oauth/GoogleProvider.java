@@ -36,12 +36,17 @@ public class GoogleProvider implements OAuthProvider {
     private final MemberRepository memberRepository;
 
     @Override
-    public LoginResponse getUserInfo(LoginRequest request) {
+    public LoginResponse getMemberInfo(LoginRequest request) {
         String idToken = getIdToken(request.getAuthCode());
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.GOOGLE)
-                                        .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
+                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
         return LoginResponse.of(member);
+    }
+
+    @Override
+    public LoginResponse getOwnerInfo(LoginRequest request) {
+        return null;
     }
 
     private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {

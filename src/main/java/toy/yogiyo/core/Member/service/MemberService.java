@@ -23,7 +23,6 @@ import javax.persistence.EntityManager;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final EntityManager em;
 
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest){
         memberRepository.findByEmailAndProvider(memberJoinRequest.getEmail(), memberJoinRequest.getProviderType())

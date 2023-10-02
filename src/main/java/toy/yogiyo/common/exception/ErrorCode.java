@@ -6,6 +6,12 @@ public enum ErrorCode {
     MEMBER_ALREADY_EXIST(400, "M_002", "이미 존재하는 이메일입니다"),
     MEMBER_UNAUTHORIZATION(403, "M_003", "권한이 없습니다"),
 
+    OWNER_NOT_FOUND(400, "O_001", "점주를 찾을 수 없습니다."),
+    OWNER_ALREADY_EXIST(400, "O_002", "이미 존재하는 이메일입니다"),
+    OWNER_UNAUTHORIZATION(403, "O_003", "권한이 없습니다"),
+
+    USERTYPE_ILLEGAL(400, "U_001", "유효하지 않는 유저 타입입니다"),
+
     JWT_EXPIRED(401, "J_001", "토큰 인증기간이 만료되었습니다"),
     JWT_UNSUPPORTED(401, "J_002", "토큰의 포맷이 맞지 않습니다"),
     JWT_MALFORMED(401, "J_003", "잘못된 형식의 토큰입니다"),

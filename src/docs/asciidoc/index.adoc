@@ -7,3 +7,4 @@
 
 include::Member-API.adoc[]
 include::MenuGroup-API.adoc[]
+include::SignatureMenu-API.adoc[]

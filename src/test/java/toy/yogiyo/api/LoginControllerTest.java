@@ -68,9 +68,9 @@ class LoginControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-    @DisplayName("기본 로그인")
+    @DisplayName("멤버 기본 로그인")
     @Test
-    void default_login() throws Exception {
+    void member_default_login() throws Exception {
         LoginRequest loginRequest = LoginRequest.builder()
                 .email("test@gmail.com")
                 .password("1234")
@@ -81,10 +81,10 @@ class LoginControllerTest {
                 .userId(1L)
                 .build();
 
-        given(loginService.login(any())).willReturn(loginResponse);
-        given(jwtProvider.createToken(any(), any())).willReturn(jwt);
+        given(loginService.memberLogin(any())).willReturn(loginResponse);
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/login")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/memberLogin")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -107,13 +107,13 @@ class LoginControllerTest {
                         )
                 );
 
-        verify(loginService).login(any());
-        verify(jwtProvider).createToken(any(), any());
+        verify(loginService).memberLogin(any());
+        verify(jwtProvider).createToken(any(), any(), any());
     }
 
-    @DisplayName("소셜 로그인")
+    @DisplayName("멤버 소셜 로그인")
     @Test
-    void social_login() throws Exception {
+    void member_social_login() throws Exception {
         LoginRequest loginRequest = LoginRequest.builder()
                 .authCode("4/0Adeu5BXHXMmmdhnrPdOZSVv0ZNbehLLQNAB1D8kUv10gAsOjCv2-5wQRHe2yRDXhmJlg1g")
                 .providerType(ProviderType.GOOGLE)
@@ -123,10 +123,10 @@ class LoginControllerTest {
                 .userId(1L)
                 .build();
 
-        given(loginService.login(any())).willReturn(loginResponse);
-        given(jwtProvider.createToken(any(), any())).willReturn(jwt);
+        given(loginService.memberLogin(any())).willReturn(loginResponse);
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/login")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/memberLogin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -149,7 +149,92 @@ class LoginControllerTest {
                         )
                 );
 
-        verify(loginService).login(any());
-        verify(jwtProvider).createToken(any(), any());
+        verify(loginService).memberLogin(any());
+        verify(jwtProvider).createToken(any(), any(), any());
+    }
+
+    @DisplayName("점주 기본 로그인")
+    @Test
+    void owner_default_login() throws Exception {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .email("test@gmail.com")
+                .password("1234")
+                .providerType(ProviderType.DEFAULT)
+                .build();
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .userId(1L)
+                .build();
+
+        given(loginService.ownerLogin(any())).willReturn(loginResponse);
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/ownerLogin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(loginRequest))
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("/owner/default/login",
+                                requestFields(
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("authCode").ignored(),
+                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("DEFAULT")
+                                ),
+                                responseFields(
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                ),
+                                responseHeaders(
+                                        headerWithName("Authorization").description("Access Token")
+                                )
+                        )
+                );
+
+        verify(loginService).ownerLogin(any());
+        verify(jwtProvider).createToken(any(), any(), any());
+    }
+
+    @DisplayName("점주 소셜 로그인")
+    @Test
+    void owner_social_login() throws Exception {
+        LoginRequest loginRequest = LoginRequest.builder()
+                .authCode("4/0Adeu5BXHXMmmdhnrPdOZSVv0ZNbehLLQNAB1D8kUv10gAsOjCv2-5wQRHe2yRDXhmJlg1g")
+                .providerType(ProviderType.GOOGLE)
+                .build();
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .userId(1L)
+                .build();
+
+        given(loginService.ownerLogin(any())).willReturn(loginResponse);
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/ownerLogin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(loginRequest))
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("/owner/social/login",
+                                requestFields(
+                                        fieldWithPath("email").ignored(),
+                                        fieldWithPath("password").ignored(),
+                                        fieldWithPath("authCode").type(JsonFieldType.STRING).description("auth_code"),
+                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO)")
+                                ),
+                                responseFields(
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                ),
+                                responseHeaders(
+                                        headerWithName("Authorization").description("Access Token")
+                                )
+                        )
+                );
+
+        verify(loginService).ownerLogin(any());
+        verify(jwtProvider).createToken(any(), any(), any());
     }
 }

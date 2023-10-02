@@ -75,7 +75,7 @@ class MemberControllerTest {
                 .build();
     }
 
-    @DisplayName("회원가입 API")
+    @DisplayName("멤버 회원가입 API")
     @Test
     void join() throws Exception{
         MemberJoinRequest memberJoinRequest = MemberJoinRequest.builder()
@@ -115,7 +115,7 @@ class MemberControllerTest {
         verify(memberService).join(any());
     }
 
-    @DisplayName("마이페이지 조회 API")
+    @DisplayName("멤버 마이페이지 조회 API")
     @Test
     void showMypage() throws Exception{
         MemberMypageResponse memberMypageResponse = MemberMypageResponse.builder()
@@ -146,7 +146,7 @@ class MemberControllerTest {
         verify(memberService).findOne(any());
     }
 
-    @DisplayName("회원정보 업데이트")
+    @DisplayName("멤버정보 업데이트 API")
     @Test
     void update() throws Exception{
         MemberUpdateRequest memberUpdateRequest = MemberUpdateRequest.builder()
@@ -173,7 +173,7 @@ class MemberControllerTest {
                 );
     }
 
-    @DisplayName("회원삭제 API")
+    @DisplayName("멤버삭제 API")
     @Test
     void delete_member() throws Exception{
 

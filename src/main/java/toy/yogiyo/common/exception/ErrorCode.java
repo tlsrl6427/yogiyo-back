@@ -25,6 +25,8 @@ public enum ErrorCode {
 
     MENUGROUPITEM_NOT_FOUND(400, "MGI_001", "메뉴를 찾을 수 없습니다."),
 
+    SIGNATUREMENU_NOT_FOUND(400, "SM_001", "대표 메뉴를 찾을 수 없습니다."),
+
     FILE_NOT_REMOVED(400, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다.");
 

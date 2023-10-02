@@ -13,6 +13,7 @@ import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -89,7 +90,7 @@ class SignatureMenuServiceTest {
     }
 
     @Test
-    @DisplayName("데표 메뉴 전체 삭제")
+    @DisplayName("대표 메뉴 전체 삭제")
     void deleteAll() throws Exception {
         // given
         given(signatureMenuRepository.deleteAllByShopId(anyLong())).willReturn(5);
@@ -99,6 +100,68 @@ class SignatureMenuServiceTest {
 
         // then
         assertThat(deleteCount).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("대표 메뉴 단건 삭제")
+    void delete() throws Exception {
+        // given
+        SignatureMenu signatureMenu = SignatureMenu.builder()
+                .id(1L)
+                .menu(Menu.builder()
+                        .id(1L)
+                        .name("메뉴")
+                        .content("메뉴 설명")
+                        .picture("image.png")
+                        .price(10000)
+                        .build())
+                .build();
+        given(signatureMenuRepository.findByMenuId(anyLong()))
+                .willReturn(Optional.of(signatureMenu));
+
+        doNothing().when(signatureMenuRepository).delete(any());
+
+        // when
+        signatureMenuService.delete(1L);
+
+        // then
+        then(signatureMenuRepository).should().delete(signatureMenu);
+    }
+
+    @Test
+    @DisplayName("대표 메뉴 정렬 순서 변경")
+    void changeOrder() throws Exception {
+        // given
+        List<SignatureMenu> signatureMenus = Arrays.asList(
+                SignatureMenu.builder().id(1L).menu(Menu.builder().id(1L).build()).build(),
+                SignatureMenu.builder().id(2L).menu(Menu.builder().id(2L).build()).build(),
+                SignatureMenu.builder().id(3L).menu(Menu.builder().id(3L).build()).build(),
+                SignatureMenu.builder().id(4L).menu(Menu.builder().id(4L).build()).build(),
+                SignatureMenu.builder().id(5L).menu(Menu.builder().id(5L).build()).build()
+        );
+
+        for (SignatureMenu signatureMenu : signatureMenus) {
+            given(signatureMenuRepository.findByMenuId(eq(signatureMenu.getMenu().getId())))
+                    .willReturn(Optional.of(signatureMenu));
+        }
+
+        List<SignatureMenu> params = Arrays.asList(
+                SignatureMenu.builder().id(5L).menu(Menu.builder().id(5L).build()).build(),
+                SignatureMenu.builder().id(4L).menu(Menu.builder().id(4L).build()).build(),
+                SignatureMenu.builder().id(3L).menu(Menu.builder().id(3L).build()).build(),
+                SignatureMenu.builder().id(2L).menu(Menu.builder().id(2L).build()).build(),
+                SignatureMenu.builder().id(1L).menu(Menu.builder().id(1L).build()).build()
+        );
+
+        // when
+        signatureMenuService.changeMenuOrder(params);
+
+        // then
+        assertThat(signatureMenus.get(0).getPosition()).isEqualTo(5);
+        assertThat(signatureMenus.get(1).getPosition()).isEqualTo(4);
+        assertThat(signatureMenus.get(2).getPosition()).isEqualTo(3);
+        assertThat(signatureMenus.get(3).getPosition()).isEqualTo(2);
+        assertThat(signatureMenus.get(4).getPosition()).isEqualTo(1);
     }
 
 }

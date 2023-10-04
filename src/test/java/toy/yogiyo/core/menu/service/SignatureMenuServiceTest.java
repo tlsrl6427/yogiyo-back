@@ -140,10 +140,7 @@ class SignatureMenuServiceTest {
                 SignatureMenu.builder().id(5L).menu(Menu.builder().id(5L).build()).build()
         );
 
-        for (SignatureMenu signatureMenu : signatureMenus) {
-            given(signatureMenuRepository.findByMenuId(eq(signatureMenu.getMenu().getId())))
-                    .willReturn(Optional.of(signatureMenu));
-        }
+        given(signatureMenuRepository.findAlLByShopId(anyLong())).willReturn(signatureMenus);
 
         List<SignatureMenu> params = Arrays.asList(
                 SignatureMenu.builder().id(5L).menu(Menu.builder().id(5L).build()).build(),
@@ -154,7 +151,7 @@ class SignatureMenuServiceTest {
         );
 
         // when
-        signatureMenuService.changeMenuOrder(params);
+        signatureMenuService.changeMenuOrder(1L, params);
 
         // then
         assertThat(signatureMenus.get(0).getPosition()).isEqualTo(5);

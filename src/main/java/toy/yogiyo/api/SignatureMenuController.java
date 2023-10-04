@@ -43,7 +43,7 @@ public class SignatureMenuController {
 
     @PutMapping("/{shopId}/change-order")
     public String changeOrder(@PathVariable Long shopId, @RequestBody SignatureMenuChangeOrderRequest request) {
-        signatureMenuService.changeMenuOrder(request.toEntity());
+        signatureMenuService.changeMenuOrder(shopId, request.toEntity());
         return "success";
     }
 

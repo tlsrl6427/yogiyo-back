@@ -233,10 +233,8 @@ class MenuGroupServiceTest {
                     MenuGroupItem.builder().id(5L).menu(Menu.builder().id(5L).build()).build()
             );
 
-            for (MenuGroupItem menuGroupItem : menuGroupItems) {
-                given(menuGroupItemRepository.findByMenuId(eq(menuGroupItem.getMenu().getId())))
-                        .willReturn(Optional.of(menuGroupItem));
-            }
+            given(menuGroupItemRepository.findMenus(anyLong())).willReturn(menuGroupItems);
+
 
             List<MenuGroupItem> params = Arrays.asList(
                     MenuGroupItem.builder().id(5L).menu(Menu.builder().id(5L).build()).build(),
@@ -247,7 +245,7 @@ class MenuGroupServiceTest {
             );
 
             // when
-            menuGroupService.changeMenuOrder(params);
+            menuGroupService.changeMenuOrder(1L, params);
 
             // then
             assertThat(menuGroupItems.get(0).getPosition()).isEqualTo(5);

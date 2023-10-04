@@ -379,7 +379,7 @@ class MenuGroupControllerTest {
             MenuGroupChangeMenuOrderRequest request = MenuGroupChangeMenuOrderRequest.builder()
                     .menuIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
                     .build();
-            doNothing().when(menuGroupService).changeMenuOrder(anyList());
+            doNothing().when(menuGroupService).changeMenuOrder(anyLong(), anyList());
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}/change-menu-order", 1)

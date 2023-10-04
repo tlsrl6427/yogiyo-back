@@ -9,6 +9,8 @@ import toy.yogiyo.core.menu.domain.SignatureMenu;
 import toy.yogiyo.core.menu.repository.SignatureMenuRepository;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -45,12 +47,14 @@ public class SignatureMenuService {
 
 
     @Transactional
-    public void changeMenuOrder(List<SignatureMenu> params) {
-        for (int i = 0; i < params.size(); i++) {
-            SignatureMenu signatureMenu = signatureMenuRepository.findByMenuId(params.get(i).getMenu().getId())
-                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SIGNATUREMENU_NOT_FOUND));
+    public void changeMenuOrder(Long shopId, List<SignatureMenu> params) {
 
-            signatureMenu.changePosition(i + 1);
-        }
+        List<SignatureMenu> signatureMenus = signatureMenuRepository.findAlLByShopId(shopId);
+
+        IntStream.range(0, params.size())
+                .forEach(i -> signatureMenus.stream()
+                        .filter(signatureMenu -> Objects.equals(signatureMenu.getMenu().getId(), params.get(i).getMenu().getId()))
+                        .findFirst()
+                        .ifPresent(signatureMenu -> signatureMenu.changePosition(i + 1)));
     }
 }

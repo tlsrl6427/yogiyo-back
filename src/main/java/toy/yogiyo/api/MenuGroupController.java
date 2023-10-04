@@ -91,7 +91,7 @@ public class MenuGroupController {
     @PatchMapping("/{menuGroupId}/change-menu-order")
     public String changeOrder(@PathVariable Long menuGroupId, @RequestBody MenuGroupChangeMenuOrderRequest request) {
         List<MenuGroupItem> menuGroupItems = request.toEntity();
-        menuGroupService.changeMenuOrder(menuGroupItems);
+        menuGroupService.changeMenuOrder(menuGroupId, menuGroupItems);
         return "success";
     }
 

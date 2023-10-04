@@ -11,6 +11,8 @@ import toy.yogiyo.core.menu.repository.MenuGroupItemRepository;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
 
 
 @Service
@@ -80,13 +82,14 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public void changeMenuOrder(List<MenuGroupItem> params) {
-        for (int i = 0; i < params.size(); i++) {
-            MenuGroupItem menuGroupItem = menuGroupItemRepository.findByMenuId(params.get(i).getMenu().getId())
-                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUGROUPITEM_NOT_FOUND));
+    public void changeMenuOrder(Long menuGroupId, List<MenuGroupItem> params) {
+        List<MenuGroupItem> menuGroupItems = menuGroupItemRepository.findMenus(menuGroupId);
 
-            menuGroupItem.changePosition(i + 1);
-        }
+        IntStream.range(0, params.size())
+                .forEach(i -> menuGroupItems.stream()
+                        .filter(menuGroupItem -> Objects.equals(menuGroupItem.getMenu().getId(), params.get(i).getMenu().getId()))
+                        .findFirst()
+                        .ifPresent(menuGroupItem -> menuGroupItem.changePosition(i + 1)));
     }
 
 

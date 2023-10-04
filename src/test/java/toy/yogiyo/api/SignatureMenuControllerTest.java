@@ -167,7 +167,7 @@ class SignatureMenuControllerTest {
     @DisplayName("대표 메뉴 정렬 순서 변경")
     void changeOrder() throws Exception {
         // given
-        doNothing().when(signatureMenuService).changeMenuOrder(anyList());
+        doNothing().when(signatureMenuService).changeMenuOrder(anyLong(), anyList());
         SignatureMenuChangeOrderRequest request = SignatureMenuChangeOrderRequest.builder()
                 .menuIds(Arrays.asList(1L, 2L, 3L, 4L, 5L))
                 .build();

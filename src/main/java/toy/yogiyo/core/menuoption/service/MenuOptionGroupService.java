@@ -5,15 +5,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
+import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
+import toy.yogiyo.core.menuoption.repository.MenuOptionGroupMenuRepository;
 import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MenuOptionGroupService {
 
     private final MenuOptionGroupRepository menuOptionGroupRepository;
+    private final MenuOptionGroupMenuRepository menuOptionGroupMenuRepository;
     private final MenuOptionService menuOptionService;
 
     @Transactional
@@ -52,6 +59,21 @@ public class MenuOptionGroupService {
         MenuOptionGroup menuOptionGroup = find(menuOptionGroupId);
         menuOptionService.deleteAll(menuOptionGroupId);
         menuOptionGroupRepository.delete(menuOptionGroup);
+    }
+
+    @Transactional
+    public void linkMenu(Long menuOptionGroupId, List<Menu> menus) {
+        MenuOptionGroup menuOptionGroup = find(menuOptionGroupId);
+
+        List<MenuOptionGroupMenu> menuOptionGroupMenu = menus.stream()
+                .map(menu -> MenuOptionGroupMenu.builder()
+                        .menuOptionGroup(menuOptionGroup)
+                        .menu(menu)
+                        .build())
+                .collect(Collectors.toList());
+
+        menuOptionGroupMenuRepository.deleteByMenuOptionGroupId(menuOptionGroupId);
+        menuOptionGroupMenuRepository.saveAll(menuOptionGroupMenu);
     }
 
 }

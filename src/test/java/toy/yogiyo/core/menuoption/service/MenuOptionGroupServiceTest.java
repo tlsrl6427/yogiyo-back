@@ -7,15 +7,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
+import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
 import toy.yogiyo.core.menuoption.domain.OptionType;
+import toy.yogiyo.core.menuoption.repository.MenuOptionGroupMenuRepository;
 import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -31,6 +35,9 @@ class MenuOptionGroupServiceTest {
 
     @Mock
     MenuOptionService menuOptionService;
+
+    @Mock
+    MenuOptionGroupMenuRepository menuOptionGroupMenuRepository;
 
     @Test
     @DisplayName("메뉴 옵션 그룹 추가")
@@ -151,5 +158,34 @@ class MenuOptionGroupServiceTest {
         // then
         then(menuOptionService).should().deleteAll(1L);
         then(menuOptionGroupRepository).should().delete(menuOptionGroup);
+    }
+
+    @Test
+    @DisplayName("메뉴 옵션 그룹 메뉴 연결")
+    void linkMenu() throws Exception {
+        // given
+        MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder().id(1L).build();
+        List<Menu> menus = Arrays.asList(
+                Menu.builder().id(1L).build(),
+                Menu.builder().id(2L).build(),
+                Menu.builder().id(3L).build(),
+                Menu.builder().id(4L).build(),
+                Menu.builder().id(5L).build()
+        );
+        List<MenuOptionGroupMenu> linkMenus = menus.stream()
+                .map(menu -> MenuOptionGroupMenu.builder()
+                        .menu(menu)
+                        .menuOptionGroup(menuOptionGroup)
+                        .build())
+                .collect(Collectors.toList());
+
+        given(menuOptionGroupRepository.findById(anyLong())).willReturn(Optional.of(menuOptionGroup));
+        given(menuOptionGroupMenuRepository.saveAll(anyList())).willReturn(linkMenus);
+
+        // when
+        menuOptionGroupService.linkMenu(menuOptionGroup.getId(), menus);
+
+        // then
+        then(menuOptionGroupMenuRepository).should().saveAll(anyList());
     }
 }

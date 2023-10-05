@@ -4,13 +4,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
+import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnitUtil;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -22,9 +24,6 @@ class MenuOptionGroupRepositoryTest {
 
     @Autowired
     EntityManager em;
-
-    @Autowired
-    EntityManagerFactory emf;
 
     @Test
     @DisplayName("옵션 그룹 정렬 마지막 순서 조회")
@@ -57,8 +56,8 @@ class MenuOptionGroupRepositoryTest {
     }
 
     @Test
-    @DisplayName("옵션 그룹 fetch join 조회")
-    void findWithMenuOption() throws Exception {
+    @DisplayName("옵션 그룹 전체 조회")
+    void findAllByShopId() throws Exception {
         // given
         Shop shop = Shop.builder()
                 .name("네네치킨")
@@ -72,24 +71,37 @@ class MenuOptionGroupRepositoryTest {
                 .build();
         em.persist(shop);
 
-        MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
-                .shop(shop)
-                .position(1)
-                .build();
-        em.persist(menuOptionGroup);
+        Menu menu = Menu.builder().build();
+        em.persist(menu);
 
-        em.persist(MenuOption.builder()
-                .menuOptionGroup(menuOptionGroup)
-                .build());
+        for (int i = 0; i < 5; i++) {
+            MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
+                    .shop(shop)
+                    .position(i + 1)
+                    .build();
+            em.persist(menuOptionGroup);
+
+            em.persist(MenuOptionGroupMenu.builder()
+                    .menu(menu)
+                    .menuOptionGroup(menuOptionGroup)
+                    .build());
+
+            for (int j = 0; j < 3; j++) {
+                em.persist(MenuOption.builder()
+                        .menuOptionGroup(menuOptionGroup)
+                        .build());
+            }
+        }
 
         em.flush();
         em.clear();
 
         // when
-        MenuOptionGroup findMenuOptionGroup = menuOptionGroupRepository.findWithMenuOptionById(menuOptionGroup.getId()).get();
+        List<MenuOptionGroup> findOptionGroups = menuOptionGroupRepository.findAllByShopId(shop.getId());
 
         // then
-        PersistenceUnitUtil persistenceUnitUtil = emf.getPersistenceUnitUtil();
-        assertThat(persistenceUnitUtil.isLoaded(findMenuOptionGroup.getMenuOptions().get(0))).isTrue();
+        assertThat(findOptionGroups.size()).isEqualTo(5);
+        assertThat(findOptionGroups.get(0).getMenuOptions().size()).isEqualTo(3);
+        assertThat(findOptionGroups.get(0).getMenus().size()).isEqualTo(1);
     }
 }

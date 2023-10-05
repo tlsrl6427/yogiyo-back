@@ -1,6 +1,7 @@
 package toy.yogiyo.core.menuoption.domain;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class MenuOptionGroup {
     private String name;
     private Integer position;
     private Integer count;
+    private Boolean isPossibleCount;
 
     @Enumerated(EnumType.STRING)
     private OptionType optionType;
@@ -31,10 +33,16 @@ public class MenuOptionGroup {
     private Shop shop;
 
     @Builder.Default
+    @BatchSize(size = 100)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup")
     private List<MenuOption> menuOptions = new ArrayList<>();
 
-    public MenuOption createMenuOption(String content, int price) {
+    @Builder.Default
+    @BatchSize(size = 100)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup")
+    private List<MenuOptionGroupMenu> menus = new ArrayList<>();
+
+    public void createMenuOption(String content, int price) {
         MenuOption menuOption = MenuOption.builder()
                 .content(content)
                 .price(price)
@@ -42,7 +50,6 @@ public class MenuOptionGroup {
                 .build();
 
         getMenuOptions().add(menuOption);
-        return menuOption;
     }
 
     public void changePosition(int position) {

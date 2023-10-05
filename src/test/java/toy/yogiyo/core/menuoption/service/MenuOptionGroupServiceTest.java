@@ -86,29 +86,34 @@ class MenuOptionGroupServiceTest {
     }
 
     @Test
-    @DisplayName("메뉴 옵션 그룹, 옵션까지 한번에 조회")
-    void findWithMenuOptions() throws Exception {
+    @DisplayName("메뉴 옵션 그룹 전체 조회")
+    void findAll() throws Exception {
         // given
+        Shop shop = Shop.builder().id(1L).build();
         List<MenuOption> menuOptions = Arrays.asList(
                 MenuOption.builder().id(1L).position(1).content("옵션1").price(1000).build(),
-                MenuOption.builder().id(2L).position(2).content("옵션2").price(1000).build(),
                 MenuOption.builder().id(3L).position(3).content("옵션3").price(1000).build(),
                 MenuOption.builder().id(4L).position(4).content("옵션4").price(1000).build(),
+                MenuOption.builder().id(2L).position(2).content("옵션2").price(1000).build(),
                 MenuOption.builder().id(5L).position(5).content("옵션5").price(1000).build()
         );
-        MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
-                .id(1L)
-                .menuOptions(menuOptions)
-                .build();
-        given(menuOptionGroupRepository.findWithMenuOptionById(anyLong()))
-                .willReturn(Optional.of(menuOptionGroup));
+        List<MenuOptionGroup> menuOptionGroups = Arrays.asList(
+                MenuOptionGroup.builder().shop(shop).menuOptions(menuOptions).name("옵션 그룹1").build(),
+                MenuOptionGroup.builder().shop(shop).menuOptions(menuOptions).name("옵션 그룹2").build(),
+                MenuOptionGroup.builder().shop(shop).menuOptions(menuOptions).name("옵션 그룹3").build(),
+                MenuOptionGroup.builder().shop(shop).menuOptions(menuOptions).name("옵션 그룹4").build()
+        );
+        given(menuOptionGroupRepository.findAllByShopId(anyLong())).willReturn(menuOptionGroups);
 
         // when
-        MenuOptionGroup findMenuOptionGroup = menuOptionGroupService.findWithMenuOptions(1L);
+        List<MenuOptionGroup> findOptionGroups = menuOptionGroupService.findAll(1L);
 
         // then
-        assertThat(findMenuOptionGroup).isEqualTo(menuOptionGroup);
-        assertThat(findMenuOptionGroup.getMenuOptions()).containsAll(menuOptions);
+        assertThat(findOptionGroups).isEqualTo(menuOptionGroups);
+        List<MenuOption> options = findOptionGroups.get(0).getMenuOptions();
+        for (int i = 0; i < 5; i++) {
+            assertThat(options.get(i).getPosition()).isEqualTo(i+1);
+        }
     }
 
     @Test

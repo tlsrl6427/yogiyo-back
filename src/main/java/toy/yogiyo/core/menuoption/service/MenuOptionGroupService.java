@@ -43,9 +43,21 @@ public class MenuOptionGroupService {
     }
 
     @Transactional(readOnly = true)
-    public MenuOptionGroup findWithMenuOptions(Long menuOptionGroupId) {
-        return menuOptionGroupRepository.findWithMenuOptionById(menuOptionGroupId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUOPTIONGROUP_NOT_FOUND));
+    public List<MenuOptionGroup> findAll(Long shopId) {
+        List<MenuOptionGroup> optionGroups = menuOptionGroupRepository.findAllByShopId(shopId);
+
+        optionGroups.forEach(optionGroup ->
+                optionGroup.getMenuOptions().sort((o1, o2) -> {
+                    if (o1.getPosition() > o2.getPosition()) {
+                        return 1;
+                    } else if (o1.getPosition() < o2.getPosition()) {
+                        return -1;
+                    }
+                    return 0;
+                })
+        );
+
+        return optionGroups;
     }
 
     @Transactional

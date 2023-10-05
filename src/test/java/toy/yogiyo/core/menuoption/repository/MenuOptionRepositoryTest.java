@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -40,6 +43,45 @@ class MenuOptionRepositoryTest {
 
         // then
         assertThat(maxOrder).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("옵션 그룹 내 옵션 전체 조회")
+    void findAllByMenuOptionGroupId() throws Exception {
+        // given
+        Shop shop = Shop.builder()
+                .name("네네치킨")
+                .icon("icon.png")
+                .banner("banner.png")
+                .ownerNotice("사장님 공지")
+                .businessHours("매일")
+                .callNumber("010-1234-1234")
+                .address("주소")
+                .orderTypes("배달")
+                .build();
+        em.persist(shop);
+
+        MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
+                .shop(shop)
+                .position(1)
+                .build();
+        em.persist(menuOptionGroup);
+
+        for (int i = 0; i < 5; i++) {
+            em.persist(MenuOption.builder()
+                    .menuOptionGroup(menuOptionGroup)
+                    .position(i + 1)
+                    .build());
+        }
+
+        em.flush();
+        em.clear();
+
+        // when
+        List<MenuOption> findOptions = menuOptionRepository.findAllByMenuOptionGroupId(menuOptionGroup.getId());
+
+        // then
+        assertThat(findOptions.size()).isEqualTo(5);
     }
 
     @Test

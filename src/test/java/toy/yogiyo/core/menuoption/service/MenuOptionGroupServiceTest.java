@@ -193,4 +193,36 @@ class MenuOptionGroupServiceTest {
         // then
         then(menuOptionGroupMenuRepository).should().saveAll(anyList());
     }
+
+    @Test
+    @DisplayName("메뉴 옵션 그룹 정렬 순서 변경")
+    void changeOrder() throws Exception {
+        // given
+        List<MenuOptionGroup> menuOptionGroups = Arrays.asList(
+                MenuOptionGroup.builder().id(1L).build(),
+                MenuOptionGroup.builder().id(2L).build(),
+                MenuOptionGroup.builder().id(3L).build(),
+                MenuOptionGroup.builder().id(4L).build(),
+                MenuOptionGroup.builder().id(5L).build()
+        );
+        given(menuOptionGroupRepository.findAllByShopId(anyLong())).willReturn(menuOptionGroups);
+
+        List<MenuOptionGroup> params = Arrays.asList(
+                MenuOptionGroup.builder().id(5L).build(),
+                MenuOptionGroup.builder().id(4L).build(),
+                MenuOptionGroup.builder().id(3L).build(),
+                MenuOptionGroup.builder().id(2L).build(),
+                MenuOptionGroup.builder().id(1L).build()
+        );
+
+        // when
+        menuOptionGroupService.changeOrder(1L, params);
+
+        // then
+        assertThat(menuOptionGroups.get(0).getPosition()).isEqualTo(5);
+        assertThat(menuOptionGroups.get(1).getPosition()).isEqualTo(4);
+        assertThat(menuOptionGroups.get(2).getPosition()).isEqualTo(3);
+        assertThat(menuOptionGroups.get(3).getPosition()).isEqualTo(2);
+        assertThat(menuOptionGroups.get(4).getPosition()).isEqualTo(1);
+    }
 }

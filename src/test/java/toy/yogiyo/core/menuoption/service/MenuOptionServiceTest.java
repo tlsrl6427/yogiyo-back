@@ -10,6 +10,8 @@ import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 import toy.yogiyo.core.menuoption.repository.MenuOptionRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -120,5 +122,37 @@ class MenuOptionServiceTest {
 
         // then
         assertThat(deleteCount).isEqualTo(5);
+    }
+
+    @Test
+    @DisplayName("옵션 정렬 순서 변경")
+    void changeOrder() throws Exception {
+        // given
+        List<MenuOption> menuOptions = Arrays.asList(
+                MenuOption.builder().id(1L).build(),
+                MenuOption.builder().id(2L).build(),
+                MenuOption.builder().id(3L).build(),
+                MenuOption.builder().id(4L).build(),
+                MenuOption.builder().id(5L).build()
+        );
+        given(menuOptionRepository.findAllByMenuOptionGroupId(anyLong())).willReturn(menuOptions);
+
+        List<MenuOption> params = Arrays.asList(
+                MenuOption.builder().id(5L).build(),
+                MenuOption.builder().id(4L).build(),
+                MenuOption.builder().id(3L).build(),
+                MenuOption.builder().id(2L).build(),
+                MenuOption.builder().id(1L).build()
+        );
+
+        // when
+        menuOptionService.changeOrder(1L, params);
+
+        // then
+        assertThat(menuOptions.get(0).getPosition()).isEqualTo(5);
+        assertThat(menuOptions.get(1).getPosition()).isEqualTo(4);
+        assertThat(menuOptions.get(2).getPosition()).isEqualTo(3);
+        assertThat(menuOptions.get(3).getPosition()).isEqualTo(2);
+        assertThat(menuOptions.get(4).getPosition()).isEqualTo(1);
     }
 }

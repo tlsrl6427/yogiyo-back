@@ -13,7 +13,9 @@ import toy.yogiyo.core.menuoption.repository.MenuOptionGroupMenuRepository;
 import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +88,17 @@ public class MenuOptionGroupService {
 
         menuOptionGroupMenuRepository.deleteByMenuOptionGroupId(menuOptionGroupId);
         menuOptionGroupMenuRepository.saveAll(menuOptionGroupMenu);
+    }
+
+    @Transactional
+    public void changeOrder(Long shopId, List<MenuOptionGroup> params) {
+        List<MenuOptionGroup> optionGroups = menuOptionGroupRepository.findAllByShopId(shopId);
+
+        IntStream.range(0, params.size())
+                .forEach(i -> optionGroups.stream()
+                        .filter(optionGroup -> Objects.equals(optionGroup.getId(), params.get(i).getId()))
+                        .findFirst()
+                        .ifPresent(optionGroup -> optionGroup.changePosition(i + 1)));
     }
 
 }

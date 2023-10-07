@@ -19,8 +19,6 @@ public class ShopUpdateRequest {
     private String address;
 
     private int deliveryTime;
-    private String orderTypes;
-    private int packagingPrice;
     private List<DeliveryPriceDto> deliveryPrices;
     private List<CategoryDto> categories;
 

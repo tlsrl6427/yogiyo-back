@@ -67,7 +67,7 @@ class ShopServiceTest {
             MockMultipartFile icon = givenIcon();
             MockMultipartFile banner = givenBanner();
 
-            when(ownerService.findOneTemp(anyLong())).thenReturn(new Owner());
+            when(ownerService.findOne(anyLong())).thenReturn(new Owner(1L, "owner", "owner@yogiyo.com", "owner", null));
             when(imageFileHandler.store(icon))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(banner))
@@ -122,8 +122,6 @@ class ShopServiceTest {
             registerRequest.setCallNumber("010-1234-5678");
             registerRequest.setAddress("서울 강남구 영동대로 513");
             registerRequest.setDeliveryTime(30);
-            registerRequest.setOrderTypes("가게배달, 포장");
-            registerRequest.setPackagingPrice(0);
             registerRequest.setDeliveryPrices(Arrays.asList(
                     new DeliveryPriceDto(10000, 5000),
                     new DeliveryPriceDto(20000, 4000),
@@ -165,8 +163,6 @@ class ShopServiceTest {
                 assertThat(response.getCallNumber()).isEqualTo(shop.getCallNumber());
                 assertThat(response.getAddress()).isEqualTo(shop.getAddress());
                 assertThat(response.getDeliveryTime()).isEqualTo(shop.getDeliveryTime());
-                assertThat(response.getOrderTypes()).isEqualTo(shop.getOrderTypes());
-                assertThat(response.getPackagingPrice()).isEqualTo(shop.getPackagingPrice());
 
                 for (int i = 0; i < response.getDeliveryPrices().size(); i++) {
                     DeliveryPriceDto deliveryPriceDto = response.getDeliveryPrices().get(i);
@@ -214,8 +210,6 @@ class ShopServiceTest {
                 assertThat(shop.getCallNumber()).isEqualTo(updateRequest.getCallNumber());
                 assertThat(shop.getAddress()).isEqualTo(updateRequest.getAddress());
                 assertThat(shop.getDeliveryTime()).isEqualTo(updateRequest.getDeliveryTime());
-                assertThat(shop.getOrderTypes()).isEqualTo(updateRequest.getOrderTypes());
-                assertThat(shop.getPackagingPrice()).isEqualTo(updateRequest.getPackagingPrice());
 
                 for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
                     DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
@@ -264,8 +258,6 @@ class ShopServiceTest {
                 updateRequest.setCallNumber("010-1234-5678 (수정됨)");
                 updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
                 updateRequest.setDeliveryTime(60);
-                updateRequest.setOrderTypes("가게배달, 포장 (수정됨)");
-                updateRequest.setPackagingPrice(1000);
                 updateRequest.setDeliveryPrices(Arrays.asList(
                         new DeliveryPriceDto(15000, 4500),
                         new DeliveryPriceDto(25000, 3500),
@@ -350,16 +342,16 @@ class ShopServiceTest {
     }
 
     private Shop getShop() {
-        Shop shop = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후 10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop shop = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .businessHours("오전 10시 ~ 오후 10시")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         shop.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 5000),
@@ -371,7 +363,7 @@ class ShopServiceTest {
 
     private Shop getShopWithOwner(Long ownerId) {
         Shop shop = getShop();
-        shop.changeOwner(new Owner(ownerId));
+        shop.changeOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", null));
         return shop;
     }
 }

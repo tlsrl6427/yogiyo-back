@@ -20,8 +20,6 @@ public class ShopDetailsResponse {
     private String address;
 
     private int deliveryTime;
-    private String orderTypes;
-    private int packagingPrice;
     private List<DeliveryPriceDto> deliveryPrices;
 
     public static ShopDetailsResponse from(Shop shop) {
@@ -34,8 +32,6 @@ public class ShopDetailsResponse {
         response.setCallNumber(shop.getCallNumber());
         response.setAddress(shop.getAddress());
         response.setDeliveryTime(shop.getDeliveryTime());
-        response.setOrderTypes(shop.getOrderTypes());
-        response.setPackagingPrice(shop.getPackagingPrice());
 
         response.setDeliveryPrices(shop.getDeliveryPriceInfos().stream()
                 .map(d -> new DeliveryPriceDto(d.getOrderPrice(), d.getDeliveryPrice()))

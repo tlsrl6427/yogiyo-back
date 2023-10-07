@@ -77,8 +77,6 @@ public class ShopService {
                 request.getCallNumber(),
                 request.getAddress(),
                 request.getDeliveryTime(),
-                request.getOrderTypes(),
-                request.getPackagingPrice(),
                 deliveryPriceInfos);
 
         categoryShopService.changeCategory(request.getCategories(), shop);

@@ -22,14 +22,20 @@ public class ShopRegisterRequest {
     private String address;
 
     private int deliveryTime;
-    private String orderTypes;
-    private int packagingPrice;
     private List<DeliveryPriceDto> deliveryPrices;
     private List<CategoryDto> categories;
 
     public Shop toEntity(String iconStoredName, String bannerStoredName) {
-        Shop shop = new Shop(name, iconStoredName, bannerStoredName, ownerNotice, businessHours, callNumber,
-                address, deliveryTime, orderTypes, packagingPrice);
+        Shop shop = Shop.builder()
+                .name(name)
+                .icon(iconStoredName)
+                .banner(bannerStoredName)
+                .ownerNotice(ownerNotice)
+                .businessHours(businessHours)
+                .callNumber(callNumber)
+                .address(address)
+                .deliveryTime(deliveryTime)
+                .build();
 
         List<DeliveryPriceInfo> deliveryPriceInfos = this.deliveryPrices.stream()
                 .map(DeliveryPriceDto::toEntity)

@@ -13,6 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -51,6 +52,7 @@ class ShopControllerTest {
 
     @Test
     @DisplayName("가게 입점")
+    @WithLoginOwner
     void register() throws Exception {
         // given
         ShopRegisterRequest registerRequest = givenRegisterRequest();
@@ -61,7 +63,7 @@ class ShopControllerTest {
                 objectMapper.writeValueAsString(registerRequest).getBytes());
         MockMultipartFile icon = givenIcon();
         MockMultipartFile banner = givenBanner();
-        when(shopService.register(any(), eq(icon), eq(banner), anyLong())).thenReturn(1L);
+        when(shopService.register(any(), eq(icon), eq(banner), any())).thenReturn(1L);
 
         // when & then
         mockMvc.perform(multipart("/shop/register")
@@ -74,7 +76,7 @@ class ShopControllerTest {
                 .andDo(print());
 
         // then
-        verify(shopService).register(any(), eq(icon), eq(banner), anyLong());
+        verify(shopService).register(any(), eq(icon), eq(banner), any());
     }
 
     @Test
@@ -95,8 +97,6 @@ class ShopControllerTest {
                 .andExpect(jsonPath("$.callNumber").value(shop.getCallNumber()))
                 .andExpect(jsonPath("$.address").value(shop.getAddress()))
                 .andExpect(jsonPath("$.deliveryTime").value(shop.getDeliveryTime()))
-                .andExpect(jsonPath("$.orderTypes").value(shop.getOrderTypes()))
-                .andExpect(jsonPath("$.packagingPrice").value(shop.getPackagingPrice()))
                 .andExpect(jsonPath("$.deliveryPrices").isArray())
                 .andExpect(jsonPath("$.deliveryPrices.length()").value(3))
                 .andDo(print());
@@ -107,6 +107,7 @@ class ShopControllerTest {
 
     @Test
     @DisplayName("가게 정보 수정")
+    @WithLoginOwner
     void update() throws Exception {
         // given
         ShopUpdateRequest updateRequest = givenUpdateRequest();
@@ -126,6 +127,7 @@ class ShopControllerTest {
 
     @Test
     @DisplayName("가게 삭제")
+    @WithLoginOwner
     void deleteShop() throws Exception {
         // given
         doNothing().when(shopService).delete(anyLong(), anyLong());
@@ -141,16 +143,16 @@ class ShopControllerTest {
     }
 
     private Shop givenShop() {
-        Shop shop = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후 10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop shop = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .businessHours("오전 10시 ~ 오후 10시")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         shop.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 5000),
@@ -176,8 +178,6 @@ class ShopControllerTest {
         registerRequest.setCallNumber("010-1234-5678");
         registerRequest.setAddress("서울 강남구 영동대로 513");
         registerRequest.setDeliveryTime(30);
-        registerRequest.setOrderTypes("가게배달, 포장");
-        registerRequest.setPackagingPrice(0);
         registerRequest.setDeliveryPrices(Arrays.asList(
                 new DeliveryPriceDto(10000, 5000),
                 new DeliveryPriceDto(20000, 4000),
@@ -198,8 +198,6 @@ class ShopControllerTest {
         updateRequest.setCallNumber("010-1234-5678 (수정됨)");
         updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
         updateRequest.setDeliveryTime(60);
-        updateRequest.setOrderTypes("가게배달, 포장 (수정됨)");
-        updateRequest.setPackagingPrice(1000);
         updateRequest.setDeliveryPrices(Arrays.asList(
                 new DeliveryPriceDto(15000, 4500),
                 new DeliveryPriceDto(25000, 3500),

@@ -1,13 +1,11 @@
 package toy.yogiyo.core.menuoption.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import toy.yogiyo.core.menu.domain.Menu;
 
 import javax.persistence.*;
 
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

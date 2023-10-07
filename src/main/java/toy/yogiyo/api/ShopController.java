@@ -3,6 +3,8 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import toy.yogiyo.common.login.LoginOwner;
+import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
 import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
@@ -18,13 +20,13 @@ public class ShopController {
 
     private final ShopService shopService;
 
-    // TODO : Owner id 가져오는 로직 수정
     @PostMapping(value = "/register")
-    public Long register(@RequestPart("shopData") ShopRegisterRequest request,
+    public Long register(@LoginOwner Owner owner,
+                         @RequestPart("shopData") ShopRegisterRequest request,
                          @RequestPart("icon") MultipartFile icon,
                          @RequestPart("banner") MultipartFile banner) throws IOException {
 
-        return shopService.register(request, icon, banner, 1L);
+        return shopService.register(request, icon, banner, owner.getId());
     }
 
     @GetMapping("/{shopId}")
@@ -32,17 +34,17 @@ public class ShopController {
         return shopService.getDetailInfo(shopId);
     }
 
-    // TODO : Owner id 가져오는 로직 수정
     @PatchMapping("/{shopId}")
-    public String update(@PathVariable("shopId") Long shopId, @RequestBody ShopUpdateRequest request) {
-        shopService.updateInfo(shopId, 1L, request);
+    public String update(@LoginOwner Owner owner,
+                         @PathVariable("shopId") Long shopId,
+                         @RequestBody ShopUpdateRequest request) {
+        shopService.updateInfo(shopId, owner.getId(), request);
         return "success";
     }
 
-    // TODO : Owner id 가져오는 로직 수정
     @DeleteMapping("/{shopId}")
-    public String delete(@PathVariable("shopId") Long shopId) {
-        shopService.delete(shopId, 1L);
+    public String delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
+        shopService.delete(shopId, owner.getId());
         return "success";
     }
 }

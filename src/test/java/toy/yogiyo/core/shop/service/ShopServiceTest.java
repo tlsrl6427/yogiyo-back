@@ -13,6 +13,8 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.category.domain.Category;
+import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
@@ -135,8 +137,8 @@ class ShopServiceTest {
         class Get {
 
             @Test
-            @DisplayName("성공")
-            void success() throws Exception {
+            @DisplayName("가게 정보 조회")
+            void getInfo() throws Exception {
                 // given
                 Shop shop = getShop();
 
@@ -144,35 +146,69 @@ class ShopServiceTest {
                         .thenReturn(Optional.of(shop));
 
                 // when
-                ShopDetailsResponse response = shopService.getDetailInfo(shop.getId());
+                ShopInfoResponse response = shopService.getInfo(shop.getId());
 
                 // then
                 assertThat(response.getName()).isEqualTo(shop.getName());
-                assertThat(response.getOwnerNotice()).isEqualTo(shop.getOwnerNotice());
-                assertThat(response.getBusinessHours()).isEqualTo(shop.getBusinessHours());
                 assertThat(response.getCallNumber()).isEqualTo(shop.getCallNumber());
                 assertThat(response.getAddress()).isEqualTo(shop.getAddress());
-                assertThat(response.getDeliveryTime()).isEqualTo(shop.getDeliveryTime());
+                for (int i = 0; i < response.getCategories().size(); i++) {
+                    String categoryName = response.getCategories().get(i);
+                    assertThat(categoryName).isEqualTo(shop.getCategoryShop().get(i).getCategory().getName());
+                }
+            }
 
+            @Test
+            @DisplayName("사장님 공지 조회")
+            void getNotice() throws Exception {
+                // given
+                Shop shop = getShop();
+
+                when(shopRepository.findById(shop.getId()))
+                        .thenReturn(Optional.of(shop));
+
+                // when
+                ShopNoticeResponse response = shopService.getNotice(shop.getId());
+
+                // then
+                assertThat(response.getNotice()).isEqualTo(shop.getOwnerNotice());
+            }
+
+            @Test
+            @DisplayName("영업 시간 조회")
+            void getBusinessHours() throws Exception {
+                // given
+                Shop shop = getShop();
+
+                when(shopRepository.findById(shop.getId()))
+                        .thenReturn(Optional.of(shop));
+
+                // when
+                ShopBusinessHourResponse response = shopService.getBusinessHours(shop.getId());
+
+                // then
+                assertThat(response.getBusinessHours()).isEqualTo(shop.getBusinessHours());
+            }
+
+            @Test
+            @DisplayName("배달 요금 조회")
+            void getDeliveryPrice() throws Exception {
+                // given
+                Shop shop = getShop();
+
+                when(shopRepository.findById(shop.getId()))
+                        .thenReturn(Optional.of(shop));
+
+                // when
+                ShopDeliveryPriceResponse response = shopService.getDeliveryPrice(shop.getId());
+
+                // then
                 for (int i = 0; i < response.getDeliveryPrices().size(); i++) {
                     DeliveryPriceDto deliveryPriceDto = response.getDeliveryPrices().get(i);
                     DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
                     assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPriceInfo.getDeliveryPrice());
                     assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPriceInfo.getOrderPrice());
                 }
-            }
-
-            @Test
-            @DisplayName("실패")
-            void fail() throws Exception {
-                // given
-                Shop shop = getShop();
-                when(shopRepository.findById(shop.getId()))
-                        .thenReturn(Optional.empty());
-
-                // when & then
-                assertThatThrownBy(() -> shopService.getDetailInfo(shop.getId()))
-                        .isInstanceOf(EntityNotFoundException.class);
             }
 
         }
@@ -249,38 +285,6 @@ class ShopServiceTest {
                     assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
             }
-            
-            
-            // ==================================================
-
-//            @Test
-//            @DisplayName("가게가 없으면 예외 발생")
-//            void failNotFound() throws Exception {
-//                // given
-//                Shop shop = getShopWithOwner(1L);
-//                ShopUpdateRequest updateRequest = getUpdateRequest();
-//                when(shopRepository.findById(shop.getId())).thenReturn(Optional.empty());
-//
-//                // when & then
-//                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), shop.getOwner().getId(), updateRequest))
-//                        .isInstanceOf(EntityNotFoundException.class);
-//            }
-//
-//            @Test
-//            @DisplayName("Owner가 다르면 예외 발생")
-//            void updateShopInfoFailDiffOwner() throws Exception {
-//                // given
-//                Shop shop = getShopWithOwner(1L);
-//                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-//                ShopUpdateRequest updateRequest = getUpdateRequest();
-//
-//                // when & then
-//                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), 2L, updateRequest))
-//                        .isInstanceOf(AccessDeniedException.class);
-//
-//                // then
-//                verify(shopRepository).findById(shop.getId());
-//            }
 
             private ShopUpdateRequest getUpdateRequest() {
                 ShopUpdateRequest updateRequest = new ShopUpdateRequest();
@@ -397,6 +401,12 @@ class ShopServiceTest {
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
                 .deliveryTime(30)
+                .categoryShop(Arrays.asList(
+                        CategoryShop.builder().category(Category.builder().name("카테고리1").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리2").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리3").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리4").build()).build()
+                ))
                 .build();
 
         shop.changeDeliveryPrices(Arrays.asList(

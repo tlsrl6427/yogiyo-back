@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
+import toy.yogiyo.core.category.domain.Category;
+import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -81,30 +83,75 @@ class ShopControllerTest {
         verify(shopService).register(any(), eq(icon), eq(banner), any());
     }
 
+
     @Test
     @DisplayName("가게 정보 조회")
-    void details() throws Exception {
+    void getInfo() throws Exception {
         // given
-        Shop shop = givenShop();
-        ShopDetailsResponse response = ShopDetailsResponse.from(shop);
-        when(shopService.getDetailInfo(anyLong())).thenReturn(response);
+        ShopInfoResponse response = ShopInfoResponse.from(givenShop());
+        when(shopService.getInfo(anyLong())).thenReturn(response);
 
-        // when & then
-        mockMvc.perform(get("/shop/{shopId}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(shop.getId()))
-                .andExpect(jsonPath("$.name").value(shop.getName()))
-                .andExpect(jsonPath("$.ownerNotice").value(shop.getOwnerNotice()))
-                .andExpect(jsonPath("$.businessHours").value(shop.getBusinessHours()))
-                .andExpect(jsonPath("$.callNumber").value(shop.getCallNumber()))
-                .andExpect(jsonPath("$.address").value(shop.getAddress()))
-                .andExpect(jsonPath("$.deliveryTime").value(shop.getDeliveryTime()))
-                .andExpect(jsonPath("$.deliveryPrices").isArray())
-                .andExpect(jsonPath("$.deliveryPrices.length()").value(3))
-                .andDo(print());
+        // when
+        ResultActions result = mockMvc.perform(get("/shop/{shopId}/info", 1L));
 
         // then
-        verify(shopService).getDetailInfo(anyLong());
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(response.getId()))
+                .andExpect(jsonPath("$.name").value(response.getName()))
+                .andExpect(jsonPath("$.callNumber").value(response.getCallNumber()))
+                .andExpect(jsonPath("$.address").value(response.getAddress()))
+                .andExpect(jsonPath("$.categories").isArray())
+                .andExpect(jsonPath("$.categories.length()").value(response.getCategories().size()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("사장님 공지 조회")
+    void getNotice() throws Exception {
+        // given
+        ShopNoticeResponse response = ShopNoticeResponse.from(givenShop());
+        when(shopService.getNotice(anyLong())).thenReturn(response);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/shop/{shopId}/notice", 1));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.notice").value(response.getNotice()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("영업 시간 조회")
+    void getBusinessHours() throws Exception {
+        // given
+        ShopBusinessHourResponse response = ShopBusinessHourResponse.from(givenShop());
+        when(shopService.getBusinessHours(anyLong())).thenReturn(response);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/shop/{shopId}/business-hours", 1));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.businessHours").value(response.getBusinessHours()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("배달 요금 조회")
+    void getDeliveryPrice() throws Exception {
+        // given
+        ShopDeliveryPriceResponse response = ShopDeliveryPriceResponse.from(givenShop());
+        when(shopService.getDeliveryPrice(anyLong())).thenReturn(response);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/shop/{shopId}/delivery-price", 1));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.deliveryPrices").isArray())
+                .andExpect(jsonPath("$.deliveryPrices.length()").value(response.getDeliveryPrices().size()))
+                .andDo(print());
     }
 
     @Test
@@ -231,12 +278,19 @@ class ShopControllerTest {
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
                 .deliveryTime(30)
+                .categoryShop(Arrays.asList(
+                        CategoryShop.builder().category(Category.builder().name("카테고리1").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리2").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리3").build()).build(),
+                        CategoryShop.builder().category(Category.builder().name("카테고리4").build()).build()
+                ))
                 .build();
 
         shop.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 5000),
                 new DeliveryPriceInfo(20000, 4000),
                 new DeliveryPriceInfo(30000, 3000)));
+
 
         return shop;
     }

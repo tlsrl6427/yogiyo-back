@@ -1,12 +1,15 @@
 package toy.yogiyo.core.category.domain;
 
-import lombok.Getter;
+import lombok.*;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CategoryShop {
 
     @Id
@@ -21,15 +24,6 @@ public class CategoryShop {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
     private Shop shop;
-
-    public CategoryShop() {
-    }
-
-    public CategoryShop(Long id, Category category, Shop shop) {
-        this.id = id;
-        this.category = category;
-        this.shop = shop;
-    }
 
     public void setCategory(Category category, Shop shop) {
         this.category = category;

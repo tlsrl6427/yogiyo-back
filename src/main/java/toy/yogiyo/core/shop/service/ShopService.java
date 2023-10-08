@@ -42,11 +42,35 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public ShopDetailsResponse getDetailInfo(Long shopId) {
+    public ShopInfoResponse getInfo(Long shopId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        return ShopDetailsResponse.from(shop);
+        return ShopInfoResponse.from(shop);
+    }
+
+    @Transactional(readOnly = true)
+    public ShopNoticeResponse getNotice(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        return ShopNoticeResponse.from(shop);
+    }
+
+    @Transactional(readOnly = true)
+    public ShopBusinessHourResponse getBusinessHours(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        return ShopBusinessHourResponse.from(shop);
+    }
+
+    @Transactional(readOnly = true)
+    public ShopDeliveryPriceResponse getDeliveryPrice(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        return ShopDeliveryPriceResponse.from(shop);
     }
 
     @Transactional

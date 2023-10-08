@@ -26,10 +26,21 @@ public class ShopController {
         return shopService.register(request, icon, banner, owner.getId());
     }
 
-    // TODO : 가게정보, 사장님 공지, 영업 시간, 배달 요금 분리
-    @GetMapping("/{shopId}")
-    public ShopDetailsResponse details(@PathVariable("shopId") Long shopId) {
-        return shopService.getDetailInfo(shopId);
+    @GetMapping("/{shopId}/info")
+    public ShopInfoResponse getInfo(@PathVariable("shopId") Long shopId) {
+        return shopService.getInfo(shopId);
+    }
+    @GetMapping("/{shopId}/notice")
+    public ShopNoticeResponse getNotice(@PathVariable("shopId") Long shopId) {
+        return shopService.getNotice(shopId);
+    }
+    @GetMapping("/{shopId}/business-hours")
+    public ShopBusinessHourResponse getBusinessHours(@PathVariable("shopId") Long shopId) {
+        return shopService.getBusinessHours(shopId);
+    }
+    @GetMapping("/{shopId}/delivery-price")
+    public ShopDeliveryPriceResponse getDeliveryPrice(@PathVariable("shopId") Long shopId) {
+        return shopService.getDeliveryPrice(shopId);
     }
 
     @PatchMapping("/{shopId}/info/update")

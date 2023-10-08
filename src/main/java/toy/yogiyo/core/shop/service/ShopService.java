@@ -36,7 +36,7 @@ public class ShopService {
 
         shop.changeOwner(ownerService.findOne(ownerId));
 
-        categoryShopService.save(request.getCategories(), shop);
+        categoryShopService.save(request.getCategoryIds(), shop);
 
         return shopRepository.save(shop).getId();
     }
@@ -82,7 +82,7 @@ public class ShopService {
 
         shop.changeInfo(request.getName(), request.getCallNumber(), request.getAddress());
 
-        categoryShopService.changeCategory(request.getCategories(), shop);
+        categoryShopService.changeCategory(request.getCategoryIds(), shop);
     }
 
     @Transactional

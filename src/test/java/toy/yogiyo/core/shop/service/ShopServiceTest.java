@@ -15,7 +15,6 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.service.OwnerService;
@@ -72,7 +71,7 @@ class ShopServiceTest {
             when(imageFileHandler.store(banner))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
 
-            doNothing().when(categoryShopService).save(eq(registerRequest.getCategories()), any());
+            doNothing().when(categoryShopService).save(anyList(), any());
 
             Shop shop = registerRequest.toEntity(
                     imageFileHandler.store(icon),
@@ -118,10 +117,7 @@ class ShopServiceTest {
             registerRequest.setName("롯데리아");
             registerRequest.setCallNumber("010-1234-5678");
             registerRequest.setAddress("서울 강남구 영동대로 513");
-            registerRequest.setCategories(Arrays.asList(
-                    new CategoryDto(1L, "치킨", "picture.png"),
-                    new CategoryDto(2L, "피자", "picture.png"),
-                    new CategoryDto(3L, "분식", "picture.png")));
+            registerRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
 
             return registerRequest;
         }
@@ -224,7 +220,7 @@ class ShopServiceTest {
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
                 ShopUpdateRequest updateRequest = getUpdateRequest();
-                doNothing().when(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
+                doNothing().when(categoryShopService).changeCategory(anyList(), any());
 
                 // when
                 shopService.updateShopInfo(shop.getId(), 1L, updateRequest);
@@ -233,7 +229,7 @@ class ShopServiceTest {
                 assertThat(shop.getName()).isEqualTo(updateRequest.getName());
                 assertThat(shop.getCallNumber()).isEqualTo(updateRequest.getCallNumber());
                 assertThat(shop.getAddress()).isEqualTo(updateRequest.getAddress());
-                verify(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
+                verify(categoryShopService).changeCategory(updateRequest.getCategoryIds(), shop);
             }
             
             @Test
@@ -291,10 +287,7 @@ class ShopServiceTest {
                 updateRequest.setName("롯데리아 (수정됨)");
                 updateRequest.setCallNumber("010-1234-5678 (수정됨)");
                 updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-                updateRequest.setCategories(Arrays.asList(
-                        new CategoryDto(1L, "치킨", "picture.png"),
-                        new CategoryDto(2L, "피자", "picture.png"),
-                        new CategoryDto(3L, "분식", "picture.png")));
+                updateRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
 
                 return updateRequest;
             }

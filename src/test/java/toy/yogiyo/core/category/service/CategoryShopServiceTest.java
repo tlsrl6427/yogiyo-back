@@ -11,7 +11,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.category.dto.CategoryShopCondition;
 import toy.yogiyo.core.category.dto.CategoryShopResponse;
 import toy.yogiyo.core.category.repository.CategoryShopQueryRepository;
@@ -47,25 +46,19 @@ class CategoryShopServiceTest {
     void setCategory() throws Exception {
         // given
         Shop shop = givenShop();
-        List<CategoryDto> categoryDtos = Arrays.asList(
-                new CategoryDto(1L, "치킨", "picture.png"),
-                new CategoryDto(2L, "피자", "picture.png"),
-                new CategoryDto(3L, "분식", "picture.png"));
+        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
 
-        for (CategoryDto categoryDto : categoryDtos) {
-            when(categoryService.findCategory(categoryDto.getId()))
-                    .thenReturn(categoryDto.toEntity());
-        }
+        when(categoryService.findCategory(anyLong())).thenReturn(new Category());
         when(categoryShopRepository.saveAll(anyCollection()))
                 .thenReturn(Arrays.asList(new CategoryShop(), new CategoryShop(), new CategoryShop()));
 
         // when
-        categoryShopService.save(categoryDtos, shop);
+        categoryShopService.save(categoryIds, shop);
 
         // then
-        verify(categoryService, times(categoryDtos.size())).findCategory(anyLong());
+        verify(categoryService, times(categoryIds.size())).findCategory(anyLong());
         verify(categoryShopRepository).saveAll(anyCollection());
-        assertThat(shop.getCategoryShop().size()).isEqualTo(categoryDtos.size());
+        assertThat(shop.getCategoryShop().size()).isEqualTo(categoryIds.size());
     }
 
     @Test
@@ -73,15 +66,12 @@ class CategoryShopServiceTest {
     void changeCategory() throws Exception {
         // given
         Shop shop = givenShopWithCategoryShop();
-        List<CategoryDto> categoryDtos = Arrays.asList(
-                new CategoryDto(1L, "치킨", "picture.png"),
-                new CategoryDto(2L, "피자", "picture.png"),
-                new CategoryDto(3L, "분식", "picture.png"));
+        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
 
-        doNothing().when(categoryShopRepository).deleteAll(shop.getCategoryShop());
+        doNothing().when(categoryShopRepository).deleteAll(anyList());
 
         // when
-        categoryShopService.changeCategory(categoryDtos, shop);
+        categoryShopService.changeCategory(categoryIds, shop);
 
         // then
         verify(categoryShopRepository).deleteAll(shop.getCategoryShop());

@@ -8,19 +8,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
-import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
-import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
-import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
-import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
+import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import java.io.IOException;
@@ -41,6 +40,8 @@ class ShopControllerTest {
     MockMvc mockMvc;
 
     ObjectMapper objectMapper;
+
+    final String jwt = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsInByb3ZpZGVyVHlwZSI6IkRFRkFVTFQiLCJleHAiOjE2OTQ5NjY4Mjh9.Ls1wnxU41I99ijXRyKfkYI2w3kd-Q_qA2QgCLgpDTKk";
 
     @BeforeEach
     void beforeEach(WebApplicationContext context) {
@@ -70,6 +71,7 @@ class ShopControllerTest {
                         .file(icon)
                         .file(banner)
                         .file(requestJson)
+                        .header(HttpHeaders.AUTHORIZATION, jwt)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andExpect(content().string("1"))
@@ -108,21 +110,98 @@ class ShopControllerTest {
     @Test
     @DisplayName("가게 정보 수정")
     @WithLoginOwner
-    void update() throws Exception {
+    void updateInfo() throws Exception {
         // given
-        ShopUpdateRequest updateRequest = givenUpdateRequest();
-        doNothing().when(shopService).updateInfo(anyLong(), anyLong(), any());
+        ShopUpdateRequest updateRequest = new ShopUpdateRequest();
+        updateRequest.setName("롯데리아 (수정됨)");
+        updateRequest.setCallNumber("010-1234-5678 (수정됨)");
+        updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
+        updateRequest.setCategories(Arrays.asList(
+                new CategoryDto(1L, "치킨", "picture.png"),
+                new CategoryDto(2L, "피자", "picture.png"),
+                new CategoryDto(3L, "분식", "picture.png")));
+
+        doNothing().when(shopService).updateShopInfo(anyLong(), anyLong(), any());
 
         // when
-        mockMvc.perform(patch("/shop/{shopId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("success"))
-                .andDo(print());
+        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/info/update", 1L)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(updateRequest)));
 
         // then
-        verify(shopService).updateInfo(anyLong(), anyLong(), any());
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("사장님 공지 수정")
+    @WithLoginOwner
+    void updateNotice() throws Exception {
+        // given
+        doNothing().when(shopService).updateNotice(anyLong(), anyLong(), any());
+        ShopNoticeUpdateRequest request = ShopNoticeUpdateRequest.builder()
+                .notice("사장님 공지")
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/notice/update", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("영업 시간 수정")
+    @WithLoginOwner
+    void updateBusinessHours() throws Exception {
+        // given
+        doNothing().when(shopService).updateBusinessHours(anyLong(), anyLong(), any());
+        ShopBusinessHourUpdateRequest request = ShopBusinessHourUpdateRequest.builder()
+                .businessHours("오전 10시 ~ 오후 10시")
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/business-hours/update", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("배달 요금 수정")
+    @WithLoginOwner
+    void updateDeliveryPrice() throws Exception {
+        // given
+        doNothing().when(shopService).updateDeliveryPrice(anyLong(), anyLong(), any());
+        DeliveryPriceUpdateRequest request = DeliveryPriceUpdateRequest.builder()
+                .deliveryPrices(Arrays.asList(
+                        new DeliveryPriceDto(15000, 4500),
+                        new DeliveryPriceDto(25000, 3500),
+                        new DeliveryPriceDto(35000, 2500)))
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/delivery-price/update", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print());
     }
 
     @Test
@@ -173,41 +252,14 @@ class ShopControllerTest {
     private ShopRegisterRequest givenRegisterRequest() throws IOException {
         ShopRegisterRequest registerRequest = new ShopRegisterRequest();
         registerRequest.setName("롯데리아");
-        registerRequest.setOwnerNotice("사장님 공지");
-        registerRequest.setBusinessHours("오전 10시 ~ 오후 10시");
         registerRequest.setCallNumber("010-1234-5678");
         registerRequest.setAddress("서울 강남구 영동대로 513");
-        registerRequest.setDeliveryTime(30);
-        registerRequest.setDeliveryPrices(Arrays.asList(
-                new DeliveryPriceDto(10000, 5000),
-                new DeliveryPriceDto(20000, 4000),
-                new DeliveryPriceDto(30000, 3000)));
         registerRequest.setCategories(Arrays.asList(
                 new CategoryDto(1L, "치킨", "picture.png"),
                 new CategoryDto(2L, "피자", "picture.png"),
                 new CategoryDto(3L, "분식", "picture.png")));
 
         return registerRequest;
-    }
-
-    private ShopUpdateRequest givenUpdateRequest() {
-        ShopUpdateRequest updateRequest = new ShopUpdateRequest();
-        updateRequest.setName("롯데리아 (수정됨)");
-        updateRequest.setOwnerNotice("사장님 공지 (수정됨)");
-        updateRequest.setBusinessHours("오전 10시 ~ 오후 10시 (수정됨)");
-        updateRequest.setCallNumber("010-1234-5678 (수정됨)");
-        updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-        updateRequest.setDeliveryTime(60);
-        updateRequest.setDeliveryPrices(Arrays.asList(
-                new DeliveryPriceDto(15000, 4500),
-                new DeliveryPriceDto(25000, 3500),
-                new DeliveryPriceDto(35000, 2500)));
-        updateRequest.setCategories(Arrays.asList(
-                new CategoryDto(1L, "치킨", "picture.png"),
-                new CategoryDto(2L, "피자", "picture.png"),
-                new CategoryDto(3L, "분식", "picture.png")));
-
-        return updateRequest;
     }
 
 }

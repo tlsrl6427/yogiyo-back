@@ -9,18 +9,12 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.service.OwnerService;
-import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
-import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
-import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
-import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
-import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
+import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +24,6 @@ public class ShopService {
     private final ImageFileHandler imageFileHandler;
     private final CategoryShopService categoryShopService;
     private final OwnerService ownerService;
-
 
     @Transactional
     public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Long ownerId) throws IOException {
@@ -57,29 +50,45 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateInfo(Long shopId, Long ownerId, ShopUpdateRequest request) {
-
+    public void updateShopInfo(Long shopId, Long ownerId, ShopUpdateRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        if (!Objects.equals(shop.getOwner().getId(), ownerId)) {
-            throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
-        }
+        validatePermission(ownerId, shop);
 
-        // 배달 정보 Dto -> Entity
-        List<DeliveryPriceInfo> deliveryPriceInfos = request.getDeliveryPrices().stream()
-                .map(DeliveryPriceDto::toEntity)
-                .collect(Collectors.toList());
-
-        shop.changeInfo(request.getName(),
-                request.getOwnerNotice(),
-                request.getBusinessHours(),
-                request.getCallNumber(),
-                request.getAddress(),
-                request.getDeliveryTime(),
-                deliveryPriceInfos);
+        shop.changeInfo(request.getName(), request.getCallNumber(), request.getAddress());
 
         categoryShopService.changeCategory(request.getCategories(), shop);
+    }
+
+    @Transactional
+    public void updateNotice(Long shopId, Long ownerId, ShopNoticeUpdateRequest request) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        validatePermission(ownerId, shop);
+
+        shop.changeNotice(request.getNotice());
+    }
+
+    @Transactional
+    public void updateBusinessHours(Long shopId, Long ownerId, ShopBusinessHourUpdateRequest request) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        validatePermission(ownerId, shop);
+
+        shop.changeBusinessHours(request.getBusinessHours());
+    }
+
+    @Transactional
+    public void updateDeliveryPrice(Long shopId, Long ownerId, DeliveryPriceUpdateRequest request) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        validatePermission(ownerId, shop);
+
+        shop.changeDeliveryPrices(request.toEntity());
     }
 
     @Transactional
@@ -87,9 +96,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        if (!Objects.equals(shop.getOwner().getId(), ownerId)) {
-            throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
-        }
+        validatePermission(ownerId, shop);
 
         if (!imageFileHandler.remove(ImageFileUtil.extractFilename(shop.getIcon()))) {
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
@@ -108,4 +115,9 @@ public class ShopService {
         }
     }
 
+    private void validatePermission(Long ownerId, Shop shop) {
+        if (!Objects.equals(shop.getOwner().getId(), ownerId)) {
+            throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
+        }
+    }
 }

@@ -11,15 +11,8 @@ import java.util.List;
 public class ShopUpdateRequest {
 
     private String name;
-
-    private String ownerNotice;
-    private String businessHours;
-
     private String callNumber;
     private String address;
-
-    private int deliveryTime;
-    private List<DeliveryPriceDto> deliveryPrices;
     private List<CategoryDto> categories;
 
 }

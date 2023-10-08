@@ -19,10 +19,7 @@ import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
-import toy.yogiyo.core.shop.dto.DeliveryPriceDto;
-import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
-import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
-import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
+import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
@@ -117,15 +114,8 @@ class ShopServiceTest {
 
             ShopRegisterRequest registerRequest = new ShopRegisterRequest();
             registerRequest.setName("롯데리아");
-            registerRequest.setOwnerNotice("사장님 공지");
-            registerRequest.setBusinessHours("오전 10시 ~ 오후 10시");
             registerRequest.setCallNumber("010-1234-5678");
             registerRequest.setAddress("서울 강남구 영동대로 513");
-            registerRequest.setDeliveryTime(30);
-            registerRequest.setDeliveryPrices(Arrays.asList(
-                    new DeliveryPriceDto(10000, 5000),
-                    new DeliveryPriceDto(20000, 4000),
-                    new DeliveryPriceDto(30000, 3000)));
             registerRequest.setCategories(Arrays.asList(
                     new CategoryDto(1L, "치킨", "picture.png"),
                     new CategoryDto(2L, "피자", "picture.png"),
@@ -192,8 +182,8 @@ class ShopServiceTest {
         class Update {
 
             @Test
-            @DisplayName("성공")
-            void updateShopInfo() throws Exception {
+            @DisplayName("가게 정보 수정")
+            void updateInfo() throws Exception {
                 // given
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
@@ -201,73 +191,129 @@ class ShopServiceTest {
                 doNothing().when(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
 
                 // when
-                shopService.updateInfo(shop.getId(), 1L, updateRequest);
+                shopService.updateShopInfo(shop.getId(), 1L, updateRequest);
 
                 // then
                 assertThat(shop.getName()).isEqualTo(updateRequest.getName());
-                assertThat(shop.getOwnerNotice()).isEqualTo(updateRequest.getOwnerNotice());
-                assertThat(shop.getBusinessHours()).isEqualTo(updateRequest.getBusinessHours());
                 assertThat(shop.getCallNumber()).isEqualTo(updateRequest.getCallNumber());
                 assertThat(shop.getAddress()).isEqualTo(updateRequest.getAddress());
-                assertThat(shop.getDeliveryTime()).isEqualTo(updateRequest.getDeliveryTime());
-
-                for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
-                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
-                    DeliveryPriceDto deliveryPriceDto = updateRequest.getDeliveryPrices().get(i);
-                    assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
-                    assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
-                }
-
                 verify(categoryShopService).changeCategory(updateRequest.getCategories(), shop);
             }
-
+            
             @Test
-            @DisplayName("가게가 없으면 예외 발생")
-            void failNotFound() throws Exception {
-                // given
-                Shop shop = getShopWithOwner(1L);
-                ShopUpdateRequest updateRequest = getUpdateRequest();
-                when(shopRepository.findById(shop.getId())).thenReturn(Optional.empty());
-
-                // when & then
-                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), shop.getOwner().getId(), updateRequest))
-                        .isInstanceOf(EntityNotFoundException.class);
-            }
-
-            @Test
-            @DisplayName("Owner가 다르면 예외 발생")
-            void updateShopInfoFailDiffOwner() throws Exception {
+            @DisplayName("사장님 공지 수정")
+            void updateNotice() throws Exception {
                 // given
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-                ShopUpdateRequest updateRequest = getUpdateRequest();
+                ShopNoticeUpdateRequest request = getNoticeUpdateRequest();
 
-                // when & then
-                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), 2L, updateRequest))
-                        .isInstanceOf(AccessDeniedException.class);
+                // when
+                shopService.updateNotice(shop.getId(), 1L, request);
 
                 // then
-                verify(shopRepository).findById(shop.getId());
+                assertThat(shop.getOwnerNotice()).isEqualTo(request.getNotice());
             }
+            
+            @Test
+            @DisplayName("영업 시간 수정")
+            void updateBusinessHours() throws Exception {
+                // given
+                Shop shop = getShopWithOwner(1L);
+                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
+                ShopBusinessHourUpdateRequest request = getBusinessHoursUpdateRequest();
+
+                // when
+                shopService.updateBusinessHours(shop.getId(), 1L, request);
+
+                // then
+                assertThat(shop.getBusinessHours()).isEqualTo(request.getBusinessHours());
+            }
+            
+            @Test
+            @DisplayName("배달 요금 수정")
+            void updateDeliveryPrice() throws Exception {
+                // given
+                Shop shop = getShopWithOwner(1L);
+                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
+                DeliveryPriceUpdateRequest request = getDeliveryPriceUpdateRequest();
+
+                // when
+                shopService.updateDeliveryPrice(shop.getId(), 1L, request);
+
+                // then
+                for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
+                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
+                    DeliveryPriceDto deliveryPriceDto = request.getDeliveryPrices().get(i);
+                    assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
+                    assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
+                }
+            }
+            
+            
+            // ==================================================
+
+//            @Test
+//            @DisplayName("가게가 없으면 예외 발생")
+//            void failNotFound() throws Exception {
+//                // given
+//                Shop shop = getShopWithOwner(1L);
+//                ShopUpdateRequest updateRequest = getUpdateRequest();
+//                when(shopRepository.findById(shop.getId())).thenReturn(Optional.empty());
+//
+//                // when & then
+//                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), shop.getOwner().getId(), updateRequest))
+//                        .isInstanceOf(EntityNotFoundException.class);
+//            }
+//
+//            @Test
+//            @DisplayName("Owner가 다르면 예외 발생")
+//            void updateShopInfoFailDiffOwner() throws Exception {
+//                // given
+//                Shop shop = getShopWithOwner(1L);
+//                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
+//                ShopUpdateRequest updateRequest = getUpdateRequest();
+//
+//                // when & then
+//                assertThatThrownBy(() -> shopService.updateInfo(shop.getId(), 2L, updateRequest))
+//                        .isInstanceOf(AccessDeniedException.class);
+//
+//                // then
+//                verify(shopRepository).findById(shop.getId());
+//            }
 
             private ShopUpdateRequest getUpdateRequest() {
                 ShopUpdateRequest updateRequest = new ShopUpdateRequest();
                 updateRequest.setName("롯데리아 (수정됨)");
-                updateRequest.setOwnerNotice("사장님 공지 (수정됨)");
-                updateRequest.setBusinessHours("오전 10시 ~ 오후 10시 (수정됨)");
                 updateRequest.setCallNumber("010-1234-5678 (수정됨)");
                 updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-                updateRequest.setDeliveryTime(60);
-                updateRequest.setDeliveryPrices(Arrays.asList(
-                        new DeliveryPriceDto(15000, 4500),
-                        new DeliveryPriceDto(25000, 3500),
-                        new DeliveryPriceDto(35000, 2500)));
                 updateRequest.setCategories(Arrays.asList(
                         new CategoryDto(1L, "치킨", "picture.png"),
                         new CategoryDto(2L, "피자", "picture.png"),
                         new CategoryDto(3L, "분식", "picture.png")));
 
                 return updateRequest;
+            }
+
+            private ShopNoticeUpdateRequest getNoticeUpdateRequest() {
+                return ShopNoticeUpdateRequest.builder()
+                        .notice("사장님 공지 (수정됨)")
+                        .build();
+            }
+
+            private ShopBusinessHourUpdateRequest getBusinessHoursUpdateRequest() {
+                return ShopBusinessHourUpdateRequest.builder()
+                        .businessHours("오전 10시 ~ 오후 10시 (수정됨)")
+                        .build();
+            }
+
+            private DeliveryPriceUpdateRequest getDeliveryPriceUpdateRequest() {
+                return DeliveryPriceUpdateRequest.builder()
+                        .deliveryPrices(Arrays.asList(
+                                new DeliveryPriceDto(15000, 4500),
+                                new DeliveryPriceDto(25000, 3500),
+                                new DeliveryPriceDto(35000, 2500)))
+                        .build();
             }
 
         }

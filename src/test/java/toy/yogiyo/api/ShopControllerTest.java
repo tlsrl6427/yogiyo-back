@@ -5,12 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -18,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
@@ -28,11 +32,18 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ShopController.class)
+@ExtendWith(RestDocumentationExtension.class)
 class ShopControllerTest {
 
     @MockBean
@@ -46,8 +57,12 @@ class ShopControllerTest {
     final String jwt = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsInByb3ZpZGVyVHlwZSI6IkRFRkFVTFQiLCJleHAiOjE2OTQ5NjY4Mjh9.Ls1wnxU41I99ijXRyKfkYI2w3kd-Q_qA2QgCLgpDTKk";
 
     @BeforeEach
-    void beforeEach(WebApplicationContext context) {
+    void beforeEach(WebApplicationContext context, RestDocumentationContextProvider restDocumentationContextProvider) {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(documentationConfiguration(restDocumentationContextProvider)
+                        .operationPreprocessors()
+                        .withRequestDefaults(prettyPrint())
+                        .withResponseDefaults(prettyPrint()))
                 .build();
 
         objectMapper = new ObjectMapper();
@@ -68,19 +83,30 @@ class ShopControllerTest {
         MockMultipartFile banner = givenBanner();
         when(shopService.register(any(), eq(icon), eq(banner), any())).thenReturn(1L);
 
-        // when & then
-        mockMvc.perform(multipart("/shop/register")
-                        .file(icon)
-                        .file(banner)
-                        .file(requestJson)
-                        .header(HttpHeaders.AUTHORIZATION, jwt)
-                        .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
-                .andExpect(content().string("1"))
-                .andDo(print());
+        // when
+
+        ResultActions result = mockMvc.perform(multipart("/shop/register")
+                .file(icon)
+                .file(banner)
+                .file(requestJson)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
         verify(shopService).register(any(), eq(icon), eq(banner), any());
+        result.andExpect(status().isOk())
+                .andExpect(content().string("1"))
+                .andDo(print())
+                .andDo(document("/shop/register",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        requestParts(
+                                partWithName("icon").description("아이콘"),
+                                partWithName("banner").description("배너 이미지"),
+                                partWithName("shopData").description("가게 정보")
+                        )
+                ));
     }
 
 
@@ -92,7 +118,7 @@ class ShopControllerTest {
         when(shopService.getInfo(anyLong())).thenReturn(response);
 
         // when
-        ResultActions result = mockMvc.perform(get("/shop/{shopId}/info", 1L));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/info", 1L));
 
         // then
         result.andExpect(status().isOk())
@@ -102,7 +128,19 @@ class ShopControllerTest {
                 .andExpect(jsonPath("$.address").value(response.getAddress()))
                 .andExpect(jsonPath("$.categories").isArray())
                 .andExpect(jsonPath("$.categories.length()").value(response.getCategories().size()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/get-info",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
+                                fieldWithPath("categories").type(JsonFieldType.ARRAY).description("카테고리명 리스트")
+                        )
+                ));
     }
 
     @Test
@@ -113,12 +151,20 @@ class ShopControllerTest {
         when(shopService.getNotice(anyLong())).thenReturn(response);
 
         // when
-        ResultActions result = mockMvc.perform(get("/shop/{shopId}/notice", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/notice", 1));
 
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.notice").value(response.getNotice()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/get-notice",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("notice").type(JsonFieldType.STRING).description("사장님 공지")
+                        )
+                ));
     }
 
     @Test
@@ -129,12 +175,20 @@ class ShopControllerTest {
         when(shopService.getBusinessHours(anyLong())).thenReturn(response);
 
         // when
-        ResultActions result = mockMvc.perform(get("/shop/{shopId}/business-hours", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/business-hours", 1));
 
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.businessHours").value(response.getBusinessHours()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/get-business-hours",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("businessHours").type(JsonFieldType.STRING).description("영업 시간")
+                        )
+                ));
     }
 
     @Test
@@ -145,13 +199,23 @@ class ShopControllerTest {
         when(shopService.getDeliveryPrice(anyLong())).thenReturn(response);
 
         // when
-        ResultActions result = mockMvc.perform(get("/shop/{shopId}/delivery-price", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/delivery-price", 1));
 
         // then
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.deliveryPrices").isArray())
                 .andExpect(jsonPath("$.deliveryPrices.length()").value(response.getDeliveryPrices().size()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/get-delivery-price",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
+                                fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                                fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 요금")
+                        )
+                ));
     }
 
     @Test
@@ -160,18 +224,15 @@ class ShopControllerTest {
     void updateInfo() throws Exception {
         // given
         ShopUpdateRequest updateRequest = new ShopUpdateRequest();
-        updateRequest.setName("롯데리아 (수정됨)");
-        updateRequest.setCallNumber("010-1234-5678 (수정됨)");
-        updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-        updateRequest.setCategories(Arrays.asList(
-                new CategoryDto(1L, "치킨", "picture.png"),
-                new CategoryDto(2L, "피자", "picture.png"),
-                new CategoryDto(3L, "분식", "picture.png")));
+        updateRequest.setName("롯데리아");
+        updateRequest.setCallNumber("010-1234-5678");
+        updateRequest.setAddress("서울 강남구 영동대로 513");
+        updateRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
 
         doNothing().when(shopService).updateShopInfo(anyLong(), anyLong(), any());
 
         // when
-        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/info/update", 1L)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/info/update", 1L)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateRequest)));
@@ -179,7 +240,21 @@ class ShopControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/update-info",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
+                                fieldWithPath("categoryIds").type(JsonFieldType.ARRAY).description("카테고리 ID 리스트")
+                        )
+                ));
     }
 
     @Test
@@ -193,7 +268,7 @@ class ShopControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/notice/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/notice/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -201,7 +276,18 @@ class ShopControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/update-notice",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("notice").type(JsonFieldType.STRING).description("사장님 공지")
+                        )
+                ));
     }
 
     @Test
@@ -215,7 +301,7 @@ class ShopControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/business-hours/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/business-hours/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -223,7 +309,18 @@ class ShopControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/update-business-hours",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("businessHours").type(JsonFieldType.STRING).description("영업 시간")
+                        )
+                ));
     }
 
     @Test
@@ -240,7 +337,7 @@ class ShopControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(patch("/shop/{shopId}/delivery-price/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/delivery-price/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -248,7 +345,20 @@ class ShopControllerTest {
         // then
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("/shop/update-delivery-price",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
+                                fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                                fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액")
+                        )
+                ));
     }
 
     @Test
@@ -259,17 +369,27 @@ class ShopControllerTest {
         doNothing().when(shopService).delete(anyLong(), anyLong());
 
         // when
-        mockMvc.perform(delete("/shop/{shopId}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().string("success"))
-                .andDo(print());
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/shop/{shopId}/delete", 1L)
+                .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then
         verify(shopService).delete(anyLong(), anyLong());
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print())
+                .andDo(document("/shop/delete",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        )
+                ));
     }
 
     private Shop givenShop() {
         Shop shop = Shop.builder()
+                .id(1L)
                 .name("롯데리아")
                 .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
@@ -308,10 +428,7 @@ class ShopControllerTest {
         registerRequest.setName("롯데리아");
         registerRequest.setCallNumber("010-1234-5678");
         registerRequest.setAddress("서울 강남구 영동대로 513");
-        registerRequest.setCategories(Arrays.asList(
-                new CategoryDto(1L, "치킨", "picture.png"),
-                new CategoryDto(2L, "피자", "picture.png"),
-                new CategoryDto(3L, "분식", "picture.png")));
+        registerRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
 
         return registerRequest;
     }

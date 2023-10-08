@@ -79,7 +79,7 @@ public class ShopController {
         return "success";
     }
 
-    @DeleteMapping("/{shopId}")
+    @DeleteMapping("/{shopId}/delete")
     public String delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
         shopService.delete(shopId, owner.getId());
         return "success";

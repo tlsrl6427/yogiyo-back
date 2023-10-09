@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
-import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
+import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.*;
 
 
 @DataJpaTest
-class MenuOptionGroupMenuRepositoryTest {
+class OptionGroupLinkMenuRepositoryTest {
 
     @Autowired
-    MenuOptionGroupMenuRepository menuOptionGroupMenuRepository;
+    OptionGroupLinkMenuRepository optionGroupLinkMenuRepository;
 
     @Autowired
     EntityManager em;
@@ -48,14 +48,14 @@ class MenuOptionGroupMenuRepositoryTest {
         for (int i = 0; i < 5; i++) {
             Menu menu = Menu.builder().build();
             em.persist(menu);
-            em.persist(MenuOptionGroupMenu.builder()
+            em.persist(OptionGroupLinkMenu.builder()
                     .menuOptionGroup(menuOptionGroup)
                     .menu(menu)
                     .build());
         }
 
         // when
-        int deleteCount = menuOptionGroupMenuRepository.deleteByMenuOptionGroupId(menuOptionGroup.getId());
+        int deleteCount = optionGroupLinkMenuRepository.deleteByMenuOptionGroupId(menuOptionGroup.getId());
 
         // then
         assertThat(deleteCount).isEqualTo(5);

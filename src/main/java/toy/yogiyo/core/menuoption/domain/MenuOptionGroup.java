@@ -2,6 +2,7 @@ package toy.yogiyo.core.menuoption.domain;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.*;
@@ -34,13 +35,13 @@ public class MenuOptionGroup {
 
     @Builder.Default
     @BatchSize(size = 100)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuOption> menuOptions = new ArrayList<>();
 
     @Builder.Default
     @BatchSize(size = 100)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup")
-    private List<MenuOptionGroupMenu> menus = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "menuOptionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OptionGroupLinkMenu> linkMenus = new ArrayList<>();
 
     public void createMenuOption(String content, int price) {
         MenuOption menuOption = MenuOption.builder()
@@ -50,6 +51,18 @@ public class MenuOptionGroup {
                 .build();
 
         getMenuOptions().add(menuOption);
+    }
+
+    public void changeLinkMenus(List<Menu> menus) {
+        this.linkMenus.clear();
+        menus.forEach(menu -> {
+            OptionGroupLinkMenu linkMenu = OptionGroupLinkMenu.builder()
+                    .menuOptionGroup(this)
+                    .menu(menu)
+                    .build();
+
+            linkMenus.add(linkMenu);
+        });
     }
 
     public void changePosition(int position) {

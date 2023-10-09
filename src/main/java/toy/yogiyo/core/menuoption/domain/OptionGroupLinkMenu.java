@@ -10,11 +10,11 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MenuOptionGroupMenu {
+public class OptionGroupLinkMenu {
 
     @Id
     @GeneratedValue
-    @Column(name = "menu_option_group_menu_id")
+    @Column(name = "option_group_link_menu_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

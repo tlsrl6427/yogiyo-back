@@ -22,7 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
-import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
+import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.menuoption.dto.*;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
@@ -172,9 +172,9 @@ class MenuOptionGroupControllerTest {
                     MenuOption.builder().id(5L).content("옵션2").price(1000).position(2).build(),
                     MenuOption.builder().id(6L).content("옵션3").price(1000).position(3).build()
             );
-            List<MenuOptionGroupMenu> menus = Arrays.asList(
-                    MenuOptionGroupMenu.builder().menu(Menu.builder().name("메뉴1").build()).build(),
-                    MenuOptionGroupMenu.builder().menu(Menu.builder().name("메뉴2").build()).build()
+            List<OptionGroupLinkMenu> menus = Arrays.asList(
+                    OptionGroupLinkMenu.builder().menu(Menu.builder().name("메뉴1").build()).build(),
+                    OptionGroupLinkMenu.builder().menu(Menu.builder().name("메뉴2").build()).build()
             );
             MenuOptionGroup menuOptionGroup1 = MenuOptionGroup.builder()
                     .id(1L)
@@ -184,7 +184,7 @@ class MenuOptionGroupControllerTest {
                     .isPossibleCount(false)
                     .optionType(OptionType.REQUIRED)
                     .menuOptions(menuOptions1)
-                    .menus(menus)
+                    .linkMenus(menus)
                     .build();
             MenuOptionGroup menuOptionGroup2 = MenuOptionGroup.builder()
                     .id(2L)
@@ -194,7 +194,7 @@ class MenuOptionGroupControllerTest {
                     .isPossibleCount(true)
                     .optionType(OptionType.OPTIONAL)
                     .menuOptions(menuOptions2)
-                    .menus(menus)
+                    .linkMenus(menus)
                     .build();
             given(menuOptionGroupService.findAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
 

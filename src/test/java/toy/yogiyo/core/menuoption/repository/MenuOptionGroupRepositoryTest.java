@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
-import toy.yogiyo.core.menuoption.domain.MenuOptionGroupMenu;
+import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
@@ -81,7 +81,7 @@ class MenuOptionGroupRepositoryTest {
                     .build();
             em.persist(menuOptionGroup);
 
-            em.persist(MenuOptionGroupMenu.builder()
+            em.persist(OptionGroupLinkMenu.builder()
                     .menu(menu)
                     .menuOptionGroup(menuOptionGroup)
                     .build());
@@ -102,6 +102,6 @@ class MenuOptionGroupRepositoryTest {
         // then
         assertThat(findOptionGroups.size()).isEqualTo(5);
         assertThat(findOptionGroups.get(0).getMenuOptions().size()).isEqualTo(3);
-        assertThat(findOptionGroups.get(0).getMenus().size()).isEqualTo(1);
+        assertThat(findOptionGroups.get(0).getLinkMenus().size()).isEqualTo(1);
     }
 }

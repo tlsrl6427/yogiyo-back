@@ -46,7 +46,7 @@ public class MenuOptionGroupAllGetResponse {
             this.menuOptions = menuOptionGroup.getMenuOptions().stream()
                     .map(MenuOptionDto::new)
                     .collect(Collectors.toList());
-            this.menus = menuOptionGroup.getMenus().stream()
+            this.menus = menuOptionGroup.getLinkMenus().stream()
                     .map(menu -> menu.getMenu().getName())
                     .collect(Collectors.toList());
         }

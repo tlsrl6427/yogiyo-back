@@ -20,6 +20,7 @@ public class WithLoginOwnerSecurityContextFactory implements WithSecurityContext
                 .id(annotation.id())
                 .nickname(annotation.nickname())
                 .email(annotation.email())
+                .providerType(annotation.providerType())
                 .build();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(owner, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));

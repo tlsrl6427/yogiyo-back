@@ -1,8 +1,11 @@
 package toy.yogiyo.core.menu.domain;
 
 import lombok.*;
+import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,6 +22,10 @@ public class Menu {
     private String content;
     private String picture;
     private Integer price;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
+    private List<OptionGroupLinkMenu> linkMenus = new ArrayList<>();
 
     public void changePicture(String picture) {
         this.picture = picture;

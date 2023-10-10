@@ -67,7 +67,7 @@ class ShopServiceTest {
             MockMultipartFile icon = givenIcon();
             MockMultipartFile banner = givenBanner();
 
-            when(ownerService.findOneTemp(anyLong())).thenReturn(new Owner());
+            when(ownerService.findOne(anyLong())).thenReturn(new Owner(1L, "owner", "owner@yogiyo.com", "owner", null));
             when(imageFileHandler.store(icon))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(banner))
@@ -371,7 +371,7 @@ class ShopServiceTest {
 
     private Shop getShopWithOwner(Long ownerId) {
         Shop shop = getShop();
-        shop.changeOwner(new Owner(ownerId));
+        shop.changeOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", null));
         return shop;
     }
 }

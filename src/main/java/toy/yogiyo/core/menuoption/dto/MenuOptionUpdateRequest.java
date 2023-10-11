@@ -1,24 +1,23 @@
-package toy.yogiyo.core.menu.dto;
+package toy.yogiyo.core.menuoption.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menuoption.domain.MenuOption;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuAddRequest {
+public class MenuOptionUpdateRequest {
 
-    private String name;
     private String content;
     private int price;
 
-    public Menu toEntity() {
-        return Menu.builder()
-                .name(name)
+    public MenuOption toEntity(Long menuOptionId) {
+        return MenuOption.builder()
+                .id(menuOptionId)
                 .content(content)
                 .price(price)
                 .build();

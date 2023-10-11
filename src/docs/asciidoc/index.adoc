@@ -8,4 +8,5 @@
 include::Member-API.adoc[]
 include::MenuGroup-API.adoc[]
 include::SignatureMenu-API.adoc[]
+include::MenuOptionGroup-API.adoc[]
 include::Shop-API.adoc[]

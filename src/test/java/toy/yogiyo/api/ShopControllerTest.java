@@ -112,6 +112,14 @@ class ShopControllerTest {
                                 partWithName("banner").description("배너 이미지"),
                                 partWithName("shopData").description("가게 정보")
                         ),
+                        requestPartFields("shopData",
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
+                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("categoryIds").type(JsonFieldType.ARRAY).description("카테고리 ID")
+                        ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID")
                         )
@@ -228,9 +236,9 @@ class ShopControllerTest {
     }
 
     @Test
-    @DisplayName("가게 정보 수정")
+    @DisplayName("가게 전화번호 수정")
     @WithLoginOwner
-    void updateInfo() throws Exception {
+    void updateCallNumber() throws Exception {
         // given
         ShopUpdateCallNumberRequest updateRequest = ShopUpdateCallNumberRequest.builder()
                 .callNumber("010-1234-5678")
@@ -266,16 +274,29 @@ class ShopControllerTest {
     @WithLoginOwner
     void updateNotice() throws Exception {
         // given
-        doNothing().when(shopService).updateNotice(anyLong(), any(), any());
+        doNothing().when(shopService).updateNotice(anyLong(), any(), any(), anyList());
         ShopNoticeUpdateRequest request = ShopNoticeUpdateRequest.builder()
+                .title("공지 제목")
                 .notice("사장님 공지")
                 .build();
+        MockMultipartFile image1 = new MockMultipartFile("images", "image1.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes());
+        MockMultipartFile image2 = new MockMultipartFile("images", "image2.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes());
+        MockMultipartFile image3 = new MockMultipartFile("images", "image3.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes());
+        MockMultipartFile requestJson = new MockMultipartFile(
+                "noticeData",
+                "jsonData",
+                MediaType.APPLICATION_JSON_VALUE,
+                objectMapper.writeValueAsString(request).getBytes());
+
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/notice/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/shop/{shopId}/notice/update", 1)
+                        .file(image1)
+                        .file(image2)
+                        .file(image3)
+                        .file(requestJson)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
+                .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
         result.andExpect(status().isOk())
@@ -288,8 +309,13 @@ class ShopControllerTest {
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
-                        requestFields(
-                                fieldWithPath("notice").type(JsonFieldType.STRING).description("사장님 공지")
+                        requestParts(
+                                partWithName("images").description("첨부 사진"),
+                                partWithName("noticeData").description("공지 Json")
+                        ),
+                        requestPartFields("noticeData",
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("공지 제목"),
+                                fieldWithPath("notice").type(JsonFieldType.STRING).description("공지 내용")
                         )
                 ));
     }

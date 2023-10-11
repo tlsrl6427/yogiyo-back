@@ -4,7 +4,7 @@
 === 입점
 `POST /shop/register`
 
-operation::shop/register[snippets='http-request,http-response,request-headers,request-parts']
+operation::shop/register[snippets='http-request,http-response,request-headers,request-parts,request-part-shopData-fields,response-fields']
 
 === 가게 정보 조회
 `GET /shop/{shop id}/info`
@@ -27,14 +27,14 @@ operation::shop/get-business-hours[snippets='http-request,http-response,path-par
 operation::shop/get-delivery-price[snippets='http-request,http-response,path-parameters,response-fields']
 
 === 가게 정보 수정
-`PATCH /shop/{shop id}/info/update`
+`PATCH /shop/{shop id}/call-number/update`
 
-operation::shop/update-info[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::shop/update-call-number[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 사장님 공지 수정
 `PATCH /shop/{shop id}/notice/update`
 
-operation::shop/update-notice[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::shop/update-notice[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-noticeData-fields']
 
 === 영업 시간 수정
 `PATCH /shop/{shop id}/business-hours/update`

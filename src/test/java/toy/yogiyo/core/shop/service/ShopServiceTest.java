@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.exception.AccessDeniedException;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
@@ -25,6 +26,7 @@ import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -227,11 +229,21 @@ class ShopServiceTest {
             void updateNotice() throws Exception {
                 // given
                 Shop shop = getShopWithOwner(1L);
+                when(imageFileHandler.store(any())).thenReturn("image.png");
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-                ShopNoticeUpdateRequest request = getNoticeUpdateRequest();
+                ShopNoticeUpdateRequest request = ShopNoticeUpdateRequest.builder()
+                        .title("공지 제목")
+                        .notice("사장님 공지")
+                        .build();
+
+                List<MultipartFile> imageFiles = List.of(
+                        new MockMultipartFile("images", "image1.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes()),
+                        new MockMultipartFile("images", "image2.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes()),
+                        new MockMultipartFile("images", "image3.png", MediaType.IMAGE_PNG_VALUE, "<<image.png>>".getBytes())
+                );
 
                 // when
-                shopService.updateNotice(shop.getId(), shop.getOwner(), request);
+                shopService.updateNotice(shop.getId(), shop.getOwner(), request, imageFiles);
 
                 // then
                 assertThat(shop.getOwnerNotice()).isEqualTo(request.getNotice());
@@ -270,12 +282,6 @@ class ShopServiceTest {
                     assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
                     assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
-            }
-
-            private ShopNoticeUpdateRequest getNoticeUpdateRequest() {
-                return ShopNoticeUpdateRequest.builder()
-                        .notice("사장님 공지 (수정됨)")
-                        .build();
             }
 
             private ShopBusinessHourUpdateRequest getBusinessHoursUpdateRequest() {

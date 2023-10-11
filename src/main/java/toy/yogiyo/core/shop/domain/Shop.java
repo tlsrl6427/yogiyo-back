@@ -1,6 +1,7 @@
 package toy.yogiyo.core.shop.domain;
 
 import lombok.*;
+import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
@@ -23,9 +24,10 @@ public class Shop extends BaseTimeEntity {
     private String name;
 
     private long wishNum;
-    private long reviewNum;
     private long ownerReplyNum;
 
+    // 리뷰
+    private long reviewNum;
     private double tasteScore;
     private double quantityScore;
     private double deliveryScore;
@@ -33,7 +35,13 @@ public class Shop extends BaseTimeEntity {
     private String icon;
     private String banner;
 
+    // 공지
+    private String noticeTitle;
     private String ownerNotice;
+    @Builder.Default
+    @Convert(converter = StringArrayConverter.class)
+    private List<String> noticeImages = new ArrayList<>();
+
     private String businessHours;
 
     private String callNumber;
@@ -65,8 +73,10 @@ public class Shop extends BaseTimeEntity {
         this.callNumber = callNumber;
     }
 
-    public void changeNotice(String notice) {
+    public void changeNotice(String title, String notice, List<String> images) {
+        this.noticeTitle = title;
         this.ownerNotice = notice;
+        this.noticeImages = images;
     }
 
     public void changeBusinessHours(String businessHours) {

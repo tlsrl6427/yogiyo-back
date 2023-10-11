@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ShopNoticeUpdateRequest {
 
+    private String title;
     private String notice;
 }

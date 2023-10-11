@@ -9,6 +9,7 @@ import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -57,19 +58,20 @@ public class ShopController {
         return "success";
     }
 
-    @PatchMapping("/{shopId}/notice/update")
+    @PostMapping("/{shopId}/notice/update")
     public String updateNotice(@LoginOwner Owner owner,
-                         @PathVariable Long shopId,
-                         @RequestBody ShopNoticeUpdateRequest request) {
+                               @PathVariable Long shopId,
+                               @RequestPart("noticeData") ShopNoticeUpdateRequest request,
+                               @RequestPart(value = "images", required = false) List<MultipartFile> imageFiles) throws IOException {
 
-        shopService.updateNotice(shopId, owner, request);
+        shopService.updateNotice(shopId, owner, request, imageFiles);
         return "success";
     }
 
     @PatchMapping("/{shopId}/business-hours/update")
-    public String updateNotice(@LoginOwner Owner owner,
-                         @PathVariable Long shopId,
-                         @RequestBody ShopBusinessHourUpdateRequest request) {
+    public String updateBusinessHours(@LoginOwner Owner owner,
+                                      @PathVariable Long shopId,
+                                      @RequestBody ShopBusinessHourUpdateRequest request) {
 
         shopService.updateBusinessHours(shopId, owner, request);
         return "success";

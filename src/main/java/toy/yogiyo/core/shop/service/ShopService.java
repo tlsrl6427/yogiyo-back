@@ -14,6 +14,8 @@ import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -81,13 +83,27 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateNotice(Long shopId, Owner owner, ShopNoticeUpdateRequest request) {
+    public void updateNotice(Long shopId, Owner owner, ShopNoticeUpdateRequest request, List<MultipartFile> imageFiles) throws IOException {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
         validatePermission(owner, shop);
 
-        shop.changeNotice(request.getNotice());
+        // 기존에 있던 이미지 삭제
+        for (String noticeImage : shop.getNoticeImages()) {
+            if(!imageFileHandler.remove(ImageFileUtil.extractFilename(noticeImage))){
+                throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+            }
+        }
+
+        // 새로운 이미지 저장
+        List<String> storedImages = new ArrayList<>();
+        for (MultipartFile imageFile : imageFiles) {
+            String storedFilePath = ImageFileUtil.getFilePath(imageFileHandler.store(imageFile));
+            storedImages.add(storedFilePath);
+        }
+
+        shop.changeNotice(request.getTitle(), request.getNotice(), storedImages);
     }
 
     @Transactional

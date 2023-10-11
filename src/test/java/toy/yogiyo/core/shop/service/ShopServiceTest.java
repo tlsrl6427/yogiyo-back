@@ -13,11 +13,11 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.Member.domain.ProviderType;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
-import toy.yogiyo.core.owner.service.OwnerService;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
@@ -45,9 +45,6 @@ class ShopServiceTest {
     @Mock
     CategoryShopService categoryShopService;
 
-    @Mock
-    OwnerService ownerService;
-
     @BeforeAll
     static void beforeAll() {
         new ImageFileUtil().setPath("/image/");
@@ -65,7 +62,6 @@ class ShopServiceTest {
             MockMultipartFile icon = givenIcon();
             MockMultipartFile banner = givenBanner();
 
-            when(ownerService.findOne(anyLong())).thenReturn(new Owner(1L, "owner", "owner@yogiyo.com", "owner", null));
             when(imageFileHandler.store(icon))
                     .thenReturn("692c0741-f234-448e-ba3f-35b5a394f33d.png");
             when(imageFileHandler.store(banner))
@@ -73,17 +69,13 @@ class ShopServiceTest {
 
             doNothing().when(categoryShopService).save(anyList(), any());
 
-            Shop shop = registerRequest.toEntity(
-                    imageFileHandler.store(icon),
-                    imageFileHandler.store(banner));
-
-            when(shopRepository.save(any())).thenReturn(shop);
+            when(shopRepository.save(any())).thenReturn(any());
 
             // when
-            Long createdId = shopService.register(registerRequest, icon, banner, anyLong());
+            Long createdId = shopService.register(registerRequest, icon, banner, Owner.builder().build());
 
             // then
-            assertThat(createdId).isEqualTo(shop.getId());
+            verify(shopRepository).save(any());
         }
 
         @Test
@@ -97,7 +89,7 @@ class ShopServiceTest {
                     .thenReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> shopService.register(registerRequest, icon, banner, anyLong()))
+            assertThatThrownBy(() -> shopService.register(registerRequest, icon, banner, Owner.builder().build()))
                     .isInstanceOf(EntityExistsException.class);
         }
 
@@ -112,14 +104,14 @@ class ShopServiceTest {
 
 
         private ShopRegisterRequest givenRegisterRequest() throws IOException {
-
-            ShopRegisterRequest registerRequest = new ShopRegisterRequest();
-            registerRequest.setName("롯데리아");
-            registerRequest.setCallNumber("010-1234-5678");
-            registerRequest.setAddress("서울 강남구 영동대로 513");
-            registerRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
-
-            return registerRequest;
+            return ShopRegisterRequest.builder()
+                    .name("롯데리아")
+                    .callNumber("010-1234-5678")
+                    .address("서울 강남구 영동대로 513")
+                    .latitude(36.674648)
+                    .longitude(127.448544)
+                    .categoryIds(Arrays.asList(1L, 2L, 3L))
+                    .build();
         }
 
     }
@@ -214,22 +206,20 @@ class ShopServiceTest {
         class Update {
 
             @Test
-            @DisplayName("가게 정보 수정")
-            void updateInfo() throws Exception {
+            @DisplayName("가게 전화번호 수정")
+            void updateCallNumber() throws Exception {
                 // given
                 Shop shop = getShopWithOwner(1L);
                 when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-                ShopUpdateRequest updateRequest = getUpdateRequest();
-                doNothing().when(categoryShopService).changeCategory(anyList(), any());
+                ShopUpdateCallNumberRequest updateRequest = ShopUpdateCallNumberRequest.builder()
+                        .callNumber("010-1234-1234")
+                        .build();
 
                 // when
-                shopService.updateShopInfo(shop.getId(), 1L, updateRequest);
+                shopService.updateCallNumber(shop.getId(), shop.getOwner(), updateRequest);
 
                 // then
-                assertThat(shop.getName()).isEqualTo(updateRequest.getName());
-                assertThat(shop.getCallNumber()).isEqualTo(updateRequest.getCallNumber());
-                assertThat(shop.getAddress()).isEqualTo(updateRequest.getAddress());
-                verify(categoryShopService).changeCategory(updateRequest.getCategoryIds(), shop);
+                assertThat(shop.getCallNumber()).isEqualTo("010-1234-1234");
             }
             
             @Test
@@ -241,7 +231,7 @@ class ShopServiceTest {
                 ShopNoticeUpdateRequest request = getNoticeUpdateRequest();
 
                 // when
-                shopService.updateNotice(shop.getId(), 1L, request);
+                shopService.updateNotice(shop.getId(), shop.getOwner(), request);
 
                 // then
                 assertThat(shop.getOwnerNotice()).isEqualTo(request.getNotice());
@@ -256,7 +246,7 @@ class ShopServiceTest {
                 ShopBusinessHourUpdateRequest request = getBusinessHoursUpdateRequest();
 
                 // when
-                shopService.updateBusinessHours(shop.getId(), 1L, request);
+                shopService.updateBusinessHours(shop.getId(), shop.getOwner(), request);
 
                 // then
                 assertThat(shop.getBusinessHours()).isEqualTo(request.getBusinessHours());
@@ -271,7 +261,7 @@ class ShopServiceTest {
                 DeliveryPriceUpdateRequest request = getDeliveryPriceUpdateRequest();
 
                 // when
-                shopService.updateDeliveryPrice(shop.getId(), 1L, request);
+                shopService.updateDeliveryPrice(shop.getId(), shop.getOwner(), request);
 
                 // then
                 for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
@@ -280,16 +270,6 @@ class ShopServiceTest {
                     assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
                     assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
                 }
-            }
-
-            private ShopUpdateRequest getUpdateRequest() {
-                ShopUpdateRequest updateRequest = new ShopUpdateRequest();
-                updateRequest.setName("롯데리아 (수정됨)");
-                updateRequest.setCallNumber("010-1234-5678 (수정됨)");
-                updateRequest.setAddress("서울 강남구 영동대로 513 (수정됨)");
-                updateRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
-
-                return updateRequest;
             }
 
             private ShopNoticeUpdateRequest getNoticeUpdateRequest() {
@@ -331,7 +311,7 @@ class ShopServiceTest {
             doNothing().when(shopRepository).delete(shop);
 
             // when
-            shopService.delete(shop.getId(), 1L);
+            shopService.delete(shop.getId(), shop.getOwner());
 
             // then
             verify(imageFileHandler, times(2)).remove(anyString());
@@ -347,7 +327,7 @@ class ShopServiceTest {
             when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
 
             // when
-            assertThatThrownBy(() -> shopService.delete(shop.getId(), 2L))
+            assertThatThrownBy(() -> shopService.delete(shop.getId(), Owner.builder().id(2L).build()))
                     .isInstanceOf(AccessDeniedException.class);
 
             // then
@@ -363,7 +343,7 @@ class ShopServiceTest {
             when(imageFileHandler.remove(anyString())).thenReturn(false);
 
             // when & then
-            assertThatThrownBy(() -> shopService.delete(shop.getId(), 1L))
+            assertThatThrownBy(() -> shopService.delete(shop.getId(), shop.getOwner()))
                     .isInstanceOf(FileIOException.class);
 
             // then
@@ -378,7 +358,7 @@ class ShopServiceTest {
             when(shopRepository.findById(shop.getId())).thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> shopService.delete(getShop().getId(), shop.getOwner().getId()))
+            assertThatThrownBy(() -> shopService.delete(getShop().getId(), shop.getOwner()))
                     .isInstanceOf(EntityNotFoundException.class);
         }
 
@@ -412,7 +392,7 @@ class ShopServiceTest {
 
     private Shop getShopWithOwner(Long ownerId) {
         Shop shop = getShop();
-        shop.changeOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", null));
+        shop.changeOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", ProviderType.DEFAULT));
         return shop;
     }
 }

@@ -35,7 +35,6 @@ class OptionGroupLinkMenuRepositoryTest {
                 .businessHours("매일")
                 .callNumber("010-1234-1234")
                 .address("주소")
-                .orderTypes("배달")
                 .build();
         em.persist(shop);
 

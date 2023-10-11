@@ -17,13 +17,18 @@ import java.io.IOException;
 public class ShopController {
 
     private final ShopService shopService;
-    @PostMapping(value = "/register")
-    public Long register(@LoginOwner Owner owner,
-                         @RequestPart("shopData") ShopRegisterRequest request,
-                         @RequestPart("icon") MultipartFile icon,
-                         @RequestPart("banner") MultipartFile banner) throws IOException {
 
-        return shopService.register(request, icon, banner, owner.getId());
+    @PostMapping(value = "/register")
+    public ShopRegisterResponse register(@LoginOwner Owner owner,
+                                         @RequestPart("shopData") ShopRegisterRequest request,
+                                         @RequestPart("icon") MultipartFile icon,
+                                         @RequestPart("banner") MultipartFile banner) throws IOException {
+
+        Long shopId = shopService.register(request, icon, banner, owner);
+
+        return ShopRegisterResponse.builder()
+                .id(shopId)
+                .build();
     }
 
     @GetMapping("/{shopId}/info")
@@ -43,12 +48,12 @@ public class ShopController {
         return shopService.getDeliveryPrice(shopId);
     }
 
-    @PatchMapping("/{shopId}/info/update")
-    public String updateInfo(@LoginOwner Owner owner,
+    @PatchMapping("/{shopId}/call-number/update")
+    public String updateCallNumber(@LoginOwner Owner owner,
                              @PathVariable Long shopId,
-                             @RequestBody ShopUpdateRequest request) {
+                             @RequestBody ShopUpdateCallNumberRequest request) {
 
-        shopService.updateShopInfo(shopId, owner.getId(), request);
+        shopService.updateCallNumber(shopId, owner, request);
         return "success";
     }
 
@@ -57,7 +62,7 @@ public class ShopController {
                          @PathVariable Long shopId,
                          @RequestBody ShopNoticeUpdateRequest request) {
 
-        shopService.updateNotice(shopId, owner.getId(), request);
+        shopService.updateNotice(shopId, owner, request);
         return "success";
     }
 
@@ -66,7 +71,7 @@ public class ShopController {
                          @PathVariable Long shopId,
                          @RequestBody ShopBusinessHourUpdateRequest request) {
 
-        shopService.updateBusinessHours(shopId, owner.getId(), request);
+        shopService.updateBusinessHours(shopId, owner, request);
         return "success";
     }
 
@@ -75,13 +80,13 @@ public class ShopController {
                          @PathVariable Long shopId,
                          @RequestBody DeliveryPriceUpdateRequest request) {
 
-        shopService.updateDeliveryPrice(shopId, owner.getId(), request);
+        shopService.updateDeliveryPrice(shopId, owner, request);
         return "success";
     }
 
     @DeleteMapping("/{shopId}/delete")
     public String delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
-        shopService.delete(shopId, owner.getId());
+        shopService.delete(shopId, owner);
         return "success";
     }
 }

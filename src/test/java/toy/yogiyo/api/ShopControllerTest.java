@@ -73,7 +73,15 @@ class ShopControllerTest {
     @WithLoginOwner
     void register() throws Exception {
         // given
-        ShopRegisterRequest registerRequest = givenRegisterRequest();
+        ShopRegisterRequest registerRequest = ShopRegisterRequest.builder()
+                .name("롯데리아")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .latitude(36.674648)
+                .longitude(127.448544)
+                .categoryIds(Arrays.asList(1L, 2L, 3L))
+                .build();
+
         MockMultipartFile requestJson = new MockMultipartFile(
                 "shopData",
                 "jsonData",
@@ -81,10 +89,9 @@ class ShopControllerTest {
                 objectMapper.writeValueAsString(registerRequest).getBytes());
         MockMultipartFile icon = givenIcon();
         MockMultipartFile banner = givenBanner();
-        when(shopService.register(any(), eq(icon), eq(banner), any())).thenReturn(1L);
+        when(shopService.register(any(), any(), any(), any())).thenReturn(1L);
 
         // when
-
         ResultActions result = mockMvc.perform(multipart("/shop/register")
                 .file(icon)
                 .file(banner)
@@ -93,11 +100,10 @@ class ShopControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        verify(shopService).register(any(), eq(icon), eq(banner), any());
         result.andExpect(status().isOk())
-                .andExpect(content().string("1"))
+                .andExpect(jsonPath("$.id").value(1))
                 .andDo(print())
-                .andDo(document("/shop/register",
+                .andDo(document("shop/register",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -105,6 +111,9 @@ class ShopControllerTest {
                                 partWithName("icon").description("아이콘"),
                                 partWithName("banner").description("배너 이미지"),
                                 partWithName("shopData").description("가게 정보")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID")
                         )
                 ));
     }
@@ -129,7 +138,7 @@ class ShopControllerTest {
                 .andExpect(jsonPath("$.categories").isArray())
                 .andExpect(jsonPath("$.categories.length()").value(response.getCategories().size()))
                 .andDo(print())
-                .andDo(document("/shop/get-info",
+                .andDo(document("shop/get-info",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -157,7 +166,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.notice").value(response.getNotice()))
                 .andDo(print())
-                .andDo(document("/shop/get-notice",
+                .andDo(document("shop/get-notice",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -181,7 +190,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.businessHours").value(response.getBusinessHours()))
                 .andDo(print())
-                .andDo(document("/shop/get-business-hours",
+                .andDo(document("shop/get-business-hours",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -206,7 +215,7 @@ class ShopControllerTest {
                 .andExpect(jsonPath("$.deliveryPrices").isArray())
                 .andExpect(jsonPath("$.deliveryPrices.length()").value(response.getDeliveryPrices().size()))
                 .andDo(print())
-                .andDo(document("/shop/get-delivery-price",
+                .andDo(document("shop/get-delivery-price",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -223,16 +232,14 @@ class ShopControllerTest {
     @WithLoginOwner
     void updateInfo() throws Exception {
         // given
-        ShopUpdateRequest updateRequest = new ShopUpdateRequest();
-        updateRequest.setName("롯데리아");
-        updateRequest.setCallNumber("010-1234-5678");
-        updateRequest.setAddress("서울 강남구 영동대로 513");
-        updateRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
+        ShopUpdateCallNumberRequest updateRequest = ShopUpdateCallNumberRequest.builder()
+                .callNumber("010-1234-5678")
+                .build();
 
-        doNothing().when(shopService).updateShopInfo(anyLong(), anyLong(), any());
+        doNothing().when(shopService).updateCallNumber(anyLong(), any(), any());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/info/update", 1L)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/call-number/update", 1L)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(updateRequest)));
@@ -241,7 +248,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/shop/update-info",
+                .andDo(document("shop/update-call-number",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -249,10 +256,7 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
-                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
-                                fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
-                                fieldWithPath("categoryIds").type(JsonFieldType.ARRAY).description("카테고리 ID 리스트")
+                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호")
                         )
                 ));
     }
@@ -262,7 +266,7 @@ class ShopControllerTest {
     @WithLoginOwner
     void updateNotice() throws Exception {
         // given
-        doNothing().when(shopService).updateNotice(anyLong(), anyLong(), any());
+        doNothing().when(shopService).updateNotice(anyLong(), any(), any());
         ShopNoticeUpdateRequest request = ShopNoticeUpdateRequest.builder()
                 .notice("사장님 공지")
                 .build();
@@ -277,7 +281,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/shop/update-notice",
+                .andDo(document("shop/update-notice",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -295,7 +299,7 @@ class ShopControllerTest {
     @WithLoginOwner
     void updateBusinessHours() throws Exception {
         // given
-        doNothing().when(shopService).updateBusinessHours(anyLong(), anyLong(), any());
+        doNothing().when(shopService).updateBusinessHours(anyLong(), any(), any());
         ShopBusinessHourUpdateRequest request = ShopBusinessHourUpdateRequest.builder()
                 .businessHours("오전 10시 ~ 오후 10시")
                 .build();
@@ -310,7 +314,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/shop/update-business-hours",
+                .andDo(document("shop/update-business-hours",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -328,7 +332,7 @@ class ShopControllerTest {
     @WithLoginOwner
     void updateDeliveryPrice() throws Exception {
         // given
-        doNothing().when(shopService).updateDeliveryPrice(anyLong(), anyLong(), any());
+        doNothing().when(shopService).updateDeliveryPrice(anyLong(), any(), any());
         DeliveryPriceUpdateRequest request = DeliveryPriceUpdateRequest.builder()
                 .deliveryPrices(Arrays.asList(
                         new DeliveryPriceDto(15000, 4500),
@@ -346,7 +350,7 @@ class ShopControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/shop/update-delivery-price",
+                .andDo(document("shop/update-delivery-price",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -366,18 +370,18 @@ class ShopControllerTest {
     @WithLoginOwner
     void deleteShop() throws Exception {
         // given
-        doNothing().when(shopService).delete(anyLong(), anyLong());
+        doNothing().when(shopService).delete(anyLong(), any());
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/shop/{shopId}/delete", 1L)
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then
-        verify(shopService).delete(anyLong(), anyLong());
+        verify(shopService).delete(anyLong(), any());
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/shop/delete",
+                .andDo(document("shop/delete",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -421,16 +425,6 @@ class ShopControllerTest {
 
     private MockMultipartFile givenBanner() throws IOException {
         return new MockMultipartFile("banner", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
-    }
-
-    private ShopRegisterRequest givenRegisterRequest() throws IOException {
-        ShopRegisterRequest registerRequest = new ShopRegisterRequest();
-        registerRequest.setName("롯데리아");
-        registerRequest.setCallNumber("010-1234-5678");
-        registerRequest.setAddress("서울 강남구 영동대로 513");
-        registerRequest.setCategoryIds(Arrays.asList(1L, 2L, 3L));
-
-        return registerRequest;
     }
 
 }

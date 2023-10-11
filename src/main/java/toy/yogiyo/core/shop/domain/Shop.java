@@ -61,10 +61,8 @@ public class Shop extends BaseTimeEntity {
         this.owner = owner;
     }
 
-    public void changeInfo(String name, String callNumber, String address) {
-        this.name = name;
+    public void changeCallNumber(String callNumber) {
         this.callNumber = callNumber;
-        this.address = address;
     }
 
     public void changeNotice(String notice) {

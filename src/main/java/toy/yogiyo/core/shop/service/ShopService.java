@@ -8,7 +8,7 @@ import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.service.CategoryShopService;
-import toy.yogiyo.core.owner.service.OwnerService;
+import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
@@ -23,22 +23,19 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
     private final CategoryShopService categoryShopService;
-    private final OwnerService ownerService;
 
     @Transactional
-    public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Long ownerId) throws IOException {
+    public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) throws IOException {
         validateDuplicateName(request.getName());
 
         String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(icon));
         String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
 
-        Shop shop = request.toEntity(iconStoredName, bannerStoredName);
-
-        shop.changeOwner(ownerService.findOne(ownerId));
-
+        Shop shop = request.toEntity(iconStoredName, bannerStoredName, owner);
+        shopRepository.save(shop);
         categoryShopService.save(request.getCategoryIds(), shop);
 
-        return shopRepository.save(shop).getId();
+        return shop.getId();
     }
 
     @Transactional(readOnly = true)
@@ -74,53 +71,51 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateShopInfo(Long shopId, Long ownerId, ShopUpdateRequest request) {
+    public void updateCallNumber(Long shopId, Owner owner, ShopUpdateCallNumberRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        validatePermission(ownerId, shop);
+        validatePermission(owner, shop);
 
-        shop.changeInfo(request.getName(), request.getCallNumber(), request.getAddress());
-
-        categoryShopService.changeCategory(request.getCategoryIds(), shop);
+        shop.changeCallNumber(request.getCallNumber());
     }
 
     @Transactional
-    public void updateNotice(Long shopId, Long ownerId, ShopNoticeUpdateRequest request) {
+    public void updateNotice(Long shopId, Owner owner, ShopNoticeUpdateRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        validatePermission(ownerId, shop);
+        validatePermission(owner, shop);
 
         shop.changeNotice(request.getNotice());
     }
 
     @Transactional
-    public void updateBusinessHours(Long shopId, Long ownerId, ShopBusinessHourUpdateRequest request) {
+    public void updateBusinessHours(Long shopId, Owner owner, ShopBusinessHourUpdateRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        validatePermission(ownerId, shop);
+        validatePermission(owner, shop);
 
         shop.changeBusinessHours(request.getBusinessHours());
     }
 
     @Transactional
-    public void updateDeliveryPrice(Long shopId, Long ownerId, DeliveryPriceUpdateRequest request) {
+    public void updateDeliveryPrice(Long shopId, Owner owner, DeliveryPriceUpdateRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        validatePermission(ownerId, shop);
+        validatePermission(owner, shop);
 
         shop.changeDeliveryPrices(request.toEntity());
     }
 
     @Transactional
-    public void delete(Long shopId, Long ownerId) {
+    public void delete(Long shopId, Owner owner) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
-        validatePermission(ownerId, shop);
+        validatePermission(owner, shop);
 
         if (!imageFileHandler.remove(ImageFileUtil.extractFilename(shop.getIcon()))) {
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
@@ -139,8 +134,8 @@ public class ShopService {
         }
     }
 
-    private void validatePermission(Long ownerId, Shop shop) {
-        if (!Objects.equals(shop.getOwner().getId(), ownerId)) {
+    private void validatePermission(Owner owner, Shop shop) {
+        if (!Objects.equals(shop.getOwner().getId(), owner.getId())) {
             throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
         }
     }

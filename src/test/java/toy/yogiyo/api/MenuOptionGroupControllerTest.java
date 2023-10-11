@@ -103,7 +103,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.menuOptionGroupId").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/add-group",
+                    .andDo(document("menu-option-group/add-group",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -144,7 +144,7 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.id").value(1))
                     .andExpect(jsonPath("$.name").value("옵션 그룹"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/find-one",
+                    .andDo(document("menu-option-group/find-one",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -211,7 +211,7 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.menuOptionGroups[0].menuOptions").isArray())
                     .andExpect(jsonPath("$.menuOptionGroups[0].menuOptions.length()").value(3))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/find-all",
+                    .andDo(document("menu-option-group/find-all",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -255,7 +255,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/update",
+                    .andDo(document("menu-option-group/update",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -281,7 +281,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/delete",
+                    .andDo(document("menu-option-group/delete",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -310,7 +310,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/link-menu",
+                    .andDo(document("menu-option-group/link-menu",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -342,7 +342,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/change-order",
+                    .andDo(document("menu-option-group/change-order",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -380,7 +380,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.menuOptionId").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/add-option",
+                    .andDo(document("menu-option-group/add-option",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -419,7 +419,7 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.content").value("옵션1"))
                     .andExpect(jsonPath("$.price").value(1000))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/find-option",
+                    .andDo(document("menu-option-group/find-option",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -454,7 +454,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/update-option",
+                    .andDo(document("menu-option-group/update-option",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -482,7 +482,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/delete-option",
+                    .andDo(document("menu-option-group/delete-option",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -511,7 +511,7 @@ class MenuOptionGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-option-group/change-option-order",
+                    .andDo(document("menu-option-group/change-option-order",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),

@@ -106,7 +106,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-group/add",
+                    .andDo(document("menu-group/add",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -147,7 +147,7 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menuGroups[2].id").value(3))
                     .andExpect(jsonPath("$.menuGroups[3].id").value(4))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-all",
+                    .andDo(document("menu-group/find-all",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -181,7 +181,7 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.name").value("메뉴 그룹1"))
                     .andExpect(jsonPath("$.content").value("메뉴 그룹1 설명"))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-one",
+                    .andDo(document("menu-group/find-one",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -215,7 +215,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/update",
+                    .andDo(document("menu-group/update",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -244,7 +244,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/delete",
+                    .andDo(document("menu-group/delete",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -281,7 +281,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-group/add-menu",
+                    .andDo(document("menu-group/add-menu",
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -330,7 +330,7 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menus[1].name").value("메뉴2"))
                     .andExpect(jsonPath("$.menus[2].name").value("메뉴3"))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-menus",
+                    .andDo(document("menu-group/find-menus",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -362,7 +362,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/delete-menu",
+                    .andDo(document("menu-group/delete-menu",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -391,7 +391,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/change-menu-order",
+                    .andDo(document("menu-group/change-menu-order",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),

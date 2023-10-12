@@ -236,7 +236,6 @@ class CategoryControllerTest {
                 .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .ownerNotice("사장님 공지")
-                .businessHours("오전 10시 ~ 오후 10시")
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
                 .deliveryTime(30)

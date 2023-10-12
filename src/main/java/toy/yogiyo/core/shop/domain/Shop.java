@@ -42,8 +42,6 @@ public class Shop extends BaseTimeEntity {
     @Convert(converter = StringArrayConverter.class)
     private List<String> noticeImages = new ArrayList<>();
 
-    private String businessHours;
-
     private String callNumber;
     private String address;
 
@@ -64,6 +62,10 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeliveryPriceInfo> deliveryPriceInfos = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BusinessHours> businessHours = new ArrayList<>();
+
 
     public void changeOwner(Owner owner) {
         this.owner = owner;
@@ -79,8 +81,12 @@ public class Shop extends BaseTimeEntity {
         this.noticeImages = images;
     }
 
-    public void changeBusinessHours(String businessHours) {
-        this.businessHours = businessHours;
+    public void changeBusinessHours(List<BusinessHours> businessHours) {
+        this.businessHours.clear();
+        for (BusinessHours businessHour : businessHours) {
+            this.businessHours.add(businessHour);
+            businessHour.changeShop(this);
+        }
     }
 
     public void changeDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {

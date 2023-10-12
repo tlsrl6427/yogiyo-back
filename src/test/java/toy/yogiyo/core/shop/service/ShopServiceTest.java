@@ -19,12 +19,15 @@ import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.shop.domain.BusinessHours;
+import toy.yogiyo.core.shop.domain.Days;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -168,16 +171,28 @@ class ShopServiceTest {
             @DisplayName("영업 시간 조회")
             void getBusinessHours() throws Exception {
                 // given
-                Shop shop = getShop();
+                Shop shop = Shop.builder()
+                        .id(1L)
+                        .businessHours(List.of(
+                                BusinessHours.builder()
+                                        .dayOfWeek(Days.EVERYDAY)
+                                        .isOpen(true)
+                                        .openTime(LocalTime.of(10, 0))
+                                        .closeTime(LocalTime.of(20, 0))
+                                        .build()
+                        ))
+                        .build();
 
-                when(shopRepository.findById(shop.getId()))
+                when(shopRepository.findById(anyLong()))
                         .thenReturn(Optional.of(shop));
 
                 // when
                 ShopBusinessHourResponse response = shopService.getBusinessHours(shop.getId());
 
                 // then
-                assertThat(response.getBusinessHours()).isEqualTo(shop.getBusinessHours());
+                assertThat(response.getBusinessHours().get(0).getDayOfWeek()).isEqualTo(Days.EVERYDAY);
+                assertThat(response.getBusinessHours().get(0).getOpenTime()).isEqualTo(LocalTime.of(10, 0));
+                assertThat(response.getBusinessHours().get(0).getCloseTime()).isEqualTo(LocalTime.of(20, 0));
             }
 
             @Test
@@ -253,15 +268,26 @@ class ShopServiceTest {
             @DisplayName("영업 시간 수정")
             void updateBusinessHours() throws Exception {
                 // given
-                Shop shop = getShopWithOwner(1L);
-                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-                ShopBusinessHourUpdateRequest request = getBusinessHoursUpdateRequest();
+                Shop shop = Shop.builder()
+                        .id(1L)
+                        .owner(Owner.builder().id(1L).build())
+                        .build();
+                when(shopRepository.findById(anyLong())).thenReturn(Optional.of(shop));
+                ShopBusinessHourUpdateRequest request = ShopBusinessHourUpdateRequest.builder()
+                        .businessHours(List.of(
+                                new ShopBusinessHourUpdateRequest.BusinessHoursDto(Days.MONDAY, true, LocalTime.of(10, 0), LocalTime.of(20, 0), null, null),
+                                new ShopBusinessHourUpdateRequest.BusinessHoursDto(Days.THURSDAY, true, LocalTime.of(10, 0), LocalTime.of(20, 0), null, null),
+                                new ShopBusinessHourUpdateRequest.BusinessHoursDto(Days.FRIDAY, true, LocalTime.of(10, 0), LocalTime.of(20, 0), null, null)
+                        ))
+                        .build();
 
                 // when
                 shopService.updateBusinessHours(shop.getId(), shop.getOwner(), request);
 
                 // then
-                assertThat(shop.getBusinessHours()).isEqualTo(request.getBusinessHours());
+                assertThat(shop.getBusinessHours().get(0).getDayOfWeek()).isEqualTo(Days.MONDAY);
+                assertThat(shop.getBusinessHours().get(1).getDayOfWeek()).isEqualTo(Days.THURSDAY);
+                assertThat(shop.getBusinessHours().get(2).getDayOfWeek()).isEqualTo(Days.FRIDAY);
             }
             
             @Test
@@ -286,7 +312,6 @@ class ShopServiceTest {
 
             private ShopBusinessHourUpdateRequest getBusinessHoursUpdateRequest() {
                 return ShopBusinessHourUpdateRequest.builder()
-                        .businessHours("오전 10시 ~ 오후 10시 (수정됨)")
                         .build();
             }
 
@@ -376,7 +401,6 @@ class ShopServiceTest {
                 .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .ownerNotice("사장님 공지")
-                .businessHours("오전 10시 ~ 오후 10시")
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
                 .deliveryTime(30)

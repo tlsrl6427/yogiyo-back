@@ -113,7 +113,7 @@ public class ShopService {
 
         validatePermission(owner, shop);
 
-        shop.changeBusinessHours(request.getBusinessHours());
+        shop.changeBusinessHours(request.toEntity());
     }
 
     @Transactional

@@ -23,13 +23,17 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
+import toy.yogiyo.core.shop.domain.BusinessHours;
+import toy.yogiyo.core.shop.domain.Days;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
@@ -188,7 +192,17 @@ class ShopControllerTest {
     @DisplayName("영업 시간 조회")
     void getBusinessHours() throws Exception {
         // given
-        ShopBusinessHourResponse response = ShopBusinessHourResponse.from(givenShop());
+        ShopBusinessHourResponse response = ShopBusinessHourResponse.builder()
+                .businessHours(List.of(
+                        new ShopBusinessHourResponse.BusinessHoursDto(BusinessHours.builder()
+                                .dayOfWeek(Days.EVERYDAY)
+                                .isOpen(true)
+                                .openTime(LocalTime.of(10, 0))
+                                .closeTime(LocalTime.of(20, 0))
+                                .build()
+                        )
+                ))
+                .build();
         when(shopService.getBusinessHours(anyLong())).thenReturn(response);
 
         // when
@@ -196,14 +210,22 @@ class ShopControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.businessHours").value(response.getBusinessHours()))
+                .andExpect(jsonPath("$.businessHours.length()").value(1))
+                .andExpect(jsonPath("$.businessHours[0].dayOfWeek").value("EVERYDAY"))
+                .andExpect(jsonPath("$.businessHours[0].openTime").value("10:00:00"))
                 .andDo(print())
                 .andDo(document("shop/get-business-hours",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         responseFields(
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING).description("영업 시간")
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
+                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
+                                fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
+                                fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
+                                fieldWithPath("businessHours[].breakTimeStart").type(JsonFieldType.STRING).description("휴게 시간 (시작)").optional(),
+                                fieldWithPath("businessHours[].breakTimeEnd").type(JsonFieldType.STRING).description("휴게 시간 (종료)").optional()
                         )
                 ));
     }
@@ -327,14 +349,23 @@ class ShopControllerTest {
         // given
         doNothing().when(shopService).updateBusinessHours(anyLong(), any(), any());
         ShopBusinessHourUpdateRequest request = ShopBusinessHourUpdateRequest.builder()
-                .businessHours("오전 10시 ~ 오후 10시")
+                .businessHours(List.of(
+                        new ShopBusinessHourUpdateRequest.BusinessHoursDto(
+                                Days.EVERYDAY,
+                                true,
+                                LocalTime.of(10, 0),
+                                LocalTime.of(20, 0),
+                                null,
+                                null)
+                ))
                 .build();
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/business-hours/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
+                .content(objectMapper.writeValueAsString(request))
+                .characterEncoding("utf8"));
 
         // then
         result.andExpect(status().isOk())
@@ -348,7 +379,13 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("businessHours").type(JsonFieldType.STRING).description("영업 시간")
+                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
+                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
+                                fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
+                                fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
+                                fieldWithPath("businessHours[].breakTimeStart").type(JsonFieldType.STRING).description("휴게 시간 (시작)").optional(),
+                                fieldWithPath("businessHours[].breakTimeEnd").type(JsonFieldType.STRING).description("휴게 시간 (종료)").optional()
                         )
                 ));
     }
@@ -424,7 +461,6 @@ class ShopControllerTest {
                 .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
                 .ownerNotice("사장님 공지")
-                .businessHours("오전 10시 ~ 오후 10시")
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
                 .deliveryTime(30)

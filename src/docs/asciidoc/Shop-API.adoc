@@ -26,6 +26,11 @@ operation::shop/get-business-hours[snippets='http-request,http-response,path-par
 
 operation::shop/get-delivery-price[snippets='http-request,http-response,path-parameters,response-fields']
 
+=== 휴무일 조회
+`GET /shop/{shop id}/close-day`
+
+operation::shop/get-close-day[snippets='http-request,http-response,path-parameters,response-fields']
+
 === 가게 정보 수정
 `PATCH /shop/{shop id}/call-number/update`
 
@@ -46,8 +51,12 @@ operation::shop/update-business-hours[snippets='http-request,http-response,reque
 
 operation::shop/update-delivery-price[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
+=== 휴무일 수정
+`PATCH /shop/{shop id}/close-day/update`
+
+operation::shop/update-close-day[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
 === 가게 삭제
 `DELETE /shop/{shop id}/delete`
 
 operation::shop/delete[snippets='http-request,http-response,request-headers,path-parameters']
-

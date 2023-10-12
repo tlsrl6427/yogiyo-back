@@ -19,10 +19,7 @@ import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
-import toy.yogiyo.core.shop.domain.BusinessHours;
-import toy.yogiyo.core.shop.domain.Days;
-import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
-import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
@@ -216,6 +213,29 @@ class ShopServiceTest {
                 }
             }
 
+            @Test
+            @DisplayName("휴뮤일 조회")
+            void getCloseDays() throws Exception {
+                // given
+                Shop shop = Shop.builder()
+                        .id(1L)
+                        .closeDays(List.of(
+                                CloseDay.builder().weekNumOfMonth(1).dayOfWeek(Days.MONDAY).build(),
+                                CloseDay.builder().weekNumOfMonth(3).dayOfWeek(Days.MONDAY).build()
+                        ))
+                        .build();
+                when(shopRepository.findById(anyLong())).thenReturn(Optional.of(shop));
+
+                // when
+                ShopCloseDayResponse response = shopService.getCloseDays(1L);
+
+                // then
+                assertThat(response.getCloseDays().get(0).getWeekNumOfMonth()).isEqualTo(1);
+                assertThat(response.getCloseDays().get(0).getDayOfWeek()).isEqualTo(Days.MONDAY);
+                assertThat(response.getCloseDays().get(1).getWeekNumOfMonth()).isEqualTo(3);
+                assertThat(response.getCloseDays().get(1).getDayOfWeek()).isEqualTo(Days.MONDAY);
+            }
+
         }
 
         @Nested
@@ -310,9 +330,30 @@ class ShopServiceTest {
                 }
             }
 
-            private ShopBusinessHourUpdateRequest getBusinessHoursUpdateRequest() {
-                return ShopBusinessHourUpdateRequest.builder()
+            @Test
+            @DisplayName("휴무일 수정")
+            void updateCloseDays() throws Exception {
+                // given
+                Shop shop = Shop.builder()
+                        .id(1L)
+                        .owner(Owner.builder().id(1L).build())
                         .build();
+                when(shopRepository.findById(anyLong())).thenReturn(Optional.of(shop));
+                ShopCloseDayUpdateRequest request = ShopCloseDayUpdateRequest.builder()
+                        .closeDays(List.of(
+                                new ShopCloseDayUpdateRequest.CloseDayDto(1, Days.MONDAY),
+                                new ShopCloseDayUpdateRequest.CloseDayDto(3, Days.MONDAY)
+                        ))
+                        .build();
+
+                // when
+                shopService.updateCloseDays(1L, shop.getOwner(), request);
+
+                // then
+                assertThat(shop.getCloseDays().get(0).getWeekNumOfMonth()).isEqualTo(1);
+                assertThat(shop.getCloseDays().get(0).getDayOfWeek()).isEqualTo(Days.MONDAY);
+                assertThat(shop.getCloseDays().get(1).getWeekNumOfMonth()).isEqualTo(3);
+                assertThat(shop.getCloseDays().get(1).getDayOfWeek()).isEqualTo(Days.MONDAY);
             }
 
             private DeliveryPriceUpdateRequest getDeliveryPriceUpdateRequest() {

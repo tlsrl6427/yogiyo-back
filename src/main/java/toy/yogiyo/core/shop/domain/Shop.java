@@ -66,6 +66,10 @@ public class Shop extends BaseTimeEntity {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BusinessHours> businessHours = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CloseDay> closeDays = new ArrayList<>();
+
 
     public void changeOwner(Owner owner) {
         this.owner = owner;
@@ -100,6 +104,14 @@ public class Shop extends BaseTimeEntity {
     public void changeLatLng(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public void changeCloseDays(List<CloseDay> closeDays) {
+        this.closeDays.clear();
+        for (CloseDay closeDay : closeDays) {
+            this.closeDays.add(closeDay);
+            closeDay.changeShop(this);
+        }
     }
 }
 

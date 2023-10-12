@@ -72,6 +72,14 @@ public class ShopService {
         return ShopDeliveryPriceResponse.from(shop);
     }
 
+    @Transactional(readOnly = true)
+    public ShopCloseDayResponse getCloseDays(Long shopId) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        return ShopCloseDayResponse.from(shop);
+    }
+
     @Transactional
     public void updateCallNumber(Long shopId, Owner owner, ShopUpdateCallNumberRequest request) {
         Shop shop = shopRepository.findById(shopId)
@@ -124,6 +132,16 @@ public class ShopService {
         validatePermission(owner, shop);
 
         shop.changeDeliveryPrices(request.toEntity());
+    }
+
+    @Transactional
+    public void updateCloseDays(Long shopId, Owner owner, ShopCloseDayUpdateRequest request) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+
+        validatePermission(owner, shop);
+
+        shop.changeCloseDays(request.toEntity());
     }
 
     @Transactional

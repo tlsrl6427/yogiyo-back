@@ -49,6 +49,11 @@ public class ShopController {
         return shopService.getDeliveryPrice(shopId);
     }
 
+    @GetMapping("/{shopId}/close-day")
+    public ShopCloseDayResponse getCloseDays(@PathVariable Long shopId) {
+        return shopService.getCloseDays(shopId);
+    }
+
     @PatchMapping("/{shopId}/call-number/update")
     public String updateCallNumber(@LoginOwner Owner owner,
                              @PathVariable Long shopId,
@@ -83,6 +88,15 @@ public class ShopController {
                          @RequestBody DeliveryPriceUpdateRequest request) {
 
         shopService.updateDeliveryPrice(shopId, owner, request);
+        return "success";
+    }
+
+    @PatchMapping("/{shopId}/close-day/update")
+    public String updateCloseDays(@LoginOwner Owner owner,
+                                  @PathVariable Long shopId,
+                                  @RequestBody ShopCloseDayUpdateRequest request) {
+
+        shopService.updateCloseDays(shopId, owner, request);
         return "success";
     }
 

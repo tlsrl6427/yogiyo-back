@@ -23,10 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.shop.domain.BusinessHours;
-import toy.yogiyo.core.shop.domain.Days;
-import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
-import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
@@ -258,6 +255,39 @@ class ShopControllerTest {
     }
 
     @Test
+    @DisplayName("휴무일 조회")
+    void getCloseDays() throws Exception {
+        // given
+        when(shopService.getCloseDays(anyLong())).thenReturn(ShopCloseDayResponse.builder()
+                .closeDays(List.of(
+                        new ShopCloseDayResponse.CloseDayDto(CloseDay.builder().weekNumOfMonth(1).dayOfWeek(Days.MONDAY).build()),
+                        new ShopCloseDayResponse.CloseDayDto(CloseDay.builder().weekNumOfMonth(3).dayOfWeek(Days.MONDAY).build())
+                ))
+                .build());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/close-day", 1));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.closeDays[0].weekNumOfMonth").value(1))
+                .andExpect(jsonPath("$.closeDays[0].dayOfWeek").value("MONDAY"))
+                .andExpect(jsonPath("$.closeDays[1].weekNumOfMonth").value(3))
+                .andExpect(jsonPath("$.closeDays[1].dayOfWeek").value("MONDAY"))
+                .andDo(print())
+                .andDo(document("shop/get-close-day",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
+                                fieldWithPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
+                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
+                        )
+                ));
+    }
+
+    @Test
     @DisplayName("가게 전화번호 수정")
     @WithLoginOwner
     void updateCallNumber() throws Exception {
@@ -424,6 +454,43 @@ class ShopControllerTest {
                                 fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
                                 fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
                                 fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("휴무일 수정")
+    void updateCloseDays() throws Exception {
+        // given
+        doNothing().when(shopService).updateCloseDays(anyLong(), any(), any());
+        ShopCloseDayUpdateRequest request = ShopCloseDayUpdateRequest.builder()
+                .closeDays(List.of(
+                        new ShopCloseDayUpdateRequest.CloseDayDto(1, Days.MONDAY),
+                        new ShopCloseDayUpdateRequest.CloseDayDto(3, Days.MONDAY)
+                ))
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/close-day/update", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print())
+                .andDo(document("shop/update-close-day",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
+                                fieldWithPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
+                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
                         )
                 ));
     }

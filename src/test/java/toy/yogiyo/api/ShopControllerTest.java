@@ -165,7 +165,11 @@ class ShopControllerTest {
     @DisplayName("사장님 공지 조회")
     void getNotice() throws Exception {
         // given
-        ShopNoticeResponse response = ShopNoticeResponse.from(givenShop());
+        ShopNoticeResponse response = ShopNoticeResponse.builder()
+                .title("공지 제목")
+                .notice("공지 내용")
+                .images(List.of("/images/image1.png", "/images/image2.png"))
+                .build();
         when(shopService.getNotice(anyLong())).thenReturn(response);
 
         // when
@@ -173,14 +177,19 @@ class ShopControllerTest {
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.notice").value(response.getNotice()))
+                .andExpect(jsonPath("$.title").value("공지 제목"))
+                .andExpect(jsonPath("$.notice").value("공지 내용"))
+                .andExpect(jsonPath("$.images[0]").value("/images/image1.png"))
+                .andExpect(jsonPath("$.images[1]").value("/images/image2.png"))
                 .andDo(print())
                 .andDo(document("shop/get-notice",
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         responseFields(
-                                fieldWithPath("notice").type(JsonFieldType.STRING).description("사장님 공지")
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("사장님 공지 제목"),
+                                fieldWithPath("notice").type(JsonFieldType.STRING).description("사장님 공지 내용"),
+                                fieldWithPath("images").type(JsonFieldType.ARRAY).description("사장님 공지 사진 리스트")
                         )
                 ));
     }

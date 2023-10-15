@@ -231,16 +231,15 @@ class CategoryControllerTest {
     }
 
     private Shop givenShop() {
-        Shop shop = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후 10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop shop = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         shop.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 5000),

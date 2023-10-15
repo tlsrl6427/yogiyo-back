@@ -1,0 +1,62 @@
+[[Shop-API]]
+== Shop API
+
+=== 입점
+`POST /shop/register`
+
+operation::shop/register[snippets='http-request,http-response,request-headers,request-parts,request-part-shopData-fields,response-fields']
+
+=== 가게 정보 조회
+`GET /shop/{shop id}/info`
+
+operation::shop/get-info[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 사장님 공지 조회
+`GET /shop/{shop id}/notice`
+
+operation::shop/get-notice[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 영업 시간 조회
+`GET /shop/{shop id}/business-hours`
+
+operation::shop/get-business-hours[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 배달 요금 조회
+`GET /shop/{shop id}/delivery-price`
+
+operation::shop/get-delivery-price[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 휴무일 조회
+`GET /shop/{shop id}/close-day`
+
+operation::shop/get-close-day[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 가게 정보 수정
+`PATCH /shop/{shop id}/call-number/update`
+
+operation::shop/update-call-number[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
+=== 사장님 공지 수정
+`PATCH /shop/{shop id}/notice/update`
+
+operation::shop/update-notice[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-noticeData-fields']
+
+=== 영업 시간 수정
+`PATCH /shop/{shop id}/business-hours/update`
+
+operation::shop/update-business-hours[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
+=== 배달 요금 수정
+`PATCH /shop/{shop id}/delivery-price/udpate`
+
+operation::shop/update-delivery-price[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
+=== 휴무일 수정
+`PATCH /shop/{shop id}/close-day/update`
+
+operation::shop/update-close-day[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
+=== 가게 삭제
+`DELETE /shop/{shop id}/delete`
+
+operation::shop/delete[snippets='http-request,http-response,request-headers,path-parameters']

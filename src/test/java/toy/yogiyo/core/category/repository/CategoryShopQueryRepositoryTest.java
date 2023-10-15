@@ -42,16 +42,15 @@ class CategoryShopQueryRepositoryTest {
     @DisplayName("상점 조회")
     void findShop() throws Exception {
         // given
-        Shop s = new Shop("맥도날드",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(5000, 3000),
@@ -87,16 +86,15 @@ class CategoryShopQueryRepositoryTest {
         Category c = new Category("햄버거", "picture.png");
         categoryRepository.save(c);
 
-        Shop s1 = new Shop("맥도날드",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s1 = Shop.builder()
+                .name("맥도날드")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s1.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(5000, 3000),
@@ -107,16 +105,15 @@ class CategoryShopQueryRepositoryTest {
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
-        Shop s2 = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s2 = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s2.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 4000),
@@ -145,16 +142,15 @@ class CategoryShopQueryRepositoryTest {
         Category c = new Category("햄버거", "picture.png");
         categoryRepository.save(c);
 
-        Shop s1 = new Shop("맥도날드",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s1 = Shop.builder()
+                .name("맥도날드")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s1.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(5000, 3000),
@@ -165,16 +161,15 @@ class CategoryShopQueryRepositoryTest {
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
-        Shop s2 = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s2 = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s2.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 4000),
@@ -204,16 +199,15 @@ class CategoryShopQueryRepositoryTest {
         Category c = new Category("햄버거", "picture.png");
         categoryRepository.save(c);
 
-        Shop s1 = new Shop("맥도날드",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s1 = Shop.builder()
+                .name("맥도날드")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s1.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(5000, 3000),
@@ -224,16 +218,15 @@ class CategoryShopQueryRepositoryTest {
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
-        Shop s2 = new Shop("롯데리아",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "692c0741-f234-448e-ba3f-35b5a394f33d.png",
-                "사장님 공지",
-                "오전 10시 ~ 오후10시",
-                "010-1234-5678",
-                "서울 강남구 영동대로 513",
-                30,
-                "가게배달, 포장",
-                0);
+        Shop s2 = Shop.builder()
+                .name("롯데리아")
+                .icon("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .banner("692c0741-f234-448e-ba3f-35b5a394f33d.png")
+                .ownerNotice("사장님 공지")
+                .callNumber("010-1234-5678")
+                .address("서울 강남구 영동대로 513")
+                .deliveryTime(30)
+                .build();
 
         s2.changeDeliveryPrices(Arrays.asList(
                 new DeliveryPriceInfo(10000, 4000),

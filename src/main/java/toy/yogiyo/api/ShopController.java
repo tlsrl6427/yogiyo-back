@@ -3,12 +3,13 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
-import toy.yogiyo.core.shop.dto.ShopRegisterRequest;
-import toy.yogiyo.core.shop.dto.ShopUpdateRequest;
+import toy.yogiyo.common.login.LoginOwner;
+import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -18,31 +19,90 @@ public class ShopController {
 
     private final ShopService shopService;
 
-    // TODO : Owner id 가져오는 로직 수정
     @PostMapping(value = "/register")
-    public Long register(@RequestPart("shopData") ShopRegisterRequest request,
-                         @RequestPart("icon") MultipartFile icon,
-                         @RequestPart("banner") MultipartFile banner) throws IOException {
+    public ShopRegisterResponse register(@LoginOwner Owner owner,
+                                         @RequestPart("shopData") ShopRegisterRequest request,
+                                         @RequestPart("icon") MultipartFile icon,
+                                         @RequestPart("banner") MultipartFile banner) throws IOException {
 
-        return shopService.register(request, icon, banner, 1L);
+        Long shopId = shopService.register(request, icon, banner, owner);
+
+        return ShopRegisterResponse.builder()
+                .id(shopId)
+                .build();
     }
 
-    @GetMapping("/{shopId}")
-    public ShopDetailsResponse details(@PathVariable("shopId") Long shopId) {
-        return shopService.getDetailInfo(shopId);
+    @GetMapping("/{shopId}/info")
+    public ShopInfoResponse getInfo(@PathVariable("shopId") Long shopId) {
+        return shopService.getInfo(shopId);
+    }
+    @GetMapping("/{shopId}/notice")
+    public ShopNoticeResponse getNotice(@PathVariable("shopId") Long shopId) {
+        return shopService.getNotice(shopId);
+    }
+    @GetMapping("/{shopId}/business-hours")
+    public ShopBusinessHourResponse getBusinessHours(@PathVariable("shopId") Long shopId) {
+        return shopService.getBusinessHours(shopId);
+    }
+    @GetMapping("/{shopId}/delivery-price")
+    public ShopDeliveryPriceResponse getDeliveryPrice(@PathVariable("shopId") Long shopId) {
+        return shopService.getDeliveryPrice(shopId);
     }
 
-    // TODO : Owner id 가져오는 로직 수정
-    @PatchMapping("/{shopId}")
-    public String update(@PathVariable("shopId") Long shopId, @RequestBody ShopUpdateRequest request) {
-        shopService.updateInfo(shopId, 1L, request);
+    @GetMapping("/{shopId}/close-day")
+    public ShopCloseDayResponse getCloseDays(@PathVariable Long shopId) {
+        return shopService.getCloseDays(shopId);
+    }
+
+    @PatchMapping("/{shopId}/call-number/update")
+    public String updateCallNumber(@LoginOwner Owner owner,
+                             @PathVariable Long shopId,
+                             @RequestBody ShopUpdateCallNumberRequest request) {
+
+        shopService.updateCallNumber(shopId, owner, request);
         return "success";
     }
 
-    // TODO : Owner id 가져오는 로직 수정
-    @DeleteMapping("/{shopId}")
-    public String delete(@PathVariable("shopId") Long shopId) {
-        shopService.delete(shopId, 1L);
+    @PostMapping("/{shopId}/notice/update")
+    public String updateNotice(@LoginOwner Owner owner,
+                               @PathVariable Long shopId,
+                               @RequestPart("noticeData") ShopNoticeUpdateRequest request,
+                               @RequestPart(value = "images", required = false) List<MultipartFile> imageFiles) throws IOException {
+
+        shopService.updateNotice(shopId, owner, request, imageFiles);
+        return "success";
+    }
+
+    @PatchMapping("/{shopId}/business-hours/update")
+    public String updateBusinessHours(@LoginOwner Owner owner,
+                                      @PathVariable Long shopId,
+                                      @RequestBody ShopBusinessHourUpdateRequest request) {
+
+        shopService.updateBusinessHours(shopId, owner, request);
+        return "success";
+    }
+
+    @PatchMapping("/{shopId}/delivery-price/update")
+    public String updateNotice(@LoginOwner Owner owner,
+                         @PathVariable Long shopId,
+                         @RequestBody DeliveryPriceUpdateRequest request) {
+
+        shopService.updateDeliveryPrice(shopId, owner, request);
+        return "success";
+    }
+
+    @PatchMapping("/{shopId}/close-day/update")
+    public String updateCloseDays(@LoginOwner Owner owner,
+                                  @PathVariable Long shopId,
+                                  @RequestBody ShopCloseDayUpdateRequest request) {
+
+        shopService.updateCloseDays(shopId, owner, request);
+        return "success";
+    }
+
+    @DeleteMapping("/{shopId}/delete")
+    public String delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
+        shopService.delete(shopId, owner);
         return "success";
     }
 }

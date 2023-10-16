@@ -23,7 +23,6 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.domain.MenuGroupItem;
 import toy.yogiyo.core.menu.dto.MenuAddRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupAddRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupChangeMenuOrderRequest;
@@ -269,7 +268,7 @@ class MenuGroupControllerTest {
                     .price(19000)
                     .build();
 
-            given(menuGroupService.addMenu(any())).willReturn(1L);
+            given(menuService.add(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
@@ -303,20 +302,13 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 조회")
         void getMenus() throws Exception {
             // given
-            Shop shop = Shop.builder().id(1L).build();
-            MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build();
-
-            Menu menu1 = Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).build();
-            Menu menu2 = Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).build();
-            Menu menu3 = Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build();
-
-            List<MenuGroupItem> menuGroupItems = Arrays.asList(
-                    MenuGroupItem.builder().id(1L).menuGroup(menuGroup).menu(menu1).build(),
-                    MenuGroupItem.builder().id(2L).menuGroup(menuGroup).menu(menu2).build(),
-                    MenuGroupItem.builder().id(3L).menuGroup(menuGroup).menu(menu3).build()
+            List<Menu> menus = Arrays.asList(
+                Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).build(),
+                Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).build(),
+                Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build()
             );
 
-            given(menuGroupService.findMenus(anyLong())).willReturn(menuGroupItems);
+            given(menuService.findMenus(anyLong())).willReturn(menus);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1)
@@ -352,7 +344,7 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 삭제")
         void deleteMenu() throws Exception {
             // given
-            doNothing().when(menuGroupService).deleteMenu(any());
+            doNothing().when(menuService).delete(any());
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/menu-group/delete-menu/{menuId}", 1)

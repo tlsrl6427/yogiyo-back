@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.domain.MenuGroupItem;
-import toy.yogiyo.core.menu.repository.MenuGroupItemRepository;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.stream.IntStream;
 public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuGroupItemRepository menuGroupItemRepository;
     private final MenuService menuService;
 
     // =================== 점주 기능 ======================
@@ -50,46 +48,21 @@ public class MenuGroupService {
     @Transactional
     public void delete(MenuGroup deleteParam) {
         MenuGroup menuGroup = find(deleteParam.getId());
-        List<MenuGroupItem> menus = findMenus(deleteParam.getId());
+        List<Menu> menus = menuService.findMenus(deleteParam.getId());
 
-        menus.forEach(this::deleteMenu);
+        menus.forEach(menuService::delete);
         menuGroupRepository.delete(menuGroup);
     }
 
     @Transactional
-    public Long addMenu(MenuGroupItem menuGroupItem) {
-        Integer maxOrder = menuGroupItemRepository.findMaxOrder(menuGroupItem.getMenuGroup().getId());
-        menuGroupItem.changePosition(maxOrder == null ? 1 : maxOrder + 1);
-
-        menuGroupItemRepository.save(menuGroupItem);
-        menuService.add(menuGroupItem.getMenu());
-
-        return menuGroupItem.getMenu().getId();
-    }
-
-    @Transactional
-    public void deleteMenu(MenuGroupItem deleteParam) {
-        MenuGroupItem menuGroupItem = menuGroupItemRepository.findByMenuId(deleteParam.getMenu().getId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUGROUPITEM_NOT_FOUND));
-
-        menuService.delete(menuGroupItem.getMenu());
-        menuGroupItemRepository.delete(menuGroupItem);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MenuGroupItem> findMenus(Long menuGroupId) {
-        return menuGroupItemRepository.findMenus(menuGroupId);
-    }
-
-    @Transactional
-    public void changeMenuOrder(Long menuGroupId, List<MenuGroupItem> params) {
-        List<MenuGroupItem> menuGroupItems = menuGroupItemRepository.findMenus(menuGroupId);
+    public void changeMenuOrder(Long menuGroupId, List<Menu> params) {
+        List<Menu> menus = menuService.findMenus(menuGroupId);
 
         IntStream.range(0, params.size())
-                .forEach(i -> menuGroupItems.stream()
-                        .filter(menuGroupItem -> Objects.equals(menuGroupItem.getMenu().getId(), params.get(i).getMenu().getId()))
+                .forEach(i -> menus.stream()
+                        .filter(menu -> Objects.equals(menu.getId(), params.get(i).getId()))
                         .findFirst()
-                        .ifPresent(menuGroupItem -> menuGroupItem.changePosition(i + 1)));
+                        .ifPresent(menu -> menu.changePosition(i + 1)));
     }
 
 

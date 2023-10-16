@@ -13,6 +13,6 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("select max(m.position) from Menu m where m.menuGroup.id = :menuGroupId")
     Integer findMaxOrder(@Param("menuGroupId") Long menuGroupId);
 
-    @Query("select m from Menu m where m.menuGroup.id = :menuGroupId")
+    @Query("select m from Menu m where m.menuGroup.id = :menuGroupId order by m.position asc")
     List<Menu> findMenus(@Param("menuGroupId") Long menuGroupId);
 }

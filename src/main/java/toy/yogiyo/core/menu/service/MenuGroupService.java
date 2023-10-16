@@ -8,7 +8,10 @@ import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
+import toy.yogiyo.core.menuoption.domain.MenuOption;
+import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -36,7 +39,12 @@ public class MenuGroupService {
 
     @Transactional(readOnly = true)
     public List<MenuGroup> findMenuGroups(Long shopId) {
-        return menuGroupRepository.findAllByShopId(shopId);
+        List<MenuGroup> menuGroups = menuGroupRepository.findAllByShopId(shopId);
+
+        menuGroups.forEach(menuGroup ->
+                menuGroup.getMenus().sort(Comparator.comparingInt(Menu::getPosition))
+        );
+        return menuGroups;
     }
 
     @Transactional

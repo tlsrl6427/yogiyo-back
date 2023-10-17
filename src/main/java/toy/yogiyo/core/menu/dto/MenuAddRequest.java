@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.domain.MenuGroup;
 
 @Getter
 @Builder
@@ -16,11 +17,12 @@ public class MenuAddRequest {
     private String content;
     private int price;
 
-    public Menu toEntity() {
+    public Menu toEntity(Long menuGroupId) {
         return Menu.builder()
                 .name(name)
                 .content(content)
                 .price(price)
+                .menuGroup(MenuGroup.builder().id(menuGroupId).build())
                 .build();
     }
 }

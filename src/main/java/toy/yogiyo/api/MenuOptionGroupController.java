@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
@@ -20,6 +21,7 @@ public class MenuOptionGroupController {
 
     // ============= 옵션 그룹 =============
     @PostMapping("/shop/{shopId}/add")
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
     public MenuOptionGroupAddResponse add(@PathVariable Long shopId, @RequestBody MenuOptionGroupAddRequest request) {
         Long optionGroupId = menuOptionGroupService.add(request.toEntity(shopId));
         return MenuOptionGroupAddResponse.builder()
@@ -40,24 +42,28 @@ public class MenuOptionGroupController {
     }
 
     @PatchMapping("/{menuOptionGroupId}/update")
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public String update(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionGroupUpdateRequest request) {
         menuOptionGroupService.update(request.toEntity(menuOptionGroupId));
         return "success";
     }
 
     @DeleteMapping("/{menuOptionGroupId}/delete")
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public String delete(@PathVariable Long menuOptionGroupId) {
         menuOptionGroupService.delete(menuOptionGroupId);
         return "success";
     }
 
     @PutMapping("/{menuOptionGroupId}/link-menu")
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public String linkMenu(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionGroupLinkMenuRequest request) {
         menuOptionGroupService.linkMenu(menuOptionGroupId, request.toEntity());
         return "success";
     }
 
     @PutMapping("/shop/{shopId}/change-order")
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
     public String changeOrder(@PathVariable Long shopId, @RequestBody MenuOptionGroupChangeOrderRequest request) {
         menuOptionGroupService.changeOrder(shopId, request.toEntity());
         return "success";
@@ -65,6 +71,7 @@ public class MenuOptionGroupController {
 
     // ============= 옵션 =============
     @PostMapping("/{menuOptionGroupId}/add-option")
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public MenuOptionAddResponse addOption(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionAddRequest request) {
         Long menuOptionId = menuOptionService.add(request.toEntity(menuOptionGroupId));
         return MenuOptionAddResponse.builder()
@@ -79,18 +86,21 @@ public class MenuOptionGroupController {
     }
 
     @PatchMapping("/option/{menuOptionId}/update")
+    @PreAuthorize("@menuOptionPermissionEvaluator.hasWritePermission(authentication, #menuOptionId)")
     public String updateMenuOption(@PathVariable Long menuOptionId, @RequestBody MenuOptionUpdateRequest request) {
         menuOptionService.update(request.toEntity(menuOptionId));
         return "success";
     }
 
     @DeleteMapping("/option/{menuOptionId}/delete")
+    @PreAuthorize("@menuOptionPermissionEvaluator.hasWritePermission(authentication, #menuOptionId)")
     public String deleteMenuOption(@PathVariable Long menuOptionId) {
         menuOptionService.delete(menuOptionId);
         return "success";
     }
 
     @PutMapping("/{menuOptionGroupId}/change-option-order")
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public String changeOptionOrder(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionChangeOrderRequest request) {
         menuOptionService.changeOrder(menuOptionGroupId, request.toEntity());
         return "success";

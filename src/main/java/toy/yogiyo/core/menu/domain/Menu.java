@@ -23,6 +23,12 @@ public class Menu {
     private String picture;
     private Integer price;
 
+    private Integer position;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
     @Builder.Default
     @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
     private List<OptionGroupLinkMenu> linkMenus = new ArrayList<>();
@@ -36,4 +42,13 @@ public class Menu {
         this.content = updateParam.getContent();
         this.price = updateParam.getPrice();
     }
+
+    public void changePosition(int position) {
+        this.position = position;
+    }
+
+    public void changeMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
+    }
+
 }

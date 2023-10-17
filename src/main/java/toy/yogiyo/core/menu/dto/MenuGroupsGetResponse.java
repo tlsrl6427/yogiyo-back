@@ -2,6 +2,7 @@ package toy.yogiyo.core.menu.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 
 import java.util.List;
@@ -27,13 +28,34 @@ public class MenuGroupsGetResponse {
         private Long id;
         private String name;
         private String content;
+        private List<MenuDto> menus;
 
         public MenuGroupDto(MenuGroup menuGroup) {
             this.id = menuGroup.getId();
             this.name = menuGroup.getName();
             this.content = menuGroup.getContent();
+            this.menus = menuGroup.getMenus().stream()
+                    .map(MenuDto::new)
+                    .collect(Collectors.toList());
         }
 
+    }
+
+    @Getter
+    private static class MenuDto {
+        private Long id;
+        private String name;
+        private String content;
+        private int price;
+        private String picture;
+
+        public MenuDto(Menu menu) {
+            this.id = menu.getId();
+            this.name = menu.getName();
+            this.content = menu.getContent();
+            this.price = menu.getPrice();
+            this.picture = menu.getPicture();
+        }
     }
 
 }

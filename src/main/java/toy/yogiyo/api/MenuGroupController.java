@@ -21,6 +21,7 @@ public class MenuGroupController {
 
     // =================== 점주 기능 ======================
     @PostMapping("/add")
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #request.shopId)")
     public MenuGroupAddResponse add(@RequestBody MenuGroupAddRequest request) {
         Long menuGroupId = menuGroupService.add(request.toEntity());
         return MenuGroupAddResponse.builder()
@@ -29,6 +30,7 @@ public class MenuGroupController {
     }
 
     @PostMapping("/{menuGroupId}/add-menu")
+    @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
     public MenuAddResponse addMenu(@PathVariable Long menuGroupId, @RequestBody MenuAddRequest request) {
         Menu menu = request.toEntity(menuGroupId);
         Long menuId = menuService.add(menu);
@@ -58,6 +60,7 @@ public class MenuGroupController {
     }
 
     @PatchMapping("/{menuGroupId}")
+    @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
     public String update(@PathVariable Long menuGroupId, @RequestBody MenuGroupUpdateRequest request) {
         MenuGroup menuGroup = request.toEntity(menuGroupId);
         menuGroupService.update(menuGroup);
@@ -65,6 +68,7 @@ public class MenuGroupController {
     }
 
     @DeleteMapping("/{menuGroupId}")
+    @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
     public String delete(@PathVariable Long menuGroupId) {
         MenuGroup menuGroupParam = MenuGroup.builder()
                 .id(menuGroupId)
@@ -76,6 +80,7 @@ public class MenuGroupController {
     }
 
     @DeleteMapping("/delete-menu/{menuId}")
+    @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
     public String deleteMenu(@PathVariable Long menuId) {
         Menu menuParam = Menu.builder()
                 .id(menuId)
@@ -86,6 +91,7 @@ public class MenuGroupController {
     }
 
     @PatchMapping("/{menuGroupId}/change-menu-order")
+    @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
     public String changeOrder(@PathVariable Long menuGroupId, @RequestBody MenuGroupChangeMenuOrderRequest request) {
         List<Menu> menus = request.toEntity();
         menuGroupService.changeMenuOrder(menuGroupId, menus);

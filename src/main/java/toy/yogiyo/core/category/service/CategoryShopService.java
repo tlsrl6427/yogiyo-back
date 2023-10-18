@@ -22,32 +22,7 @@ import java.util.List;
 public class CategoryShopService {
 
     private final CategoryShopQueryRepository categoryShopQueryRepository;
-    private final CategoryShopRepository categoryShopRepository;
-    private final CategoryService categoryService;
 
-    @Transactional
-    public void save(List<Long> categoryIds, Shop shop) {
-
-        List<CategoryShop> categoryShops = new ArrayList<>();
-
-        for (Long categoryId : categoryIds) {
-            Category category = categoryService.findCategory(categoryId);
-            CategoryShop categoryShop = new CategoryShop();
-            categoryShop.setCategory(category, shop);
-            categoryShops.add(categoryShop);
-        }
-
-        categoryShopRepository.saveAll(categoryShops);
-    }
-
-    @Transactional
-    public void changeCategory(List<Long> categoryIds, Shop shop) {
-        List<CategoryShop> categoryShop = shop.getCategoryShop();
-        categoryShopRepository.deleteAll(categoryShop);
-        categoryShop.clear();
-
-        save(categoryIds, shop);
-    }
 
     public Slice<CategoryShopResponse> findShop(Long categoryId, CategoryShopCondition condition, Pageable pageable) {
         Slice<CategoryShop> result = categoryShopQueryRepository.findAround(categoryId, condition, pageable);
@@ -60,6 +35,5 @@ public class CategoryShopService {
                         condition.getLatitude(), condition.getLongitude())
         ));
     }
-
 
 }

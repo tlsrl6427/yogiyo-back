@@ -9,13 +9,11 @@ public class CategoryResponse {
 
     private Long id;
     private String name;
-    private String picture;
 
     public static CategoryResponse from(Category category) {
         CategoryResponse response = new CategoryResponse();
         response.setId(category.getId());
         response.setName(category.getName());
-        response.setPicture(category.getPicture());
 
         return response;
     }

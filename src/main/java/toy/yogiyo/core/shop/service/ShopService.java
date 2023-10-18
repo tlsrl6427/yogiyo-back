@@ -7,6 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.category.domain.Category;
+import toy.yogiyo.core.category.domain.CategoryShop;
+import toy.yogiyo.core.category.service.CategoryService;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -24,7 +27,7 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
-    private final CategoryShopService categoryShopService;
+    private final CategoryService categoryService;
 
     @Transactional
     public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) throws IOException {
@@ -34,8 +37,16 @@ public class ShopService {
         String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
 
         Shop shop = request.toEntity(iconStoredName, bannerStoredName, owner);
+
+        request.getCategories().forEach(categoryName -> {
+            Category category = categoryService.findCategory(categoryName);
+            shop.getCategoryShop().add(CategoryShop.builder()
+                    .category(category)
+                    .shop(shop)
+                    .build());
+        });
+
         shopRepository.save(shop);
-        categoryShopService.save(request.getCategoryIds(), shop);
 
         return shop.getId();
     }

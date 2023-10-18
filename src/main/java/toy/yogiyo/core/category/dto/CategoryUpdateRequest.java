@@ -9,9 +9,10 @@ import toy.yogiyo.core.category.domain.Category;
 public class CategoryUpdateRequest {
 
     private String name;
-    private MultipartFile picture;
 
-    public Category toEntity(String picture) {
-        return new Category(name, picture);
+    public Category toEntity() {
+        return Category.builder()
+                .name(name)
+                .build();
     }
 }

@@ -51,7 +51,7 @@ public class Shop extends BaseTimeEntity {
     private int deliveryTime;
 
     @Builder.Default
-    @OneToMany(mappedBy = "shop")
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryShop> categoryShop = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

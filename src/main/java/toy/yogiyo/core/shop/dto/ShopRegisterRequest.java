@@ -20,7 +20,7 @@ public class ShopRegisterRequest {
     private Double longitude;
     private Double latitude;
     @Builder.Default
-    private List<Long> categoryIds = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
 
     public Shop toEntity(String iconStoredName, String bannerStoredName, Owner owner) {
         return Shop.builder()

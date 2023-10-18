@@ -80,7 +80,7 @@ class ShopControllerTest {
                 .address("서울 강남구 영동대로 513")
                 .latitude(36.674648)
                 .longitude(127.448544)
-                .categoryIds(Arrays.asList(1L, 2L, 3L))
+                .categories(Arrays.asList("치킨", "한식", "중국집"))
                 .build();
 
         MockMultipartFile requestJson = new MockMultipartFile(
@@ -119,7 +119,7 @@ class ShopControllerTest {
                                 fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
                                 fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("categoryIds").type(JsonFieldType.ARRAY).description("카테고리 ID")
+                                fieldWithPath("categories").type(JsonFieldType.ARRAY).description("카테고리 Array")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID")

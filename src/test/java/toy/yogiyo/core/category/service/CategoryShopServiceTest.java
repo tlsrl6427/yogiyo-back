@@ -33,55 +33,13 @@ class CategoryShopServiceTest {
     CategoryShopService categoryShopService;
 
     @Mock
-    CategoryShopRepository categoryShopRepository;
-
-    @Mock
     CategoryShopQueryRepository categoryShopQueryRepository;
-
-    @Mock
-    CategoryService categoryService;
-
-    @Test
-    @DisplayName("카테고리 지정")
-    void setCategory() throws Exception {
-        // given
-        Shop shop = givenShop();
-        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-
-        when(categoryService.findCategory(anyLong())).thenReturn(new Category());
-        when(categoryShopRepository.saveAll(anyCollection()))
-                .thenReturn(Arrays.asList(new CategoryShop(), new CategoryShop(), new CategoryShop()));
-
-        // when
-        categoryShopService.save(categoryIds, shop);
-
-        // then
-        verify(categoryService, times(categoryIds.size())).findCategory(anyLong());
-        verify(categoryShopRepository).saveAll(anyCollection());
-        assertThat(shop.getCategoryShop().size()).isEqualTo(categoryIds.size());
-    }
-
-    @Test
-    @DisplayName("카테고리 변경")
-    void changeCategory() throws Exception {
-        // given
-        Shop shop = givenShopWithCategoryShop();
-        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-
-        doNothing().when(categoryShopRepository).deleteAll(anyList());
-
-        // when
-        categoryShopService.changeCategory(categoryIds, shop);
-
-        // then
-        verify(categoryShopRepository).deleteAll(shop.getCategoryShop());
-    }
 
     @Test
     @DisplayName("주변 상점 조회")
     void around() throws Exception {
         // given
-        Category category = new Category(1L, "치킨", "picture.png");
+        Category category = new Category(1L, "치킨");
         Shop shop = givenShop();
         List<CategoryShop> categoryShops = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -130,16 +88,6 @@ class CategoryShopServiceTest {
                 new DeliveryPriceInfo(30000, 3000)));
 
         shop.changeLatLng(36.674648, 127.448544);
-
-        return shop;
-    }
-
-    private Shop givenShopWithCategoryShop() {
-        Shop shop = givenShop();
-        List<CategoryShop> categoryShop = shop.getCategoryShop();
-        categoryShop.add(new CategoryShop());
-        categoryShop.add(new CategoryShop());
-        categoryShop.add(new CategoryShop());
 
         return shop;
     }

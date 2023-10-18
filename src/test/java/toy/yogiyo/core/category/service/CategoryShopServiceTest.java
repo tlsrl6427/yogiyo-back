@@ -48,7 +48,7 @@ class CategoryShopServiceTest {
         Shop shop = givenShop();
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
 
-        when(categoryService.findCategory(anyLong())).thenReturn(new Category());
+        when(categoryService.findCategory(anyLong())).thenReturn(Category.builder().build());
         when(categoryShopRepository.saveAll(anyCollection()))
                 .thenReturn(Arrays.asList(new CategoryShop(), new CategoryShop(), new CategoryShop()));
 
@@ -81,7 +81,7 @@ class CategoryShopServiceTest {
     @DisplayName("주변 상점 조회")
     void around() throws Exception {
         // given
-        Category category = new Category(1L, "치킨", "picture.png");
+        Category category = new Category(1L, "치킨");
         Shop shop = givenShop();
         List<CategoryShop> categoryShops = new ArrayList<>();
         for (int i = 0; i < 10; i++) {

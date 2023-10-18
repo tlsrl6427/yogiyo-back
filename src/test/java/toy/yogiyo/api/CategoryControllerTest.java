@@ -9,8 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -69,7 +67,6 @@ class CategoryControllerTest {
         // when
         ResultActions result = mockMvc.perform(
                 multipart("/category/create")
-                        .file((MockMultipartFile) request.getPicture())
                         .param("name", request.getName()));
 
         // then
@@ -95,7 +92,6 @@ class CategoryControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()))
-                .andExpect(jsonPath("$.picture").value(category.getPicture()))
                 .andDo(print());
         verify(categoryService).findCategory(category.getId());
     }
@@ -117,7 +113,6 @@ class CategoryControllerTest {
         for (int i = 0; i < categoryResponses.size(); i++) {
             result.andExpect(jsonPath("$.[%s].id", i).value(categoryResponses.get(i).getId()));
             result.andExpect(jsonPath("$.[%s].name", i).value(categoryResponses.get(i).getName()));
-            result.andExpect(jsonPath("$.[%s].picture", i).value(categoryResponses.get(i).getPicture()));
         }
         result.andDo(print());
         verify(categoryService).getCategories();
@@ -202,30 +197,28 @@ class CategoryControllerTest {
     }
 
     private Category givenCategory() {
-        return new Category(1L, "분식", "/images/picture.png");
+        return new Category(1L, "분식");
     }
 
 
     private List<Category> givenCategories() {
         return List.of(
-                new Category(1L, "치킨", "/images/picture.png"),
-                new Category(2L, "한식", "/images/picture.png"),
-                new Category(3L, "중국집", "/images/picture.png"),
-                new Category(4L, "버거", "/images/picture.png"),
-                new Category(5L, "피자/양식", "/images/picture.png"),
-                new Category(6L, "분식", "/images/picture.png"),
-                new Category(7L, "족발/보쌈", "/images/picture.png"),
-                new Category(8L, "카페/디저트", "/images/picture.png"),
-                new Category(9L, "일식/돈까스", "/images/picture.png"),
-                new Category(10L, "찜/탕", "/images/picture.png")
+                new Category(1L, "치킨"),
+                new Category(2L, "한식"),
+                new Category(3L, "중국집"),
+                new Category(4L, "버거"),
+                new Category(5L, "피자/양식"),
+                new Category(6L, "분식"),
+                new Category(7L, "족발/보쌈"),
+                new Category(8L, "카페/디저트"),
+                new Category(9L, "일식/돈까스"),
+                new Category(10L, "찜/탕")
         );
     }
 
     private CategoryCreateRequest givenCreateRequest() {
-        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
         CategoryCreateRequest createRequest = new CategoryCreateRequest();
         createRequest.setName("치킨");
-        createRequest.setPicture(picture);
 
         return createRequest;
     }

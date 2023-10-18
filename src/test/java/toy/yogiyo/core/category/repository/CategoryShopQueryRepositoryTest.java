@@ -61,7 +61,7 @@ class CategoryShopQueryRepositoryTest {
 
         shopRepository.save(s);
 
-        Category c = new Category("햄버거", "picture.png");
+        Category c = Category.builder().name("햄버거").build();
         categoryRepository.save(c);
 
         CategoryShop cs = new CategoryShop(null, c, s);
@@ -83,7 +83,7 @@ class CategoryShopQueryRepositoryTest {
     @DisplayName("상점 이름 검색")
     void findShopName() throws Exception {
         //given
-        Category c = new Category("햄버거", "picture.png");
+        Category c = Category.builder().name("햄버거").build();
         categoryRepository.save(c);
 
         Shop s1 = Shop.builder()
@@ -139,7 +139,7 @@ class CategoryShopQueryRepositoryTest {
     @DisplayName("상점 조회 - 최소 주문 금액 낮은순 정렬")
     void findShopOrderPriceMin() throws Exception {
         // given
-        Category c = new Category("햄버거", "picture.png");
+        Category c = Category.builder().name("햄버거").build();
         categoryRepository.save(c);
 
         Shop s1 = Shop.builder()
@@ -196,7 +196,7 @@ class CategoryShopQueryRepositoryTest {
     @DisplayName("상점 조회 - 최소 주문 금액 높은순 정렬")
     void findShopOrderPriceMax() throws Exception {
         // given
-        Category c = new Category("햄버거", "picture.png");
+        Category c = Category.builder().name("햄버거").build();
         categoryRepository.save(c);
 
         Shop s1 = Shop.builder()

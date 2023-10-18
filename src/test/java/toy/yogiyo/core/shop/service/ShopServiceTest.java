@@ -17,6 +17,7 @@ import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.Member.domain.ProviderType;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
+import toy.yogiyo.core.category.service.CategoryService;
 import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.*;
@@ -45,7 +46,8 @@ class ShopServiceTest {
     ImageFileHandler imageFileHandler;
 
     @Mock
-    CategoryShopService categoryShopService;
+    CategoryService categoryService;
+
 
     @BeforeAll
     static void beforeAll() {
@@ -69,7 +71,7 @@ class ShopServiceTest {
             when(imageFileHandler.store(banner))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
 
-            doNothing().when(categoryShopService).save(anyList(), any());
+            when(categoryService.findCategory(anyString())).thenReturn(Category.builder().build());
 
             when(shopRepository.save(any())).thenReturn(any());
 
@@ -112,7 +114,7 @@ class ShopServiceTest {
                     .address("서울 강남구 영동대로 513")
                     .latitude(36.674648)
                     .longitude(127.448544)
-                    .categoryIds(Arrays.asList(1L, 2L, 3L))
+                    .categories(Arrays.asList("치킨", "한식", "중국집"))
                     .build();
         }
 

@@ -52,6 +52,12 @@ public class CategoryService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public Category findCategory(String categoryName) {
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
+    }
+
     @Transactional
     public void delete(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)

@@ -13,6 +13,7 @@ import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.repository.MenuRepository;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,9 @@ public class MenuService {
 
     @Transactional
     public Long add(Menu menu) {
+        Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
+        menu.changePosition(maxOrder == null ? 1 : maxOrder + 1);
+
         menuRepository.save(menu);
         return menu.getId();
     }
@@ -42,6 +46,11 @@ public class MenuService {
     public Menu find(Long menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Menu> findMenus(Long menuGroupId) {
+        return menuRepository.findMenus(menuGroupId);
     }
 
     @Transactional

@@ -88,7 +88,7 @@ class SignatureMenuControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/signature-menu/set",
+                .andDo(document("signature-menu/set",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -125,7 +125,7 @@ class SignatureMenuControllerTest {
                 .andExpect(jsonPath("$.signatureMenus[3].id").value(4))
                 .andExpect(jsonPath("$.signatureMenus[4].id").value(5))
                 .andDo(print())
-                .andDo(document("/signature-menu/find-all",
+                .andDo(document("signature-menu/find-all",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
@@ -156,7 +156,7 @@ class SignatureMenuControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/signature-menu/delete-one",
+                .andDo(document("signature-menu/delete-one",
                         pathParameters(
                                 parameterWithName("menuId").description("메뉴 ID")
                         )
@@ -182,7 +182,7 @@ class SignatureMenuControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("/signature-menu/change-order",
+                .andDo(document("signature-menu/change-order",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),

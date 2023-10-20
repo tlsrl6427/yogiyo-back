@@ -16,8 +16,10 @@ import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -51,9 +53,10 @@ class MenuServiceTest {
                 .name("피자")
                 .content("피자 설명")
                 .price(20000)
+                .menuGroup(MenuGroup.builder().id(1L).build())
                 .build();
 
-
+        given(menuRepository.findMaxOrder(anyLong())).willReturn(null);
         given(menuRepository.save(any())).willReturn(menu);
 
         // when
@@ -124,6 +127,36 @@ class MenuServiceTest {
             assertThatThrownBy(() -> menuService.find(1L))
                     .isInstanceOf(EntityNotFoundException.class);
         }
+
+        @Test
+        @DisplayName("메뉴 그룹 하위 메뉴 조회")
+        void findMenus() throws Exception {
+            // given
+            MenuGroup menuGroup = MenuGroup.builder()
+                    .id(1L)
+                    .build();
+
+            List<Menu> menus = List.of(
+                    Menu.builder().name("메뉴 1").content("메뉴 1").price(10000).menuGroup(menuGroup).build(),
+                    Menu.builder().name("메뉴 2").content("메뉴 2").price(10000).menuGroup(menuGroup).build(),
+                    Menu.builder().name("메뉴 3").content("메뉴 3").price(10000).menuGroup(menuGroup).build(),
+                    Menu.builder().name("메뉴 4").content("메뉴 4").price(10000).menuGroup(menuGroup).build()
+            );
+
+            given(menuRepository.findMenus(anyLong())).willReturn(menus);
+
+
+            // when
+            List<Menu> findMenus = menuService.findMenus(menuGroup.getId());
+
+            // then
+            assertThat(findMenus.size()).isEqualTo(4);
+            assertThat(findMenus.get(0).getName()).isEqualTo("메뉴 1");
+            assertThat(findMenus.get(1).getName()).isEqualTo("메뉴 2");
+            assertThat(findMenus.get(2).getName()).isEqualTo("메뉴 3");
+            assertThat(findMenus.get(3).getName()).isEqualTo("메뉴 4");
+        }
+
     }
 
     @Test

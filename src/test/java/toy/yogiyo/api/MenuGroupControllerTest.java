@@ -23,7 +23,6 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.domain.MenuGroupItem;
 import toy.yogiyo.core.menu.dto.MenuAddRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupAddRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupChangeMenuOrderRequest;
@@ -106,7 +105,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-group/add",
+                    .andDo(document("menu-group/add",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -125,12 +124,20 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 전체 조회")
         void getMenuGroups() throws Exception {
             // given
-            Shop shop = Shop.builder().id(1L).build();
+            List<Menu> menus1 = Arrays.asList(
+                    Menu.builder().id(1L).name("메뉴 1").content("메뉴 1 설명").picture("image.png").price(10000).position(1).build(),
+                    Menu.builder().id(2L).name("메뉴 2").content("메뉴 2 설명").picture("image.png").price(10000).position(2).build(),
+                    Menu.builder().id(3L).name("메뉴 3").content("메뉴 3 설명").picture("image.png").price(10000).position(3).build()
+            );
+            List<Menu> menus2 = Arrays.asList(
+                    Menu.builder().id(4L).name("메뉴 4").content("메뉴 4 설명").picture("image.png").price(10000).position(1).build(),
+                    Menu.builder().id(5L).name("메뉴 5").content("메뉴 5 설명").picture("image.png").price(10000).position(2).build(),
+                    Menu.builder().id(6L).name("메뉴 6").content("메뉴 6 설명").picture("image.png").price(10000).position(3).build()
+            );
+
             List<MenuGroup> menuGroups = Arrays.asList(
-                    MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build(),
-                    MenuGroup.builder().id(2L).shop(shop).name("메뉴 그룹2").content("메뉴 그룹2 설명").build(),
-                    MenuGroup.builder().id(3L).shop(shop).name("메뉴 그룹3").content("메뉴 그룹3 설명").build(),
-                    MenuGroup.builder().id(4L).shop(shop).name("메뉴 그룹4").content("메뉴 그룹4 설명").build()
+                    MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").menus(menus1).build(),
+                    MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").menus(menus2).build()
             );
             given(menuGroupService.findMenuGroups(anyLong())).willReturn(menuGroups);
 
@@ -141,13 +148,14 @@ class MenuGroupControllerTest {
             // then
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.menuGroups").isArray())
-                    .andExpect(jsonPath("$.menuGroups.length()").value(4))
+                    .andExpect(jsonPath("$.menuGroups.length()").value(2))
                     .andExpect(jsonPath("$.menuGroups[0].id").value(1))
                     .andExpect(jsonPath("$.menuGroups[1].id").value(2))
-                    .andExpect(jsonPath("$.menuGroups[2].id").value(3))
-                    .andExpect(jsonPath("$.menuGroups[3].id").value(4))
+                    .andExpect(jsonPath("$.menuGroups[0].menus[0].id").value(1))
+                    .andExpect(jsonPath("$.menuGroups[0].menus[1].id").value(2))
+                    .andExpect(jsonPath("$.menuGroups[0].menus[2].id").value(3))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-all",
+                    .andDo(document("menu-group/find-all",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -158,7 +166,13 @@ class MenuGroupControllerTest {
                                     fieldWithPath("menuGroups").type(JsonFieldType.ARRAY).description("메뉴 그룹 Array"),
                                     fieldWithPath("menuGroups[].id").type(JsonFieldType.NUMBER).description("메뉴 그룹 ID"),
                                     fieldWithPath("menuGroups[].name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("menuGroups[].content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
+                                    fieldWithPath("menuGroups[].content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fieldWithPath("menuGroups[].menus").type(JsonFieldType.ARRAY).description("메뉴 Array"),
+                                    fieldWithPath("menuGroups[].menus[].id").type(JsonFieldType.NUMBER).description("메뉴 ID"),
+                                    fieldWithPath("menuGroups[].menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                    fieldWithPath("menuGroups[].menus[].content").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                    fieldWithPath("menuGroups[].menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                                    fieldWithPath("menuGroups[].menus[].picture").type(JsonFieldType.STRING).description("메뉴 사진")
                             )
                     ));
         }
@@ -181,7 +195,7 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.name").value("메뉴 그룹1"))
                     .andExpect(jsonPath("$.content").value("메뉴 그룹1 설명"))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-one",
+                    .andDo(document("menu-group/find-one",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -215,7 +229,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/update",
+                    .andDo(document("menu-group/update",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -244,7 +258,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/delete",
+                    .andDo(document("menu-group/delete",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -269,7 +283,7 @@ class MenuGroupControllerTest {
                     .price(19000)
                     .build();
 
-            given(menuGroupService.addMenu(any())).willReturn(1L);
+            given(menuService.add(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
@@ -281,7 +295,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
-                    .andDo(document("/menu-group/add-menu",
+                    .andDo(document("menu-group/add-menu",
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -303,20 +317,13 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 조회")
         void getMenus() throws Exception {
             // given
-            Shop shop = Shop.builder().id(1L).build();
-            MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build();
-
-            Menu menu1 = Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).build();
-            Menu menu2 = Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).build();
-            Menu menu3 = Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build();
-
-            List<MenuGroupItem> menuGroupItems = Arrays.asList(
-                    MenuGroupItem.builder().id(1L).menuGroup(menuGroup).menu(menu1).build(),
-                    MenuGroupItem.builder().id(2L).menuGroup(menuGroup).menu(menu2).build(),
-                    MenuGroupItem.builder().id(3L).menuGroup(menuGroup).menu(menu3).build()
+            List<Menu> menus = Arrays.asList(
+                Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).build(),
+                Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).build(),
+                Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build()
             );
 
-            given(menuGroupService.findMenus(anyLong())).willReturn(menuGroupItems);
+            given(menuService.findMenus(anyLong())).willReturn(menus);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1)
@@ -330,7 +337,7 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menus[1].name").value("메뉴2"))
                     .andExpect(jsonPath("$.menus[2].name").value("메뉴3"))
                     .andDo(print())
-                    .andDo(document("/menu-group/find-menus",
+                    .andDo(document("menu-group/find-menus",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -352,7 +359,7 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 삭제")
         void deleteMenu() throws Exception {
             // given
-            doNothing().when(menuGroupService).deleteMenu(any());
+            doNothing().when(menuService).delete(any());
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/menu-group/delete-menu/{menuId}", 1)
@@ -362,7 +369,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/delete-menu",
+                    .andDo(document("menu-group/delete-menu",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -391,7 +398,7 @@ class MenuGroupControllerTest {
             result.andExpect(status().isOk())
                     .andExpect(content().string("success"))
                     .andDo(print())
-                    .andDo(document("/menu-group/change-menu-order",
+                    .andDo(document("menu-group/change-menu-order",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),

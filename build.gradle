@@ -41,6 +41,8 @@ dependencies {
     implementation group: 'com.google.api-client', name: 'google-api-client-jackson2', version: '1.30.10'
     compileOnly 'com.google.api-client:google-api-client:1.32.1'
 
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     //querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"

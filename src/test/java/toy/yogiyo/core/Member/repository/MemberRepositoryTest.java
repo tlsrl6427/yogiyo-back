@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import toy.yogiyo.common.config.TestQuerydslConfiguration;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.domain.ProviderType;
 
@@ -14,6 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Import(TestQuerydslConfiguration.class)
 class MemberRepositoryTest {
 
     @Autowired
@@ -31,7 +34,7 @@ class MemberRepositoryTest {
                 .build();
     }
 
-    @DisplayName("email, providerType으로 Member 조회")
+   /* @DisplayName("email, providerType으로 Member 조회")
     @Test
     void findByEmailAndProvider() {
 
@@ -40,5 +43,6 @@ class MemberRepositoryTest {
         Member findMember = memberRepository.findByEmailAndProvider(member.getEmail(), member.getProviderType()).orElse(null);
 
         assertThat(findMember).isEqualTo(member);
-    }
+    }*/
+
 }

@@ -37,7 +37,6 @@ class MemberServiceTest {
     @BeforeEach
     void beforeEach(){
         member = Member.builder()
-                .id(1L)
                 .nickname("test")
                 .email("test@gmail.com")
                 .password("1234")

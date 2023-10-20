@@ -3,7 +3,6 @@ package toy.yogiyo.core.menu.dto;
 import lombok.Builder;
 import lombok.Getter;
 import toy.yogiyo.core.menu.domain.Menu;
-import toy.yogiyo.core.menu.domain.MenuGroupItem;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +13,10 @@ public class MenuGroupGetMenusResponse {
 
     private List<MenuDto> menus;
 
-    public static MenuGroupGetMenusResponse from(List<MenuGroupItem> menuGroupItems) {
+    public static MenuGroupGetMenusResponse from(List<Menu> menus) {
         return MenuGroupGetMenusResponse.builder()
-                .menus(menuGroupItems.stream()
-                        .map(menuGroupItem -> new MenuDto(menuGroupItem.getMenu()))
+                .menus(menus.stream()
+                        .map(MenuDto::new)
                         .collect(Collectors.toList()))
                 .build();
     }

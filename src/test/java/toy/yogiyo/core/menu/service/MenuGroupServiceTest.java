@@ -10,12 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.domain.MenuGroupItem;
-import toy.yogiyo.core.menu.repository.MenuGroupItemRepository;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 import toy.yogiyo.core.shop.domain.Shop;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -31,9 +28,6 @@ class MenuGroupServiceTest {
 
     @Mock
     MenuGroupRepository menuGroupRepository;
-
-    @Mock
-    MenuGroupItemRepository menuGroupItemRepository;
 
     @Mock
     MenuService menuService;
@@ -154,135 +148,36 @@ class MenuGroupServiceTest {
     class MenuGroupMenuTest {
 
         @Test
-        @DisplayName("메뉴 그룹 메뉴 추가")
-        void addMenu() throws Exception {
-            // given
-            MenuGroupItem menuGroupItem = MenuGroupItem.builder()
-                    .id(1L)
-                    .menuGroup(MenuGroup.builder().id(1L).build())
-                    .menu(Menu.builder().id(1L).build())
-                    .build();
-
-            given(menuGroupItemRepository.findMaxOrder(anyLong())).willReturn(5);
-            given(menuGroupItemRepository.save(menuGroupItem)).willReturn(menuGroupItem);
-            given(menuService.add(any())).willReturn(menuGroupItem.getMenu().getId());
-
-
-            // when
-            Long addMenuGroupItemId = menuGroupService.addMenu(menuGroupItem);
-
-            // then
-            assertThat(addMenuGroupItemId).isEqualTo(1L);
-            assertThat(menuGroupItem.getPosition()).isEqualTo(6);
-        }
-
-        @Test
-        @DisplayName("메뉴 그룹 메뉴 조회")
-        void findMenus() throws Exception {
-            // given
-
-            List<MenuGroupItem> menuGroupItems = new ArrayList<>();
-
-            MenuGroup menuGroup = MenuGroup.builder()
-                    .id(1L)
-                    .name("순살 메뉴")
-                    .content("머스타드 + 소금 + 콜라 제공")
-                    .shop(Shop.builder().id(1L).build())
-                    .build();
-
-            for (int i = 0; i < 5; i++) {
-
-                Menu menu = Menu.builder()
-                        .name("메뉴" + i)
-                        .content("메뉴" + i + " 설명")
-                        .price(10000)
-                        .build();
-
-                MenuGroupItem menuGroupItem = MenuGroupItem.builder()
-                        .id(i + 1L)
-                        .position(i + 1)
-                        .menu(menu)
-                        .menuGroup(menuGroup)
-                        .build();
-
-                menuGroupItems.add(menuGroupItem);
-            }
-
-            given(menuGroupItemRepository.findMenus(anyLong())).willReturn(menuGroupItems);
-
-
-            // when
-            List<MenuGroupItem> menus = menuGroupService.findMenus(menuGroup.getId());
-
-            // then
-            assertThat(menus.size()).isEqualTo(5);
-            for (int i = 0; i < 5; i++) {
-                assertThat(menus.get(i).getMenu().getName()).isEqualTo("메뉴" + i);
-            }
-        }
-
-        @Test
         @DisplayName("메뉴 그룹 메뉴 순서 변경")
         void changeMenuOrder() throws Exception {
             // given
-            List<MenuGroupItem> menuGroupItems = Arrays.asList(
-                    MenuGroupItem.builder().id(1L).menu(Menu.builder().id(1L).build()).build(),
-                    MenuGroupItem.builder().id(2L).menu(Menu.builder().id(2L).build()).build(),
-                    MenuGroupItem.builder().id(3L).menu(Menu.builder().id(3L).build()).build(),
-                    MenuGroupItem.builder().id(4L).menu(Menu.builder().id(4L).build()).build(),
-                    MenuGroupItem.builder().id(5L).menu(Menu.builder().id(5L).build()).build()
+            List<Menu> menus = Arrays.asList(
+                    Menu.builder().id(1L).build(),
+                    Menu.builder().id(2L).build(),
+                    Menu.builder().id(3L).build(),
+                    Menu.builder().id(4L).build(),
+                    Menu.builder().id(5L).build()
             );
 
-            given(menuGroupItemRepository.findMenus(anyLong())).willReturn(menuGroupItems);
+            given(menuService.findMenus(anyLong())).willReturn(menus);
 
-
-            List<MenuGroupItem> params = Arrays.asList(
-                    MenuGroupItem.builder().id(5L).menu(Menu.builder().id(5L).build()).build(),
-                    MenuGroupItem.builder().id(4L).menu(Menu.builder().id(4L).build()).build(),
-                    MenuGroupItem.builder().id(3L).menu(Menu.builder().id(3L).build()).build(),
-                    MenuGroupItem.builder().id(2L).menu(Menu.builder().id(2L).build()).build(),
-                    MenuGroupItem.builder().id(1L).menu(Menu.builder().id(1L).build()).build()
+            List<Menu> params = Arrays.asList(
+                    Menu.builder().id(5L).build(),
+                    Menu.builder().id(4L).build(),
+                    Menu.builder().id(3L).build(),
+                    Menu.builder().id(2L).build(),
+                    Menu.builder().id(1L).build()
             );
 
             // when
             menuGroupService.changeMenuOrder(1L, params);
 
             // then
-            assertThat(menuGroupItems.get(0).getPosition()).isEqualTo(5);
-            assertThat(menuGroupItems.get(1).getPosition()).isEqualTo(4);
-            assertThat(menuGroupItems.get(2).getPosition()).isEqualTo(3);
-            assertThat(menuGroupItems.get(3).getPosition()).isEqualTo(2);
-            assertThat(menuGroupItems.get(4).getPosition()).isEqualTo(1);
-        }
-
-        @Test
-        @DisplayName("메뉴 그룹 메뉴 삭제")
-        void deleteMenu() throws Exception {
-            // given
-            MenuGroupItem menuGroupItem = MenuGroupItem.builder()
-                    .id(1L)
-                    .position(1)
-                    .menu(Menu.builder()
-                            .id(2L)
-                            .name("치킨")
-                            .content("설명")
-                            .price(15000)
-                            .build())
-                    .build();
-
-            MenuGroupItem deleteParam = MenuGroupItem.builder().id(1L)
-                    .menu(Menu.builder().id(2L).build())
-                    .build();
-
-            given(menuGroupItemRepository.findByMenuId(anyLong())).willReturn(Optional.of(menuGroupItem));
-            doNothing().when(menuService).delete(any());
-
-            // when
-            menuGroupService.deleteMenu(deleteParam);
-
-            // then
-            then(menuService).should().delete(menuGroupItem.getMenu());
-            then(menuGroupItemRepository).should().delete(menuGroupItem);
+            assertThat(menus.get(0).getPosition()).isEqualTo(5);
+            assertThat(menus.get(1).getPosition()).isEqualTo(4);
+            assertThat(menus.get(2).getPosition()).isEqualTo(3);
+            assertThat(menus.get(3).getPosition()).isEqualTo(2);
+            assertThat(menus.get(4).getPosition()).isEqualTo(1);
         }
 
     }

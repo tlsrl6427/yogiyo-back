@@ -6,9 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
-import toy.yogiyo.common.exception.FileIOException;
-import toy.yogiyo.common.file.ImageFileHandler;
-import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.CategoryCreateRequest;
 import toy.yogiyo.core.category.dto.CategoryResponse;
@@ -24,13 +21,11 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final ImageFileHandler imageFileHandler;
 
     @Transactional
-    public Long createCategory(CategoryCreateRequest request) throws IOException {
+    public Long createCategory(CategoryCreateRequest request) {
         validationDuplicatedName(request.getName());
-        String storedName = imageFileHandler.store(request.getPicture());
-        Category category = request.toEntity(ImageFileUtil.getFilePath(storedName));
+        Category category = request.toEntity();
         return categoryRepository.save(category).getId();
     }
 
@@ -38,17 +33,6 @@ public class CategoryService {
     public void update(Long categoryId, CategoryUpdateRequest request) throws IOException {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
-
-        if (!request.getPicture().isEmpty()) {
-            if (!imageFileHandler.remove(ImageFileUtil.extractFilename(category.getPicture()))) {
-                throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
-            }
-
-            String storedName = imageFileHandler.store(request.getPicture());
-            String imagePath = ImageFileUtil.getFilePath(storedName);
-
-            category.changePicture(imagePath);
-        }
 
         category.changeName(request.getName());
     }
@@ -68,14 +52,16 @@ public class CategoryService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
+    public Category findCategory(String categoryName) {
+        return categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
+    }
+
     @Transactional
     public void delete(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
-
-        if (!imageFileHandler.remove(ImageFileUtil.extractFilename(category.getPicture()))) {
-            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
-        }
 
         categoryRepository.delete(category);
     }

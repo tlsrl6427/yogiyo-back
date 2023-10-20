@@ -9,18 +9,16 @@ public class CategoryDto {
 
     private Long id;
     private String name;
-    private String picture;
 
     public CategoryDto() {
     }
 
-    public CategoryDto(Long id, String name, String picture) {
+    public CategoryDto(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.picture = picture;
     }
 
     public Category toEntity() {
-        return new Category(id, name, picture);
+        return new Category(id, name);
     }
 }

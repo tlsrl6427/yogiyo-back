@@ -1,6 +1,5 @@
 package toy.yogiyo.core.category.service;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
-import toy.yogiyo.common.file.ImageFileHandler;
-import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.CategoryCreateRequest;
 import toy.yogiyo.core.category.dto.CategoryResponse;
@@ -37,14 +34,6 @@ class CategoryServiceTest {
     @Mock
     CategoryRepository categoryRepository;
 
-    @Mock
-    ImageFileHandler imageFileHandler;
-
-    @BeforeAll
-    static void beforeAll() {
-        new ImageFileUtil().setPath("/images/");
-    }
-
     @Nested
     @DisplayName("카테고리 추가")
     class Create {
@@ -54,10 +43,12 @@ class CategoryServiceTest {
         void success() throws Exception {
             // given
             CategoryCreateRequest createRequest = givenCreateRequest();
-            Category category = new Category(1L, createRequest.getName(), "/images/image.png");
+            Category category = Category.builder()
+                    .id(1L)
+                    .name(createRequest.getName())
+                    .build();
 
-            when(categoryRepository.existsByName(createRequest.getName())).thenReturn(false);
-            when(imageFileHandler.store(createRequest.getPicture())).thenReturn("image.png");
+            when(categoryRepository.existsByName(anyString())).thenReturn(false);
             when(categoryRepository.save(any())).thenReturn(category);
 
             // when
@@ -66,7 +57,6 @@ class CategoryServiceTest {
             // then
             assertThat(categoryId).isEqualTo(category.getId());
             verify(categoryRepository).existsByName(createRequest.getName());
-            verify(imageFileHandler).store(createRequest.getPicture());
             verify(categoryRepository).save(any());
         }
 
@@ -75,7 +65,7 @@ class CategoryServiceTest {
         void failDuplicateName() throws Exception {
             // given
             CategoryCreateRequest createRequest = givenCreateRequest();
-            when(categoryRepository.existsByName(createRequest.getName())).thenReturn(true);
+            when(categoryRepository.existsByName(anyString())).thenReturn(true);
 
             // when & then
             assertThatThrownBy(() -> categoryService.createCategory(createRequest))
@@ -86,10 +76,8 @@ class CategoryServiceTest {
         }
 
         private CategoryCreateRequest givenCreateRequest() {
-            MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
             CategoryCreateRequest createRequest = new CategoryCreateRequest();
             createRequest.setName("치킨");
-            createRequest.setPicture(picture);
 
             return createRequest;
         }
@@ -104,29 +92,12 @@ class CategoryServiceTest {
         void success() throws Exception {
             // given
             CategoryUpdateRequest updateRequest = givenUpdateRequest();
-            Category category = new Category(1L, updateRequest.getName(), "/images/image.png");
+            Category category = Category.builder()
+                    .id(1L)
+                    .name(updateRequest.getName())
+                    .build();
 
-            when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
-            when(imageFileHandler.remove(anyString())).thenReturn(true);
-            when(imageFileHandler.store(updateRequest.getPicture())).thenReturn("image.png");
-
-            // when
-            categoryService.update(category.getId(), updateRequest);
-
-            // then
-            assertThat(category.getName()).isEqualTo(updateRequest.getName());
-            assertThat(category.getPicture()).isEqualTo(ImageFileUtil.getFilePath("image.png"));
-        }
-
-        @Test
-        @DisplayName("카테고리 수정 이름만 변경")
-        void changeName() throws Exception {
-            // given
-            CategoryUpdateRequest updateRequest = givenUpdateRequest();
-            updateRequest.setPicture(new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, new byte[0]));
-            Category category = new Category(1L, updateRequest.getName(), "/images/image.png");
-
-            when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
+            when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
 
             // when
             categoryService.update(category.getId(), updateRequest);
@@ -136,10 +107,8 @@ class CategoryServiceTest {
         }
 
         private CategoryUpdateRequest givenUpdateRequest() {
-            MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
             CategoryUpdateRequest updateRequest = new CategoryUpdateRequest();
             updateRequest.setName("한식");
-            updateRequest.setPicture(picture);
 
             return updateRequest;
         }
@@ -154,7 +123,7 @@ class CategoryServiceTest {
         void success() throws Exception {
             // given
             Category category = givenCategory();
-            when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
+            when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
 
             // when
             Category findCategory = categoryService.findCategory(category.getId());
@@ -205,7 +174,6 @@ class CategoryServiceTest {
             Category category = givenCategory();
             when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
             doNothing().when(categoryRepository).delete(category);
-            when(imageFileHandler.remove(any())).thenReturn(true);
 
             // when
             categoryService.delete(category.getId());
@@ -213,7 +181,6 @@ class CategoryServiceTest {
             // then
             verify(categoryRepository).findById(category.getId());
             verify(categoryRepository).delete(category);
-            verify(imageFileHandler).remove(any());
         }
 
         @Test
@@ -230,41 +197,24 @@ class CategoryServiceTest {
             // then
             verify(categoryRepository).findById(category.getId());
         }
-
-        @Test
-        @DisplayName("사진이 삭제되지 않으면 에러 발생")
-        void failPicture() throws Exception {
-            // given
-            Category category = givenCategory();
-            when(categoryRepository.findById(category.getId())).thenReturn(Optional.of(category));
-            when(imageFileHandler.remove(any())).thenReturn(false);
-
-            // when & then
-            assertThatThrownBy(() -> categoryService.delete(category.getId()))
-                    .isInstanceOf(FileIOException.class);
-
-            // then
-            verify(categoryRepository).findById(category.getId());
-            verify(imageFileHandler).remove(any());
-        }
     }
 
     private Category givenCategory() {
-        return new Category(1L, "분식", "/images/picture.png");
+        return new Category(1L, "분식");
     }
 
     private List<Category> givenCategories() {
         return List.of(
-                new Category(1L, "치킨", "/images/picture.png"),
-                new Category(2L, "한식", "/images/picture.png"),
-                new Category(3L, "중국집", "/images/picture.png"),
-                new Category(4L, "버거", "/images/picture.png"),
-                new Category(5L, "피자/양식", "/images/picture.png"),
-                new Category(6L, "분식", "/images/picture.png"),
-                new Category(7L, "족발/보쌈", "/images/picture.png"),
-                new Category(8L, "카페/디저트", "/images/picture.png"),
-                new Category(9L, "일식/돈까스", "/images/picture.png"),
-                new Category(10L, "찜/탕", "/images/picture.png")
+                new Category(1L, "치킨"),
+                new Category(2L, "한식"),
+                new Category(3L, "중국집"),
+                new Category(4L, "버거"),
+                new Category(5L, "피자/양식"),
+                new Category(6L, "분식"),
+                new Category(7L, "족발/보쌈"),
+                new Category(8L, "카페/디저트"),
+                new Category(9L, "일식/돈까스"),
+                new Category(10L, "찜/탕")
         );
     }
 }

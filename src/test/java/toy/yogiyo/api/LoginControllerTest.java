@@ -91,7 +91,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/default/login",
+                        document("default/login",
                             requestFields(
                                     fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                     fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
@@ -133,7 +133,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/social/login",
+                        document("social/login",
                                 requestFields(
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),
@@ -176,7 +176,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/owner/default/login",
+                        document("owner/default/login",
                                 requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
@@ -218,7 +218,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/owner/social/login",
+                        document("owner/social/login",
                                 requestFields(
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),

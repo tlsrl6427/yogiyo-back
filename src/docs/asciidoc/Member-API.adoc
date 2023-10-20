@@ -11,13 +11,13 @@ operation::member/join[snippets='http-request,http-response,request-fields,respo
 === 멤버 기본 로그인
 `POST /memberLogin`
 
-operation::member/default/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
+operation::default/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-social-login]]
 === 멤버 소셜 로그인
 `POST /memberLogin`
 
-operation::member/social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
+operation::social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-mypage]]
 === 멤버 마이페이지 조회

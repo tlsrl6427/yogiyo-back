@@ -1,12 +1,10 @@
 package toy.yogiyo.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -17,12 +15,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.domain.ProviderType;
-import toy.yogiyo.core.Member.dto.MemberJoinRequest;
-import toy.yogiyo.core.Member.dto.MemberJoinResponse;
-import toy.yogiyo.core.Member.dto.MemberMypageResponse;
-import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.dto.OwnerJoinRequest;
 import toy.yogiyo.core.owner.dto.OwnerJoinResponse;
@@ -30,7 +23,6 @@ import toy.yogiyo.core.owner.dto.OwnerMypageResponse;
 import toy.yogiyo.core.owner.dto.OwnerUpdateRequest;
 import toy.yogiyo.core.owner.service.OwnerService;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -135,7 +127,7 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/owner/mypage",
+                        document("owner/mypage",
                                 requestHeaders(
                                         headerWithName("Authorization").description("Access Token")
                                 ),

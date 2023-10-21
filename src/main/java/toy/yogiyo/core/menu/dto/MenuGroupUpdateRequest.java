@@ -1,11 +1,15 @@
 package toy.yogiyo.core.menu.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuGroupUpdateRequest {
 
     private String name;

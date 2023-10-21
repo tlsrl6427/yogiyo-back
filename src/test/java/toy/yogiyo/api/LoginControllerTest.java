@@ -1,8 +1,6 @@
 package toy.yogiyo.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.json.Json;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,23 +13,18 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.common.login.service.LoginService;
 import toy.yogiyo.common.security.jwt.JwtProvider;
-import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.domain.ProviderType;
 
-import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -91,7 +84,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/default/login",
+                        document("default/login",
                             requestFields(
                                     fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                     fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
@@ -133,7 +126,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/social/login",
+                        document("social/login",
                                 requestFields(
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),
@@ -176,7 +169,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/owner/default/login",
+                        document("owner/default/login",
                                 requestFields(
                                         fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
@@ -218,7 +211,7 @@ class LoginControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(
-                        document("/owner/social/login",
+                        document("owner/social/login",
                                 requestFields(
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),

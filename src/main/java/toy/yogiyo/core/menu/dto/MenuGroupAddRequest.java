@@ -1,12 +1,16 @@
 package toy.yogiyo.core.menu.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.shop.domain.Shop;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuGroupAddRequest {
 
     private Long shopId;

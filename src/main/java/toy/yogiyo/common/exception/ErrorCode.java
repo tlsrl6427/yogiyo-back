@@ -37,6 +37,10 @@ public enum ErrorCode {
 
     SIGNATUREMENU_NOT_FOUND(400, "SM_001", "대표 메뉴를 찾을 수 없습니다."),
 
+    MENUOPTION_NOT_FOUND(400, "MO_001", "옵션을 찾을 수 없습니다."),
+
+    MENUOPTIONGROUP_NOT_FOUND(400, "MOG_001", "옵션 그룹을 찾을 수 없습니다."),
+
     FILE_NOT_REMOVED(400, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다.");
 

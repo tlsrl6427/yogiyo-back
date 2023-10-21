@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.Like.domain.Like;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -24,6 +24,9 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
     @Builder
     public Member(Long id, String nickname, String email, String password, ProviderType providerType) {
         this.id = id;
@@ -35,5 +38,9 @@ public class Member extends BaseTimeEntity {
 
     public void update(Member member){
         if(this.nickname != member.getNickname()) this.nickname = member.getNickname();
+    }
+
+    public void addLike(Like like){
+        this.likes.add(like);
     }
 }

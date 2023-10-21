@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -15,7 +14,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcConfigurer;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Member.domain.ProviderType;
@@ -25,10 +23,8 @@ import toy.yogiyo.core.Member.dto.MemberMypageResponse;
 import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.Member.service.MemberService;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
@@ -36,9 +32,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,14 +61,13 @@ class MemberControllerTest {
         objectMapper = new ObjectMapper();
 
         member = Member.builder()
-                .id(1L)
                 .nickname("test")
                 .email("test@gmail.com")
                 .password("1234")
                 .build();
     }
 
-    @DisplayName("회원가입 API")
+    @DisplayName("멤버 회원가입 API")
     @Test
     void join() throws Exception{
         MemberJoinRequest memberJoinRequest = MemberJoinRequest.builder()
@@ -115,7 +107,7 @@ class MemberControllerTest {
         verify(memberService).join(any());
     }
 
-    @DisplayName("마이페이지 조회 API")
+    @DisplayName("멤버 마이페이지 조회 API")
     @Test
     void showMypage() throws Exception{
         MemberMypageResponse memberMypageResponse = MemberMypageResponse.builder()
@@ -132,7 +124,7 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                         .andDo(
-                                document("/member/mypage",
+                                document("member/mypage",
                                     requestHeaders(
                                             headerWithName("Authorization").description("Access Token")
                                     ),
@@ -146,7 +138,7 @@ class MemberControllerTest {
         verify(memberService).findOne(any());
     }
 
-    @DisplayName("회원정보 업데이트")
+    @DisplayName("멤버정보 업데이트 API")
     @Test
     void update() throws Exception{
         MemberUpdateRequest memberUpdateRequest = MemberUpdateRequest.builder()
@@ -173,7 +165,7 @@ class MemberControllerTest {
                 );
     }
 
-    @DisplayName("회원삭제 API")
+    @DisplayName("멤버삭제 API")
     @Test
     void delete_member() throws Exception{
 

@@ -10,7 +10,12 @@ import toy.yogiyo.common.login.dto.LoginResponse;
 
 public class KakaoProvider implements OAuthProvider {
     @Override
-    public LoginResponse getUserInfo(LoginRequest request) {
+    public LoginResponse getMemberInfo(LoginRequest request) {
+        return null;
+    }
+
+    @Override
+    public LoginResponse getOwnerInfo(LoginRequest request) {
         return null;
     }
 }

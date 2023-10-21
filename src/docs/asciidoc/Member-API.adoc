@@ -2,37 +2,37 @@
 == Member API
 
 [[Member-join]]
-=== 회원가입
+=== 멤버 회원가입
 `POST /member/join`
 
 operation::member/join[snippets='http-request,http-response,request-fields,response-fields']
 
 [[Member-default-login]]
-=== 기본 로그인
-`POST /login`
+=== 멤버 기본 로그인
+`POST /memberLogin`
 
 operation::default/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-social-login]]
-=== 소셜 로그인
-`POST /login`
+=== 멤버 소셜 로그인
+`POST /memberLogin`
 
 operation::social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-mypage]]
-=== 마이페이지 조회
+=== 멤버 마이페이지 조회
 `POST /member/mypage`
 
 operation::member/mypage[snippets='http-request,http-response,request-headers,response-fields']
 
 [[Member-update]]
-=== 회원정보 수정
+=== 멤버 회원정보 수정
 `POST /member/update`
 
 operation::member/update[snippets='http-request,http-response,request-headers,request-fields']
 
 [[Member-delete]]
-=== 회원삭제
+=== 멤버삭제
 `POST /member/delete`
 
 operation::member/delete[snippets='http-request,http-response,request-headers']

@@ -1,25 +1,35 @@
 package toy.yogiyo.core.owner.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.Member.domain.ProviderType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity
-public class Owner {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Owner extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
     private Long id;
 
-    public Owner() {
+    private String nickname;
+    private String email;
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
+
+    @Builder
+    public Owner(Long id, String nickname, String email, String password, ProviderType providerType) {
+        this.id = id;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.providerType = providerType;
     }
 
-    public Owner(Long id) {
-        this.id = id;
+    public void update(Owner owner) {
+        if(this.nickname != owner.getNickname()) this.nickname = owner.getNickname();
     }
 }

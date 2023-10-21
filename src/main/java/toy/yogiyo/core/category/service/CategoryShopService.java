@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.util.LatLngDistanceCalculator;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.category.dto.CategoryDto;
 import toy.yogiyo.core.category.dto.CategoryShopCondition;
 import toy.yogiyo.core.category.dto.CategoryShopResponse;
 import toy.yogiyo.core.category.repository.CategoryShopQueryRepository;
@@ -23,32 +22,7 @@ import java.util.List;
 public class CategoryShopService {
 
     private final CategoryShopQueryRepository categoryShopQueryRepository;
-    private final CategoryShopRepository categoryShopRepository;
-    private final CategoryService categoryService;
 
-    @Transactional
-    public void save(List<CategoryDto> categoryDto, Shop shop) {
-
-        List<CategoryShop> categoryShops = new ArrayList<>();
-
-        for (CategoryDto dto : categoryDto) {
-            Category category = categoryService.findCategory(dto.getId());
-            CategoryShop categoryShop = new CategoryShop();
-            categoryShop.setCategory(category, shop);
-            categoryShops.add(categoryShop);
-        }
-
-        categoryShopRepository.saveAll(categoryShops);
-    }
-
-    @Transactional
-    public void changeCategory(List<CategoryDto> categoryDto, Shop shop) {
-        List<CategoryShop> categoryShop = shop.getCategoryShop();
-        categoryShopRepository.deleteAll(categoryShop);
-        categoryShop.clear();
-
-        save(categoryDto, shop);
-    }
 
     public Slice<CategoryShopResponse> findShop(Long categoryId, CategoryShopCondition condition, Pageable pageable) {
         Slice<CategoryShop> result = categoryShopQueryRepository.findAround(categoryId, condition, pageable);
@@ -61,6 +35,5 @@ public class CategoryShopService {
                         condition.getLatitude(), condition.getLongitude())
         ));
     }
-
 
 }

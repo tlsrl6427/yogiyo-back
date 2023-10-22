@@ -1,6 +1,8 @@
 package toy.yogiyo.common.domain;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import net.bytebuddy.asm.Advice;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +15,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @EntityListeners(value = AuditingEntityListener.class)
 @MappedSuperclass
 public class BaseTimeEntity {

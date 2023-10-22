@@ -1,0 +1,8 @@
+[[Management-Review-API]]
+== Management Review API
+
+[[Review-Shop]]
+=== 리뷰 확인
+`GET /menagement/review/shop/{shopId}`
+
+operation::management/review/shop[snippets='http-request,http-response,path-parameters,request-parameters,response-fields']

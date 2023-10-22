@@ -129,12 +129,12 @@ class OrderControllerTest {
                                         fieldWithPath("orderItems[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
                                         fieldWithPath("orderItems[].price").type(JsonFieldType.NUMBER).description("가격"),
                                         fieldWithPath("orderItems[].quantity").type(JsonFieldType.NUMBER).description("개수"),
-                                        fieldWithPath("orderItems[].order").ignored(),
+//                                        fieldWithPath("orderItems[].order").ignored(),
 
                                         fieldWithPath("orderItems[].orderItemOptions[].id").ignored(),
                                         fieldWithPath("orderItems[].orderItemOptions[].optionName").type(JsonFieldType.STRING).description("옵션 이름"),
                                         fieldWithPath("orderItems[].orderItemOptions[].price").type(JsonFieldType.NUMBER).description("가격"),
-                                        fieldWithPath("orderItems[].orderItemOptions[].orderItem").ignored(),
+//                                        fieldWithPath("orderItems[].orderItemOptions[].orderItem").ignored(),
 
                                         fieldWithPath("requestMsg").type(JsonFieldType.STRING).description("요청사항"),
                                         fieldWithPath("requestDoor").type(JsonFieldType.BOOLEAN).description("문 앞에 두기 여부"),

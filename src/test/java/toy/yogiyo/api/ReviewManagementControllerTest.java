@@ -8,9 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.PayloadDocumentation;
@@ -25,8 +27,10 @@ import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Review.domain.Review;
 import toy.yogiyo.core.Review.domain.ReviewImage;
+import toy.yogiyo.core.Review.dto.ReplyRequest;
 import toy.yogiyo.core.Review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.Review.repository.ReviewQueryRepository;
+import toy.yogiyo.core.Review.service.ReviewManagementService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -48,6 +53,9 @@ class ReviewManagementControllerTest {
 
     @MockBean
     ReviewQueryRepository reviewQueryRepository;
+
+    @MockBean
+    ReviewManagementService reviewManagementService;
 
     @Autowired
     MockMvc mockMvc;
@@ -145,4 +153,62 @@ class ReviewManagementControllerTest {
                         )
                 ));
     }
+
+    @Test
+    @DisplayName("답변")
+    void reply() throws Exception {
+        // given
+        doNothing().when(reviewManagementService).reply(anyLong(), anyString());
+        ReplyRequest request = ReplyRequest.builder()
+                .reply("답변")
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/management/review/{reviewId}/reply", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print())
+                .andDo(document("management/review/reply",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("reviewId").description("리뷰 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("reply").type(JsonFieldType.STRING).description("답변 내용")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("답변 삭제")
+    void deleteReply() throws Exception {
+        // given
+        doNothing().when(reviewManagementService).deleteReply(anyLong());
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/management/review/{reviewId}/reply", 1)
+                .header(HttpHeaders.AUTHORIZATION, jwt));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(content().string("success"))
+                .andDo(print())
+                .andDo(document("management/review/reply",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                        ),
+                        pathParameters(
+                                parameterWithName("reviewId").description("리뷰 ID")
+                        )
+                ));
+    }
+
+
 }

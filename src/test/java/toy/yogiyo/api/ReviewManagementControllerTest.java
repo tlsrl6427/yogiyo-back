@@ -200,7 +200,7 @@ class ReviewManagementControllerTest {
         result.andExpect(status().isOk())
                 .andExpect(content().string("success"))
                 .andDo(print())
-                .andDo(document("management/review/reply",
+                .andDo(document("management/review/reply-delete",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),

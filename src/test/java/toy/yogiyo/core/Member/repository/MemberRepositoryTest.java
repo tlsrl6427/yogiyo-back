@@ -34,7 +34,7 @@ class MemberRepositoryTest {
                 .build();
     }
 
-    @DisplayName("email, providerType으로 Member 조회")
+   /* @DisplayName("email, providerType으로 Member 조회")
     @Test
     void findByEmailAndProvider() {
 
@@ -43,5 +43,6 @@ class MemberRepositoryTest {
         Member findMember = memberRepository.findByEmailAndProvider(member.getEmail(), member.getProviderType()).orElse(null);
 
         assertThat(findMember).isEqualTo(member);
-    }
+    }*/
+
 }

@@ -1,0 +1,14 @@
+[[Like-API]]
+== Like API
+
+[[Like-toggle]]
+=== 찜하기(toggle)
+`POST /like/{shopid}`
+
+operation::like[snippets='http-request,http-response,request-headers,path-parameters']
+
+[[Review-memberReview]]
+=== 멤버 리뷰 조회
+`GET /like/scroll`
+
+operation::like/scroll[snippets='http-request,http-response,request-headers,request-parameters,response-fields']

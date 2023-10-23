@@ -4,10 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.Like.domain.Like;
 import toy.yogiyo.core.Address.domain.MemberAddress;
-import toy.yogiyo.core.Order.domain.Order;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,7 +26,11 @@ public class Member extends BaseTimeEntity {
     private ProviderType providerType;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberAddress> memberAddresses = new ArrayList<>();
+
 
     @Builder
     public Member(Long id, String nickname, String email, String password, ProviderType providerType, List<MemberAddress> memberAddresses) {
@@ -43,8 +46,11 @@ public class Member extends BaseTimeEntity {
         if(this.nickname != member.getNickname()) this.nickname = member.getNickname();
     }
 
+    public void addLike(Like like){
+        this.likes.add(like);
+    }
     public void addMemberAddresses(MemberAddress memberAddress){
-        this.getMemberAddresses().add(memberAddress);
+        this.memberAddresses.add(memberAddress);
     }
 
 }

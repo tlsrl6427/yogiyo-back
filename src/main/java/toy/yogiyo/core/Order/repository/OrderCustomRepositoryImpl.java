@@ -4,10 +4,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.Like.domain.QLike;
 import toy.yogiyo.core.Order.domain.Order;
 
 import java.util.List;
 
+import static toy.yogiyo.core.Like.domain.QLike.like;
 import static toy.yogiyo.core.Order.domain.QOrder.order;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
@@ -16,28 +18,6 @@ import static toy.yogiyo.core.shop.domain.QShop.shop;
 public class OrderCustomRepositoryImpl implements OrderCustomRepository{
 
     private final JPAQueryFactory jpaQueryFactory;
-
-    /*@Override
-    public List<OrderHistory> scrollOrderDetails(Long memberId, Long lastId) {
-        return jpaQueryFactory.select(Projections.constructor(OrderHistory.class,
-                            order.id.as("orderId"),
-                            order.createdAt.as("orderTime"),
-                            order.orderType,
-                            order.status,
-                            shop.name.as("shopName"),
-                            shop.id.as("shopId"),
-                            //menuName
-                            shop.icon.as("shopImg")
-                            //menuCount
-                            //totalMenuCount
-                        ))
-                .from(order)
-                .leftJoin(order.shop, shop)
-                .where(order.member.id.eq(memberId))
-                .orderBy(member.id.desc())
-                .offset(lastId)
-                .limit(6L).fetch();
-    }*/
 
     @Override
     public List<Order> scrollOrders(Long memberId, Long lastId) {

@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import toy.yogiyo.common.config.TestQuerydslConfiguration;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.owner.domain.Owner;
@@ -20,6 +22,7 @@ import java.util.List;
 
 
 @DataJpaTest
+@Import(TestQuerydslConfiguration.class)
 class MenuPermissionEvaluatorTest {
 
     @Autowired

@@ -9,6 +9,7 @@ import toy.yogiyo.core.Member.domain.Member;
 import toy.yogiyo.core.Order.domain.Order;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class Review extends BaseTimeEntity {
 
     private String content;
     private String ownerReply;
+    private LocalDateTime ownerReplyCreatedAt;
 
     private Long shopId;
     private String shopName;
@@ -42,17 +44,25 @@ public class Review extends BaseTimeEntity {
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
     @Builder
-    public Review(Long id, float tasteScore, float quantityScore, float deliveryScore, String content, String ownerReply, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
+    public Review(Long id, float tasteScore, float quantityScore, float deliveryScore, String content, String ownerReply, LocalDateTime ownerReplyCreatedAt, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
         this.id = id;
         this.tasteScore = tasteScore;
         this.quantityScore = quantityScore;
         this.deliveryScore = deliveryScore;
         this.content = content;
         this.ownerReply = ownerReply;
+        this.ownerReplyCreatedAt = ownerReplyCreatedAt;
         this.shopId = shopId;
         this.shopName = shopName;
         this.member = member;
         this.order = order;
         this.reviewImages = reviewImages;
+    }
+
+    public void changeOwnerReply(String reply) {
+        if (this.ownerReply == null) {
+            this.ownerReplyCreatedAt = LocalDateTime.now();
+        }
+        this.ownerReply = reply;
     }
 }

@@ -1,5 +1,6 @@
-package toy.yogiyo.core.menuoption.service;
+package toy.yogiyo.core.Review.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,28 +13,26 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import toy.yogiyo.common.config.TestQuerydslConfiguration;
-import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
+import toy.yogiyo.core.Review.domain.Review;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
-
-@DataJpaTest
 @Import(TestQuerydslConfiguration.class)
-class MenuOptionGroupPermissionEvaluatorTest {
+@DataJpaTest
+class ReviewManagementPermissionEvaluatorTest {
 
     @Autowired
     EntityManager em;
 
     @Autowired
-    MenuOptionGroupPermissionEvaluator menuOptionGroupPermissionEvaluator;
+    ReviewManagementPermissionEvaluator reviewManagementPermissionEvaluator;
 
     @Test
-    @DisplayName("옵션 그룹 수정 권한 체크")
-    void hasWritePermission() {
+    @DisplayName("옵션 수정 권한 체크")
+    void hasPermission() {
         // given
         Owner owner = Owner.builder()
                 .nickname("점주")
@@ -46,31 +45,29 @@ class MenuOptionGroupPermissionEvaluatorTest {
                 .build();
         em.persist(shop);
 
-        MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
-                .shop(shop)
-                .name("옵션그룹")
+        Review review = Review.builder()
+                .shopId(shop.getId())
+                .content("리뷰")
                 .build();
-        em.persist(menuOptionGroup);
+        em.persist(review);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(owner, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         // when
-        boolean hasWritePermission = menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, menuOptionGroup.getId());
+        boolean hasPermission = reviewManagementPermissionEvaluator.hasPermission(authentication, review.getId());
 
         // then
-        Assertions.assertThat(hasWritePermission).isTrue();
+        Assertions.assertThat(hasPermission).isTrue();
     }
 
     @TestConfiguration
     public static class Config {
-
         @Autowired
-        EntityManager em;
+        JPAQueryFactory jpaQueryFactory;
 
         @Bean
-        public MenuOptionGroupPermissionEvaluator menuOptionGroupPermissionEvaluator() {
-            return new MenuOptionGroupPermissionEvaluator(em);
+        public ReviewManagementPermissionEvaluator reviewManagementPermissionEvaluator() {
+            return new ReviewManagementPermissionEvaluator(jpaQueryFactory);
         }
-
     }
 }

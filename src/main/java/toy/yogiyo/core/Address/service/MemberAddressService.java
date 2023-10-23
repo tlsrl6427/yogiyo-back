@@ -1,6 +1,7 @@
 package toy.yogiyo.core.Address.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MemberAddressService {
 
     private final MemberAddressRepository memberAddressRepository;
@@ -34,6 +36,7 @@ public class MemberAddressService {
         member.addMemberAddresses(request.toMemberAddress());
     }
 
+    @Transactional(readOnly = true)
     public MemberAddressResponse getAddresses(Member member){
         List<MemberAddress> findMemberAddress = memberAddressRepository.findByMemberId(member.getId());
         return MemberAddressResponse.from(findMemberAddress);

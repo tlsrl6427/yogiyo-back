@@ -1,0 +1,20 @@
+[[MemberAddress-API]]
+== MemberAddress API
+
+[[MemberAddress-register]]
+=== 멤버 주소 등록
+`POST /address/register`
+
+operation::address/register[snippets='http-request,http-response,request-headers,request-fields']
+
+[[MemberAddress-view]]
+=== 멤버 주소 조회
+`GET /address/view`
+
+operation::address/view[snippets='http-request,http-response,request-headers,response-fields']
+
+[[MemberAddress-delete]]
+=== 멤버 주소 삭제
+`DELETE /address/{memberAddressId}`
+
+operation::address[snippets='http-request,http-response,request-headers,path-parameters']

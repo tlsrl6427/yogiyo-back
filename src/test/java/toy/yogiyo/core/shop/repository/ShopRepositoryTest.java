@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
+import toy.yogiyo.common.config.TestQuerydslConfiguration;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
@@ -18,6 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
 @Transactional
+@Import(TestQuerydslConfiguration.class)
 class ShopRepositoryTest {
 
     @Autowired

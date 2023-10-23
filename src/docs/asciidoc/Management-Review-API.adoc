@@ -1,0 +1,21 @@
+[[Management-Review-API]]
+== Management Review API
+
+[[Review-Shop]]
+=== 리뷰 확인
+`GET /management/review/shop/{shopId}`
+
+operation::management/review/shop[snippets='http-request,http-response,path-parameters,request-parameters,response-fields']
+
+[[Review-Reply]]
+=== 답변 작성/수정
+`PATCH /management/review/{reviewId}/reply`
+
+operation::management/review/reply[snippets='http-request,http-response,path-parameters,request-headers,request-fields']
+
+[[Review-Reply-Delete]]
+=== 답변 삭제
+`DELETE /management/review/{reviewId}`
+
+operation::management/review/reply-delete[snippets='http-request,http-response,path-parameters,request-headers']
+

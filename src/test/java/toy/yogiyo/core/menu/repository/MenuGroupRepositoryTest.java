@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import toy.yogiyo.common.config.TestQuerydslConfiguration;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.shop.domain.Shop;
 
@@ -12,6 +14,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 
+@Import(TestQuerydslConfiguration.class)
 @DataJpaTest
 class MenuGroupRepositoryTest {
 

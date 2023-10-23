@@ -20,6 +20,7 @@ import toy.yogiyo.core.Review.dto.MemberReviewScrollResponse;
 import toy.yogiyo.core.Review.dto.ReviewWriteRequest;
 import toy.yogiyo.core.Review.service.ReviewService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -119,6 +120,7 @@ class ReviewControllerTest {
                                     .quantityScore(3.0f)
                                     .deliveryScore(5.0f)
                                     .ownerReply("사장님 댓글입니다")
+                                    .ownerReplyCreatedAt(LocalDateTime.of(2023, 10, 23, 0, 0, 0))
                                     .content("맛있어요~")
                                     .shopId(1L)
                                     .shopName("BHC 행당점")
@@ -165,6 +167,7 @@ class ReviewControllerTest {
                                 fieldWithPath("reviews[].deliveryScore").type(JsonFieldType.NUMBER).description("배달 점수"),
                                 fieldWithPath("reviews[].content").type(JsonFieldType.STRING).description("내용"),
                                 fieldWithPath("reviews[].ownerReply").type(JsonFieldType.STRING).description("사장님 댓글"),
+                                fieldWithPath("reviews[].ownerReplyCreatedAt").type(JsonFieldType.STRING).description("사장님 댓글 작성 시간"),
                                 fieldWithPath("reviews[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
                                 fieldWithPath("reviews[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
                                 fieldWithPath("reviews[].reviewImages[].id").type(JsonFieldType.NUMBER).description(""),

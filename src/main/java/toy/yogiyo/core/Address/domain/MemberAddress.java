@@ -20,6 +20,7 @@ public class MemberAddress {
     @Embedded
     private Address address;
 
+    @Enumerated(EnumType.STRING)
     private AddressType addressType;
     private String nickname;
 
@@ -39,6 +40,10 @@ public class MemberAddress {
         this.nickname = nickname;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.member = member;
+    }
+
+    public void setMember(Member member){
         this.member = member;
     }
 }

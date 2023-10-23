@@ -51,6 +51,6 @@ public class Member extends BaseTimeEntity {
     }
     public void addMemberAddresses(MemberAddress memberAddress){
         this.memberAddresses.add(memberAddress);
+        memberAddress.setMember(this);
     }
-
 }

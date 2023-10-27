@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Table(name = "Likes")
 public class Like extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

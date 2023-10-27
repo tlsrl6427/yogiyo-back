@@ -17,7 +17,7 @@ import java.util.List;
 public class MenuOptionGroup {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_option_group_id")
     private Long id;
 

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class SignatureMenu {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "signature_menu_id")
     private Long id;
 

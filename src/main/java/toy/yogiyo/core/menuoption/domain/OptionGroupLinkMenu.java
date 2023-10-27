@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class OptionGroupLinkMenu {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "option_group_link_menu_id")
     private Long id;
 

@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "Orders")
 public class Order extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String orderNumber;

@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderItem extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int price;

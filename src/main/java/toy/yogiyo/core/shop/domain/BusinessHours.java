@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessHours {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "business_hours_id")
     private Long id;
 

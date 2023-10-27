@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "menu_id")
     private Long id;
 

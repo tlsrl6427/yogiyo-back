@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CloseDay {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "close_day_Id")
     private Long id;
     private Integer weekNumOfMonth;

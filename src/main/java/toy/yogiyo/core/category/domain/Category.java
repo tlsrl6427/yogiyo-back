@@ -2,10 +2,7 @@ package toy.yogiyo.core.category.domain;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -15,7 +12,7 @@ import javax.persistence.Id;
 public class Category {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long id;
 

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class OrderItemOption {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String optionName;

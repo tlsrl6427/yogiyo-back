@@ -15,7 +15,7 @@ services:
     volumes:
       - /home/ec2-user/prometheus.yml:/prometheus.yml
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--config.file=/prometheus.yml'
     depends_on:
       - spring
     restart: always

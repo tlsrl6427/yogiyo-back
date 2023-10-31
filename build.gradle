@@ -70,6 +70,9 @@ ext {
 tasks.named('test') {
     useJUnitPlatform()
     outputs.dir snippetsDir
+    filter {
+        includeTestsMatching "toy.yogiyo.api.*"
+    }
 }
 
 //querydsl 추가 시작

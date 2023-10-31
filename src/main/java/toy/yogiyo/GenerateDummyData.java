@@ -53,6 +53,7 @@ public class GenerateDummyData {
 
         private final EntityManager em;
         private final Random random = new Random();
+        private final int SHOP_COUNT = 1000;
 
         public Generator(EntityManager em) {
             this.em = em;
@@ -133,7 +134,7 @@ public class GenerateDummyData {
         private List<Owner> generateOwner() {
             List<Owner> owners = new ArrayList<>();
 
-            for (int i = 1; i <= 100; i++) {
+            for (int i = 1; i <= SHOP_COUNT; i++) {
                 Owner owner = Owner.builder()
                         .nickname("점주 " + i)
                         .email("owner" + i + "@test.com")
@@ -149,7 +150,7 @@ public class GenerateDummyData {
         private List<Shop> generateShop(List<Owner> owners, List<Category> categories) {
             List<Shop> shops = new ArrayList<>();
 
-            for (int i = 1; i <= 100; i++) {
+            for (int i = 1; i <= SHOP_COUNT; i++) {
                 Shop shop = Shop.builder()
                         .name("음식점 " + i)
                         .address("서울특별시 송파구 올림픽로 300")
@@ -167,8 +168,8 @@ public class GenerateDummyData {
                         .quantityScore(5 * random.nextDouble())
                         .tasteScore(5 * random.nextDouble())
                         .deliveryScore(5 * random.nextDouble())
-                        .icon("yogiyo-logo.jpg")
-                        .banner("banner.jpg")
+                        .icon(getFilePath("yogiyo-logo.jpg"))
+                        .banner(getFilePath("banner.jpg"))
                         .build();
 
                 shop.changeBusinessHours(generateBusinessHours());
@@ -262,7 +263,7 @@ public class GenerateDummyData {
                         Menu menu = Menu.builder()
                                 .name("메뉴 " + j)
                                 .content("메뉴 " + j + " 입니다.")
-                                .picture("hamburger.jpg")
+                                .picture(getFilePath("hamburger.jpg"))
                                 .price((1 + random.nextInt(20)) * 1000)
                                 .menuGroup(menuGroup)
                                 .position(j)
@@ -410,7 +411,7 @@ public class GenerateDummyData {
 
                 Review review = reviewBuilder.build();
                 if (random.nextBoolean()) {
-                    ReviewImage reviewImage = new ReviewImage(null, "hamburger.jpg", review);
+                    ReviewImage reviewImage = new ReviewImage(null, getFilePath("hamburger.jpg"), review);
                     em.persist(reviewImage);
                 }
 
@@ -419,6 +420,10 @@ public class GenerateDummyData {
             }
 
             return reviews;
+        }
+
+        private String getFilePath(String filename) {
+            return "/images/" + filename;
         }
     }
 }

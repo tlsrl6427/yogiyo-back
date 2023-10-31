@@ -13,9 +13,9 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - /home/ec2-user/prometheus.yml:/prometheus.yml
+      - /home/ec2-user/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
-      - '--config.file=/prometheus.yml'
+      - '--config.file=/etc/prometheus/prometheus.yml'
     depends_on:
       - spring
     restart: always

@@ -72,6 +72,7 @@ jobs:
         script: |
           sudo rm prometheus.yml
           sudo touch ./prometheus.yml # prometheus.yml 생성
+          sudo chmod 777 ./prometheus.yml
           sudo echo "${{ secrets.PROMETHEUS_YML }}" > ./prometheus.yml
 
           sudo wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml

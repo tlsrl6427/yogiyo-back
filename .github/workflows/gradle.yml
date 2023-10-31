@@ -70,14 +70,13 @@ jobs:
         key: ${{ secrets.EC2_KEY }}
 
         script: |
-          sudo rm prometheus.yml
-          sudo touch ./prometheus.yml # prometheus.yml 생성
-          sudo chmod 777 ./prometheus.yml
-          sudo echo "${{ secrets.PROMETHEUS_YML }}" > ./prometheus.yml
+          rm prometheus.yml
+          touch ./prometheus.yml # prometheus.yml 생성
+          echo "${{ secrets.PROMETHEUS_YML }}" > ./prometheus.yml
 
-          sudo wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml
-          sudo docker-compose down
-          sudo docker-compose pull && docker-compose up -d
+          wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml
+          docker rm -f ec2-user-spring-1
+          docker-compose pull && docker-compose up -d
           
           # sudo docker kill ${{ secrets.PROJECT_NAME }}
           # sudo docker rm -f ${{ secrets.PROJECT_NAME }}

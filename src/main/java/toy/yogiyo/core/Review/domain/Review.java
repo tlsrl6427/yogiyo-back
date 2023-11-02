@@ -21,9 +21,10 @@ public class Review extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float tasteScore;
-    private float quantityScore;
-    private float deliveryScore;
+    private double tasteScore;
+    private double quantityScore;
+    private double deliveryScore;
+    private double totalScore;
 
     private String content;
     private String ownerReply;
@@ -44,11 +45,12 @@ public class Review extends BaseTimeEntity {
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
     @Builder
-    public Review(Long id, float tasteScore, float quantityScore, float deliveryScore, String content, String ownerReply, LocalDateTime ownerReplyCreatedAt, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
+    public Review(Long id, double tasteScore, double quantityScore, double deliveryScore, double totalScore, String content, String ownerReply, LocalDateTime ownerReplyCreatedAt, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
         this.id = id;
         this.tasteScore = tasteScore;
         this.quantityScore = quantityScore;
         this.deliveryScore = deliveryScore;
+        this.totalScore = totalScore;
         this.content = content;
         this.ownerReply = ownerReply;
         this.ownerReplyCreatedAt = ownerReplyCreatedAt;

@@ -20,9 +20,9 @@ public class ReviewManagementResponse {
 
     private Long id;
 
-    private float tasteScore;
-    private float quantityScore;
-    private float deliveryScore;
+    private double tasteScore;
+    private double quantityScore;
+    private double deliveryScore;
     private String content;
     private String ownerReply;
     private String memberName;

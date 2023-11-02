@@ -32,13 +32,15 @@ public class LikeService {
     public void toggleLike(Member member, Long shopId){
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         Optional<Like> findLike = likeRepository.findByMemberAndShop(member.getId(), shopId);
+        Shop findShop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
         if(findLike.isPresent()){
             likeRepository.delete(findLike.get());
+            findShop.decreaseLikeNum();
             return;
         }
 
-        Shop findShop = shopRepository.findById(shopId).orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        findShop.increaseLikeNum();
         likeRepository.save(Like.toLike(member, findShop));
     }
 

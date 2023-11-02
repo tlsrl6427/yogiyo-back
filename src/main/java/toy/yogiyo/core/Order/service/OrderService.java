@@ -26,6 +26,7 @@ public class OrderService {
         Shop findShop = shopRepository.findById(orderCreateRequest.getShopId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
         Order order = Order.createOrder(member, findShop, orderCreateRequest);
+        findShop.increaseOrderNum();
         orderRepository.save(order);
     }
 

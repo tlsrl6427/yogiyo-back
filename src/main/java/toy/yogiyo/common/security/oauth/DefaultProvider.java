@@ -32,7 +32,7 @@ public class DefaultProvider implements OAuthProvider {
         String email = request.getEmail();
         String password = request.getPassword();
         Owner findOwner = ownerRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.OWNER_NOT_FOUND));
         return LoginResponse.of(findOwner);
     }
 }

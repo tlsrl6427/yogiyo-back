@@ -24,6 +24,7 @@ public class ReviewWriteRequest {
                 .tasteScore(tasteScore)
                 .quantityScore(quantityScore)
                 .deliveryScore(deliveryScore)
+                .totalScore((tasteScore+quantityScore+deliveryScore)/3)
                 .content(content)
                 .shopId(shopId)
                 .shopName(shopName)

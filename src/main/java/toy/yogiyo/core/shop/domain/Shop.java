@@ -3,6 +3,7 @@ package toy.yogiyo.core.shop.domain;
 import lombok.*;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.Review.domain.Review;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
 
@@ -23,14 +24,17 @@ public class Shop extends BaseTimeEntity {
 
     private String name;
 
+    private long orderNum;
     private long wishNum;
     private long ownerReplyNum;
 
     // 리뷰
     private long reviewNum;
+
     private double tasteScore;
     private double quantityScore;
     private double deliveryScore;
+    private double totalScore;
 
     private String icon;
     private String banner;
@@ -48,6 +52,8 @@ public class Shop extends BaseTimeEntity {
     private Double longitude;
     private Double latitude;
 
+    private int minDeliveryPrice;
+    private int minOrderPrice;
     private int deliveryTime;
 
     @Builder.Default
@@ -94,6 +100,10 @@ public class Shop extends BaseTimeEntity {
     }
 
     public void changeDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {
+        if(deliveryPriceInfos != null && !deliveryPriceInfos.isEmpty()) {
+            this.minDeliveryPrice = deliveryPriceInfos.get(deliveryPriceInfos.size()-1).getDeliveryPrice();
+            this.minOrderPrice = deliveryPriceInfos.get(0).getOrderPrice();
+        }
         this.deliveryPriceInfos.clear();
         for (DeliveryPriceInfo deliveryPriceInfo : deliveryPriceInfos) {
             this.deliveryPriceInfos.add(deliveryPriceInfo);
@@ -112,6 +122,26 @@ public class Shop extends BaseTimeEntity {
             this.closeDays.add(closeDay);
             closeDay.changeShop(this);
         }
+    }
+
+    public void increaseOrderNum(){
+        this.orderNum++;
+    }
+
+    public void addReview(Review review) {
+        this.reviewNum++;
+        this.tasteScore = (this.tasteScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
+        this.quantityScore = (this.quantityScore*(this.reviewNum-1)+review.getQuantityScore())/reviewNum;
+        this.deliveryScore = (this.deliveryScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
+        this.totalScore = (this.totalScore*(this.reviewNum-1)+review.getTotalScore())/reviewNum;
+    }
+
+    public void decreaseLikeNum() {
+        this.wishNum--;
+    }
+
+    public void increaseLikeNum() {
+        this.wishNum++;
     }
 }
 

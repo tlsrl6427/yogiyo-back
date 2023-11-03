@@ -119,6 +119,7 @@ class ReviewControllerTest {
                                     .tasteScore(3.5f)
                                     .quantityScore(3.0f)
                                     .deliveryScore(5.0f)
+                                    .totalScore(3.83333f)
                                     .ownerReply("사장님 댓글입니다")
                                     .ownerReplyCreatedAt(LocalDateTime.of(2023, 10, 23, 0, 0, 0))
                                     .content("맛있어요~")
@@ -165,6 +166,7 @@ class ReviewControllerTest {
                                 fieldWithPath("reviews[].tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),
                                 fieldWithPath("reviews[].quantityScore").type(JsonFieldType.NUMBER).description("양 점수"),
                                 fieldWithPath("reviews[].deliveryScore").type(JsonFieldType.NUMBER).description("배달 점수"),
+                                fieldWithPath("reviews[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
                                 fieldWithPath("reviews[].content").type(JsonFieldType.STRING).description("내용"),
                                 fieldWithPath("reviews[].ownerReply").type(JsonFieldType.STRING).description("사장님 댓글"),
                                 fieldWithPath("reviews[].ownerReplyCreatedAt").type(JsonFieldType.STRING).description("사장님 댓글 작성 시간"),

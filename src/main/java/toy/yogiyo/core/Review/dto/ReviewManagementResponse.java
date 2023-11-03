@@ -23,6 +23,7 @@ public class ReviewManagementResponse {
     private double tasteScore;
     private double quantityScore;
     private double deliveryScore;
+    private double totalScore;
     private String content;
     private String ownerReply;
     private String memberName;
@@ -37,6 +38,7 @@ public class ReviewManagementResponse {
                 .tasteScore(review.getTasteScore())
                 .quantityScore(review.getQuantityScore())
                 .deliveryScore(review.getDeliveryScore())
+                .totalScore(review.getTotalScore())
                 .content(review.getContent())
                 .ownerReply(review.getOwnerReply())
                 .memberName(review.getMember().getNickname())

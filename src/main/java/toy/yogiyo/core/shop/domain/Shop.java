@@ -130,10 +130,10 @@ public class Shop extends BaseTimeEntity {
 
     public void addReview(Review review) {
         this.reviewNum++;
-        this.tasteScore = (this.tasteScore*this.reviewNum+review.getTasteScore())/reviewNum;
-        this.quantityScore = (this.quantityScore*this.reviewNum+review.getQuantityScore())/reviewNum;
-        this.deliveryScore = (this.deliveryScore*this.reviewNum+review.getTasteScore())/reviewNum;
-        this.totalScore = (this.totalScore*this.reviewNum+review.getTotalScore())/reviewNum;
+        this.tasteScore = (this.tasteScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
+        this.quantityScore = (this.quantityScore*(this.reviewNum-1)+review.getQuantityScore())/reviewNum;
+        this.deliveryScore = (this.deliveryScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
+        this.totalScore = (this.totalScore*(this.reviewNum-1)+review.getTotalScore())/reviewNum;
     }
 
     public void decreaseLikeNum() {

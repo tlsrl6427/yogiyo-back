@@ -87,6 +87,7 @@ class ReviewManagementControllerTest {
                     .tasteScore(5.0f)
                     .deliveryScore(5.0f)
                     .quantityScore(5.0f)
+                    .totalScore(5.0f)
                     .content("양도 많고 감자도 잘 튀겨졌어요~~")
                     .member(Member.builder().nickname("abcde").build())
                     .reviewImages(List.of(
@@ -145,6 +146,7 @@ class ReviewManagementControllerTest {
                                 fieldWithPath("content[].tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),
                                 fieldWithPath("content[].quantityScore").type(JsonFieldType.NUMBER).description("양 점수"),
                                 fieldWithPath("content[].deliveryScore").type(JsonFieldType.NUMBER).description("배달 점수"),
+                                fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
                                 fieldWithPath("content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
                                 fieldWithPath("content[].ownerReply").type(JsonFieldType.STRING).description("사장님 답변 내용").optional(),
                                 fieldWithPath("content[].memberName").type(JsonFieldType.STRING).description("리뷰 작성자 명"),

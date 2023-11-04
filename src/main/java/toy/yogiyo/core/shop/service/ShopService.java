@@ -1,16 +1,19 @@
 package toy.yogiyo.core.shop.service;
 
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import toy.yogiyo.api.ShopScrollListRequest;
+import toy.yogiyo.api.ShopScrollListResponse;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.service.CategoryService;
-import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
@@ -23,6 +26,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ShopService {
 
     private final ShopRepository shopRepository;
@@ -183,5 +187,16 @@ public class ShopService {
         if (!Objects.equals(shop.getOwner().getId(), owner.getId())) {
             throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
         }
+    }
+
+    public ShopScrollListResponse getList(ShopScrollListRequest request) {
+        List<Shop> shops = shopRepository.scrollShopList(request);
+        for (Shop shop : shops) {
+            log.info(shop.getName());
+        }
+        boolean hasNext = shops.size() >= 6;
+        if(hasNext) shops.remove(shops.size()-1);
+        Long nextOffset = (long) shops.size();
+        return  null;
     }
 }

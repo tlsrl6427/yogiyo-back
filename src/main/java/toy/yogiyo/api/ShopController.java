@@ -105,4 +105,9 @@ public class ShopController {
         shopService.delete(shopId, owner);
         return "success";
     }
+
+    @GetMapping("/list")
+    public ShopScrollListResponse getList(@RequestBody ShopScrollListRequest request){
+        return shopService.getList(request);
+    }
 }

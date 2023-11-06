@@ -14,11 +14,9 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
-import toy.yogiyo.common.exception.EntityNotFoundException;
-import toy.yogiyo.common.exception.ErrorCode;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.ProviderType;
-import toy.yogiyo.core.Member.repository.MemberRepository;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.domain.ProviderType;
+import toy.yogiyo.core.member.repository.MemberRepository;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

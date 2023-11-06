@@ -1,8 +1,6 @@
 package toy.yogiyo.core.owner.dto;
 
 import lombok.*;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.dto.MemberJoinResponse;
 import toy.yogiyo.core.owner.domain.Owner;
 
 @Getter

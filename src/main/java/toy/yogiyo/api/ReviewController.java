@@ -3,10 +3,10 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Review.dto.MemberReviewScrollResponse;
-import toy.yogiyo.core.Review.dto.ReviewWriteRequest;
-import toy.yogiyo.core.Review.service.ReviewService;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
+import toy.yogiyo.core.review.dto.ReviewWriteRequest;
+import toy.yogiyo.core.review.service.ReviewService;
 
 @RestController
 @RequiredArgsConstructor

@@ -7,8 +7,6 @@ import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.dto.MemberJoinResponse;
 import toy.yogiyo.core.owner.dto.OwnerJoinRequest;
 import toy.yogiyo.core.owner.dto.OwnerJoinResponse;
 import toy.yogiyo.core.owner.dto.OwnerMypageResponse;

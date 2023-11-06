@@ -1,10 +1,9 @@
 package toy.yogiyo.common.security.oauth;
 
-import com.google.api.client.auth.openidconnect.IdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.*;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 @Getter
 @Builder

@@ -3,7 +3,7 @@ package toy.yogiyo.core.shop.domain;
 import lombok.*;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.Review.domain.Review;
+import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
 

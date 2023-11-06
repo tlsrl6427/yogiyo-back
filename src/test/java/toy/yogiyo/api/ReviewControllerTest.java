@@ -14,11 +14,11 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Review.domain.Review;
-import toy.yogiyo.core.Review.domain.ReviewImage;
-import toy.yogiyo.core.Review.dto.MemberReviewScrollResponse;
-import toy.yogiyo.core.Review.dto.ReviewWriteRequest;
-import toy.yogiyo.core.Review.service.ReviewService;
+import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.domain.ReviewImage;
+import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
+import toy.yogiyo.core.review.dto.ReviewWriteRequest;
+import toy.yogiyo.core.review.service.ReviewService;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -2,7 +2,7 @@ package toy.yogiyo.common.security.oauth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 @Component
 @RequiredArgsConstructor

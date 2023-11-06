@@ -1,7 +1,7 @@
 package toy.yogiyo.common.login.dto;
 
 import lombok.*;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 @Getter
 @Builder

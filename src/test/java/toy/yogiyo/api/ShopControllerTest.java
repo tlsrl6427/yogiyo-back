@@ -101,7 +101,7 @@ class ShopControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andDo(print())
                 .andDo(document("shop/register",
@@ -314,8 +314,7 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(updateRequest)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-call-number",
                         requestHeaders(
@@ -360,8 +359,7 @@ class ShopControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-notice",
                         requestHeaders(
@@ -407,8 +405,7 @@ class ShopControllerTest {
                 .characterEncoding("utf8"));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-business-hours",
                         requestHeaders(
@@ -449,8 +446,7 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-delivery-price",
                         requestHeaders(
@@ -486,8 +482,7 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-close-day",
                         requestHeaders(
@@ -517,8 +512,7 @@ class ShopControllerTest {
 
         // then
         verify(shopService).delete(anyLong(), any());
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/delete",
                         requestHeaders(

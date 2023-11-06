@@ -100,7 +100,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.menuOptionGroupId").value(1))
                     .andDo(print())
                     .andDo(document("menu-option-group/add-group",
@@ -136,8 +136,7 @@ class MenuOptionGroupControllerTest {
                             .build());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/{menuOptionGroupId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/{menuOptionGroupId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -145,9 +144,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.name").value("옵션 그룹"))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-one",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuOptionGroupId").description("옵션 그룹 ID")
                             ),
@@ -199,8 +195,7 @@ class MenuOptionGroupControllerTest {
             given(menuOptionGroupService.getAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/shop/{shopId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/shop/{shopId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -212,9 +207,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.menuOptionGroups[0].menuOptions.length()").value(3))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-all",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("shopId").description("가게 ID")
                             ),
@@ -252,8 +244,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/update",
                             requestHeaders(
@@ -278,8 +269,7 @@ class MenuOptionGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/delete",
                             requestHeaders(
@@ -307,8 +297,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/link-menu",
                             requestHeaders(
@@ -339,8 +328,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/change-order",
                             requestHeaders(
@@ -377,7 +365,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.menuOptionId").value(1))
                     .andDo(print())
                     .andDo(document("menu-option-group/add-option",
@@ -410,8 +398,7 @@ class MenuOptionGroupControllerTest {
                             .build());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/option/{menuOptionId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/option/{menuOptionId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -420,9 +407,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.price").value(1000))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-option",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuOptionId").description("옵션 ID")
                             ),
@@ -451,8 +435,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/update-option",
                             requestHeaders(
@@ -479,8 +462,7 @@ class MenuOptionGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/delete-option",
                             requestHeaders(
@@ -508,8 +490,7 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/change-option-order",
                             requestHeaders(

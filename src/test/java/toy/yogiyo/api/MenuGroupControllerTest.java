@@ -102,7 +102,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
                     .andDo(document("menu-group/add",
@@ -142,8 +142,7 @@ class MenuGroupControllerTest {
             given(menuGroupService.getMenuGroups(anyLong())).willReturn(menuGroups);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -156,9 +155,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menuGroups[0].menus[2].id").value(3))
                     .andDo(print())
                     .andDo(document("menu-group/find-all",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("shopId").description("가게 ID")
                             ),
@@ -186,8 +182,7 @@ class MenuGroupControllerTest {
             given(menuGroupService.get(anyLong())).willReturn(menuGroup);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -196,9 +191,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.content").value("메뉴 그룹1 설명"))
                     .andDo(print())
                     .andDo(document("menu-group/find-one",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -226,8 +218,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(updateRequest)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/update",
                             requestHeaders(
@@ -255,8 +246,7 @@ class MenuGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/delete",
                             requestHeaders(
@@ -275,7 +265,7 @@ class MenuGroupControllerTest {
 
         @Test
         @DisplayName("메뉴 그룹 메뉴 추가")
-        void addMenu() throws Exception {
+        void createMenu() throws Exception {
             // given
             MenuCreateRequest request = MenuCreateRequest.builder()
                     .name("양념치킨")
@@ -292,7 +282,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
                     .andDo(document("menu-group/add-menu",
@@ -326,8 +316,7 @@ class MenuGroupControllerTest {
             given(menuService.getMenus(anyLong())).willReturn(menus);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -338,9 +327,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menus[2].name").value("메뉴3"))
                     .andDo(print())
                     .andDo(document("menu-group/find-menus",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -366,8 +352,7 @@ class MenuGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/delete-menu",
                             requestHeaders(
@@ -381,7 +366,7 @@ class MenuGroupControllerTest {
 
         @Test
         @DisplayName("메뉴 그룹 메뉴 순서 변경")
-        void changeOrder() throws Exception {
+        void updatePosition() throws Exception {
             // given
             MenuGroupUpdateMenuPositionRequest request = MenuGroupUpdateMenuPositionRequest.builder()
                     .menuIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
@@ -395,8 +380,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/change-menu-order",
                             requestHeaders(

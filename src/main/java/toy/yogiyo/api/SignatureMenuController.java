@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
@@ -19,16 +20,15 @@ public class SignatureMenuController {
     private final SignatureMenuService signatureMenuService;
 
     @PutMapping("/set")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #request.shopId)")
-    public String setSignatureMenus(@RequestBody SignatureMenuSetRequest request) {
+    public void setSignatureMenus(@RequestBody SignatureMenuSetRequest request) {
         List<SignatureMenu> signatureMenus = request.toSignatureMenus();
         signatureMenuService.deleteAll(request.getShopId());
 
         for (SignatureMenu signatureMenu : signatureMenus) {
             signatureMenuService.create(signatureMenu);
         }
-
-        return "success";
     }
 
     @GetMapping("/shop/{shopId}")
@@ -38,17 +38,17 @@ public class SignatureMenuController {
     }
 
     @DeleteMapping("/delete/{menuId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
-    public String delete(@PathVariable Long menuId) {
+    public void delete(@PathVariable Long menuId) {
         signatureMenuService.delete(menuId);
-        return "success";
     }
 
     @PutMapping("/{shopId}/change-order")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
-    public String changeOrder(@PathVariable Long shopId, @RequestBody SignatureMenuUpdatePositionRequest request) {
+    public void updatePosition(@PathVariable Long shopId, @RequestBody SignatureMenuUpdatePositionRequest request) {
         signatureMenuService.updateMenuPosition(shopId, request.toSignatureMenus());
-        return "success";
     }
 
 }

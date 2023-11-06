@@ -85,8 +85,7 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/set",
                         requestHeaders(
@@ -112,8 +111,7 @@ class SignatureMenuControllerTest {
         given(signatureMenuService.getAll(anyLong())).willReturn(signatureMenus);
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1)
-                .header(HttpHeaders.AUTHORIZATION, jwt));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1));
 
         // then
         result.andExpect(status().isOk())
@@ -126,9 +124,6 @@ class SignatureMenuControllerTest {
                 .andExpect(jsonPath("$.signatureMenus[4].id").value(5))
                 .andDo(print())
                 .andDo(document("signature-menu/find-all",
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                        ),
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -153,8 +148,7 @@ class SignatureMenuControllerTest {
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/signature-menu/delete/{menuId}", 1));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/delete-one",
                         pathParameters(
@@ -179,8 +173,7 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/change-order",
                         requestHeaders(

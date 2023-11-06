@@ -70,7 +70,7 @@ class CategoryControllerTest {
                         .param("name", request.getName()));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isCreated())
                 .andExpect(content().string("1"))
                 .andDo(print());
         verify(categoryService).createCategory(any());
@@ -129,8 +129,7 @@ class CategoryControllerTest {
                 patch("/category/{categoryId}", 1L));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print());
         verify(categoryService).update(anyLong(), any());
     }
@@ -145,8 +144,7 @@ class CategoryControllerTest {
         ResultActions result = mockMvc.perform(delete("/category/{categoryId}", 1L));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print());
         verify(categoryService).delete(anyLong());
     }

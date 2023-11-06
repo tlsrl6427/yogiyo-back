@@ -21,7 +21,7 @@ public class ShopBusinessHourUpdateRequest {
 
     private List<BusinessHoursDto> businessHours;
 
-    public List<BusinessHours> toEntity() {
+    public List<BusinessHours> toBusinessHours() {
         return businessHours.stream()
                 .map(businessHours -> BusinessHours.builder()
                         .dayOfWeek(businessHours.getDayOfWeek())

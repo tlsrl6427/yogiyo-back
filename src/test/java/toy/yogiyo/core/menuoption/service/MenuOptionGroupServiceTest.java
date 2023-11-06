@@ -55,7 +55,7 @@ class MenuOptionGroupServiceTest {
         given(menuOptionGroupRepository.findMaxOrder(anyLong())).willReturn(null);
 
         // when
-        Long addedId = menuOptionGroupService.add(menuOptionGroup);
+        Long addedId = menuOptionGroupService.create(menuOptionGroup);
 
         // then
         assertThat(addedId).isEqualTo(1L);
@@ -73,7 +73,7 @@ class MenuOptionGroupServiceTest {
                 .willReturn(Optional.of(menuOptionGroup));
 
         // when
-        MenuOptionGroup findMenuOptionGroup = menuOptionGroupService.find(1L);
+        MenuOptionGroup findMenuOptionGroup = menuOptionGroupService.get(1L);
 
         // then
         assertThat(findMenuOptionGroup).isEqualTo(menuOptionGroup);
@@ -100,7 +100,7 @@ class MenuOptionGroupServiceTest {
         given(menuOptionGroupRepository.findAllByShopId(anyLong())).willReturn(menuOptionGroups);
 
         // when
-        List<MenuOptionGroup> findOptionGroups = menuOptionGroupService.findAll(1L);
+        List<MenuOptionGroup> findOptionGroups = menuOptionGroupService.getAll(1L);
 
         // then
         assertThat(findOptionGroups).isEqualTo(menuOptionGroups);
@@ -196,7 +196,7 @@ class MenuOptionGroupServiceTest {
         );
 
         // when
-        menuOptionGroupService.changeOrder(1L, params);
+        menuOptionGroupService.updatePosition(1L, params);
 
         // then
         assertThat(menuOptionGroups.get(0).getPosition()).isEqualTo(5);

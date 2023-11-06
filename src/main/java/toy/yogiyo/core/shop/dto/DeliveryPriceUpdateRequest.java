@@ -17,9 +17,9 @@ public class DeliveryPriceUpdateRequest {
 
     private List<DeliveryPriceDto> deliveryPrices;
 
-    public List<DeliveryPriceInfo> toEntity() {
+    public List<DeliveryPriceInfo> toDeliveryPriceInfos() {
         return this.deliveryPrices.stream()
-                .map(DeliveryPriceDto::toEntity)
+                .map(DeliveryPriceDto::toDeliveryPriceInfo)
                 .collect(Collectors.toList());
     }
 

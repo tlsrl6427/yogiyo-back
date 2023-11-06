@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.Review.domain.Review;
-import toy.yogiyo.core.Review.dto.ReplyRequest;
-import toy.yogiyo.core.Review.dto.ReviewManagementResponse;
-import toy.yogiyo.core.Review.dto.ReviewQueryCondition;
-import toy.yogiyo.core.Review.repository.ReviewQueryRepository;
-import toy.yogiyo.core.Review.service.ReviewManagementService;
-import toy.yogiyo.core.Review.service.ReviewService;
+import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewManagementResponse;
+import toy.yogiyo.core.review.dto.ReviewQueryCondition;
+import toy.yogiyo.core.review.repository.ReviewQueryRepository;
+import toy.yogiyo.core.review.service.ReviewManagementService;
 
 @RestController
 @RequiredArgsConstructor

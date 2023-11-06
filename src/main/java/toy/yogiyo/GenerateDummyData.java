@@ -2,17 +2,16 @@ package toy.yogiyo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import toy.yogiyo.core.Address.domain.Address;
-import toy.yogiyo.core.Address.domain.AddressType;
-import toy.yogiyo.core.Address.domain.MemberAddress;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.ProviderType;
-import toy.yogiyo.core.Order.domain.*;
-import toy.yogiyo.core.Order.dto.OrderCreateRequest;
-import toy.yogiyo.core.Review.domain.Review;
-import toy.yogiyo.core.Review.domain.ReviewImage;
+import toy.yogiyo.core.address.domain.Address;
+import toy.yogiyo.core.address.domain.AddressType;
+import toy.yogiyo.core.address.domain.MemberAddress;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.domain.ProviderType;
+import toy.yogiyo.core.order.domain.*;
+import toy.yogiyo.core.order.dto.OrderCreateRequest;
+import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.domain.ReviewImage;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.menu.domain.Menu;
@@ -164,7 +163,7 @@ public class GenerateDummyData {
                         .latitude(37.512460 + random.nextDouble() * 0.1)
                         .longitude(127.102546 + random.nextDouble() * 0.1)
                         .reviewNum(random.nextInt(500))
-                        .wishNum(random.nextInt(500))
+                        .likeNum(random.nextInt(500))
                         .quantityScore(5 * random.nextDouble())
                         .tasteScore(5 * random.nextDouble())
                         .deliveryScore(5 * random.nextDouble())
@@ -172,7 +171,7 @@ public class GenerateDummyData {
                         .banner(getFilePath("banner.jpg"))
                         .build();
 
-                shop.changeBusinessHours(generateBusinessHours());
+                shop.updateBusinessHours(generateBusinessHours());
                 shop.changeDeliveryPrices(generateDeliveryPrices());
 
                 CategoryShop categoryShop = CategoryShop.builder()

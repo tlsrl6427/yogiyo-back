@@ -19,7 +19,7 @@ import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.common.login.service.LoginService;
 import toy.yogiyo.common.security.jwt.JwtProvider;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 
 import static org.mockito.ArgumentMatchers.any;

@@ -3,7 +3,7 @@ package toy.yogiyo.core.owner.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.owner.domain.Owner;
 
 import java.util.Optional;

@@ -57,7 +57,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(10000, 2000),
                 new DeliveryPriceInfo(20000, 1000)));
 
-        s.changeLatLng(36.674648, 127.448544);
+        s.updateLatLng(36.674648, 127.448544);
 
         shopRepository.save(s);
 
@@ -101,7 +101,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(10000, 2000),
                 new DeliveryPriceInfo(20000, 1000)));
 
-        s1.changeLatLng(36.674648, 127.448544);
+        s1.updateLatLng(36.674648, 127.448544);
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
@@ -120,7 +120,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(20000, 3000),
                 new DeliveryPriceInfo(30000, 2000)));
 
-        s2.changeLatLng(36.675306, 127.44358);
+        s2.updateLatLng(36.675306, 127.44358);
         shopRepository.save(s2);
         categoryShopRepository.save(new CategoryShop(null, c, s2));
 
@@ -157,7 +157,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(10000, 2000),
                 new DeliveryPriceInfo(20000, 1000)));
 
-        s1.changeLatLng(36.674648, 127.448544);
+        s1.updateLatLng(36.674648, 127.448544);
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
@@ -176,7 +176,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(20000, 3000),
                 new DeliveryPriceInfo(30000, 2000)));
 
-        s2.changeLatLng(36.675306, 127.44358);
+        s2.updateLatLng(36.675306, 127.44358);
         shopRepository.save(s2);
         categoryShopRepository.save(new CategoryShop(null, c, s2));
 
@@ -214,7 +214,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(10000, 2000),
                 new DeliveryPriceInfo(20000, 1000)));
 
-        s1.changeLatLng(36.674648, 127.448544);
+        s1.updateLatLng(36.674648, 127.448544);
         shopRepository.save(s1);
         categoryShopRepository.save(new CategoryShop(null, c, s1));
 
@@ -233,7 +233,7 @@ class CategoryShopQueryRepositoryTest {
                 new DeliveryPriceInfo(20000, 3000),
                 new DeliveryPriceInfo(30000, 2000)));
 
-        s2.changeLatLng(36.675306, 127.44358);
+        s2.updateLatLng(36.675306, 127.44358);
         shopRepository.save(s2);
         categoryShopRepository.save(new CategoryShop(null, c, s2));
 

@@ -26,13 +26,13 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public CategoryResponse find(@PathVariable("categoryId") Long categoryId) {
-        Category category = categoryService.findCategory(categoryId);
+    public CategoryResponse get(@PathVariable("categoryId") Long categoryId) {
+        Category category = categoryService.getCategory(categoryId);
         return CategoryResponse.from(category);
     }
 
     @GetMapping("/all")
-    public List<CategoryResponse> findAll() {
+    public List<CategoryResponse> getAll() {
         return categoryService.getCategories();
     }
 
@@ -49,9 +49,9 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}/shop")
-    public Slice<CategoryShopResponse> findAroundShop(@PathVariable("categoryId") Long categoryId,
-                                                      @ModelAttribute CategoryShopCondition condition,
-                                                      Pageable pageable) {
+    public Slice<CategoryShopResponse> getAroundShop(@PathVariable("categoryId") Long categoryId,
+                                                     @ModelAttribute CategoryShopCondition condition,
+                                                     Pageable pageable) {
 
         return categoryShopService.findShop(categoryId, condition, pageable);
     }

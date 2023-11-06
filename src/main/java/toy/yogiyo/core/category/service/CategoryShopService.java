@@ -27,7 +27,7 @@ public class CategoryShopService {
     public Slice<CategoryShopResponse> findShop(Long categoryId, CategoryShopCondition condition, Pageable pageable) {
         Slice<CategoryShop> result = categoryShopQueryRepository.findAround(categoryId, condition, pageable);
 
-        return result.map(categoryShop -> new CategoryShopResponse(
+        return result.map(categoryShop -> CategoryShopResponse.from(
                 categoryShop,
                 // 주문 주소와 가게 거리 계산 (meter)
                 (int) LatLngDistanceCalculator.distance(

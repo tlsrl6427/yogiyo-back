@@ -17,7 +17,7 @@ public class MenuOptionGroupLinkMenuRequest {
 
     private List<Long> menuIds;
 
-    public List<Menu> toEntity() {
+    public List<Menu> toMenus() {
         return menuIds.stream()
                 .map(id -> Menu.builder()
                         .id(id)

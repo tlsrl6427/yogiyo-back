@@ -7,11 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import toy.yogiyo.common.exception.EntityExistsException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
-import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.CategoryCreateRequest;
 import toy.yogiyo.core.category.dto.CategoryResponse;
@@ -126,7 +123,7 @@ class CategoryServiceTest {
             when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(category));
 
             // when
-            Category findCategory = categoryService.findCategory(category.getId());
+            Category findCategory = categoryService.getCategory(category.getId());
 
             // then
             assertThat(findCategory).isEqualTo(category);
@@ -140,7 +137,7 @@ class CategoryServiceTest {
             when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> categoryService.findCategory(1L))
+            assertThatThrownBy(() -> categoryService.getCategory(1L))
                     .isInstanceOf(EntityNotFoundException.class);
 
             // then

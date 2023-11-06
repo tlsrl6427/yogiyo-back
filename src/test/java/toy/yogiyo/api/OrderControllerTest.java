@@ -14,12 +14,11 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Address.domain.Address;
-import toy.yogiyo.core.Order.domain.*;
-import toy.yogiyo.core.Order.dto.*;
-import toy.yogiyo.core.Order.service.*;
+import toy.yogiyo.core.address.domain.Address;
+import toy.yogiyo.core.order.domain.*;
+import toy.yogiyo.core.order.dto.*;
+import toy.yogiyo.core.order.service.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package toy.yogiyo.common.security;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

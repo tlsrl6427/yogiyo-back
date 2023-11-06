@@ -1,6 +1,5 @@
 package toy.yogiyo.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,22 +10,20 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Address.domain.Address;
-import toy.yogiyo.core.Address.domain.AddressType;
-import toy.yogiyo.core.Address.domain.MemberAddress;
-import toy.yogiyo.core.Address.dto.AddressRegisterRequest;
-import toy.yogiyo.core.Address.dto.MemberAddressResponse;
-import toy.yogiyo.core.Address.service.MemberAddressService;
-import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.address.domain.Address;
+import toy.yogiyo.core.address.domain.AddressType;
+import toy.yogiyo.core.address.domain.MemberAddress;
+import toy.yogiyo.core.address.dto.AddressRegisterRequest;
+import toy.yogiyo.core.address.dto.MemberAddressResponse;
+import toy.yogiyo.core.address.service.MemberAddressService;
+import toy.yogiyo.core.member.domain.Member;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;

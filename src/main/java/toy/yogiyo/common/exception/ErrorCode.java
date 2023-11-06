@@ -22,6 +22,8 @@ public enum ErrorCode {
     JWT_SIGNATURE_FAILED(401, "J_004", "서명 검증에 실패하였습니다"),
     JWT_ILLEGAL_ARGUMENT(401, "J_005", "잘못된 인자입니다"),
 
+    OAUTH_PROVIDER_NOT_FOUND(404, "OA_001", "OAuth 공급자를 찾을 수 없습니다."),
+
     SHOP_NOT_FOUND(400, "SH_001", "가게를 찾을 수 없습니다."),
     SHOP_ACCESS_DENIED(400, "SH_002", "가게에 대한 권한이 없습니다."),
     SHOP_ALREADY_EXIST(400, "SH_003", "이미 존재하는 가게명 입니다."),

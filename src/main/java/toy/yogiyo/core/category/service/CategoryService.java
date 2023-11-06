@@ -25,7 +25,7 @@ public class CategoryService {
     @Transactional
     public Long createCategory(CategoryCreateRequest request) {
         validationDuplicatedName(request.getName());
-        Category category = request.toEntity();
+        Category category = request.toCategory();
         return categoryRepository.save(category).getId();
     }
 
@@ -47,13 +47,13 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Category findCategory(Long categoryId) {
+    public Category getCategory(Long categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public Category findCategory(String categoryName) {
+    public Category getCategory(String categoryName) {
         return categoryRepository.findByName(categoryName)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
     }

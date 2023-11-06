@@ -22,13 +22,13 @@ public class MenuOptionGroupService {
     private final MenuOptionGroupRepository menuOptionGroupRepository;
 
     @Transactional
-    public Long add(MenuOptionGroup menuOptionGroup) {
+    public Long create(MenuOptionGroup menuOptionGroup) {
         Integer maxOrder = menuOptionGroupRepository.findMaxOrder(menuOptionGroup.getShop().getId());
-        menuOptionGroup.changePosition(maxOrder == null ? 1 : maxOrder + 1);
+        menuOptionGroup.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
         List<MenuOption> menuOptions = menuOptionGroup.getMenuOptions();
         for (int i = 0; i < menuOptions.size(); i++) {
-            menuOptions.get(i).changePosition(i + 1);
+            menuOptions.get(i).updatePosition(i + 1);
         }
 
         menuOptionGroupRepository.save(menuOptionGroup);
@@ -37,25 +37,15 @@ public class MenuOptionGroupService {
     }
 
     @Transactional(readOnly = true)
-    public MenuOptionGroup find(Long menuOptionGroupId) {
+    public MenuOptionGroup get(Long menuOptionGroupId) {
         return menuOptionGroupRepository.findById(menuOptionGroupId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUOPTIONGROUP_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public List<MenuOptionGroup> findAll(Long shopId) {
+    public List<MenuOptionGroup> getAll(Long shopId) {
         List<MenuOptionGroup> optionGroups = menuOptionGroupRepository.findAllByShopId(shopId);
 
-//        optionGroups.forEach(optionGroup ->
-//                optionGroup.getMenuOptions().sort((o1, o2) -> {
-//                    if (o1.getPosition() > o2.getPosition()) {
-//                        return 1;
-//                    } else if (o1.getPosition() < o2.getPosition()) {
-//                        return -1;
-//                    }
-//                    return 0;
-//                })
-//        );
         optionGroups.forEach(optionGroup ->
                 optionGroup.getMenuOptions().sort(Comparator.comparingInt(MenuOption::getPosition))
         );
@@ -65,31 +55,31 @@ public class MenuOptionGroupService {
 
     @Transactional
     public void update(MenuOptionGroup updateParam) {
-        MenuOptionGroup menuOptionGroup = find(updateParam.getId());
-        menuOptionGroup.changeName(updateParam.getName());
+        MenuOptionGroup menuOptionGroup = get(updateParam.getId());
+        menuOptionGroup.updateName(updateParam.getName());
     }
 
     @Transactional
     public void delete(Long menuOptionGroupId) {
-        MenuOptionGroup menuOptionGroup = find(menuOptionGroupId);
+        MenuOptionGroup menuOptionGroup = get(menuOptionGroupId);
         menuOptionGroupRepository.delete(menuOptionGroup);
     }
 
     @Transactional
     public void linkMenu(Long menuOptionGroupId, List<Menu> menus) {
-        MenuOptionGroup menuOptionGroup = find(menuOptionGroupId);
-        menuOptionGroup.changeLinkMenus(menus);
+        MenuOptionGroup menuOptionGroup = get(menuOptionGroupId);
+        menuOptionGroup.updateLinkMenus(menus);
     }
 
     @Transactional
-    public void changeOrder(Long shopId, List<MenuOptionGroup> params) {
+    public void updatePosition(Long shopId, List<MenuOptionGroup> params) {
         List<MenuOptionGroup> optionGroups = menuOptionGroupRepository.findAllByShopId(shopId);
 
         IntStream.range(0, params.size())
                 .forEach(i -> optionGroups.stream()
                         .filter(optionGroup -> Objects.equals(optionGroup.getId(), params.get(i).getId()))
                         .findFirst()
-                        .ifPresent(optionGroup -> optionGroup.changePosition(i + 1)));
+                        .ifPresent(optionGroup -> optionGroup.updatePosition(i + 1)));
     }
 
 }

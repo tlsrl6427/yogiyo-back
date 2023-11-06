@@ -60,7 +60,7 @@ class MenuServiceTest {
         given(menuRepository.save(any())).willReturn(menu);
 
         // when
-        Long savedId = menuService.add(menu);
+        Long savedId = menuService.create(menu);
 
         // then
         assertThat(savedId).isEqualTo(1L);
@@ -85,7 +85,7 @@ class MenuServiceTest {
         given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
         // when
-        menuService.changePicture(1L, picture);
+        menuService.updatePicture(1L, picture);
 
         // then
         assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
@@ -110,7 +110,7 @@ class MenuServiceTest {
             given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
 
             // when
-            Menu findMenu = menuService.find(1L);
+            Menu findMenu = menuService.get(1L);
 
             // then
             assertThat(findMenu.getId()).isEqualTo(1L);
@@ -124,7 +124,7 @@ class MenuServiceTest {
             given(menuRepository.findById(anyLong())).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> menuService.find(1L))
+            assertThatThrownBy(() -> menuService.get(1L))
                     .isInstanceOf(EntityNotFoundException.class);
         }
 
@@ -147,7 +147,7 @@ class MenuServiceTest {
 
 
             // when
-            List<Menu> findMenus = menuService.findMenus(menuGroup.getId());
+            List<Menu> findMenus = menuService.getMenus(menuGroup.getId());
 
             // then
             assertThat(findMenus.size()).isEqualTo(4);

@@ -22,7 +22,7 @@ public class ShopRegisterRequest {
     @Builder.Default
     private List<String> categories = new ArrayList<>();
 
-    public Shop toEntity(String iconStoredName, String bannerStoredName, Owner owner) {
+    public Shop toShop(String iconStoredName, String bannerStoredName, Owner owner) {
         return Shop.builder()
                 .name(name)
                 .icon(iconStoredName)

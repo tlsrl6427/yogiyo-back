@@ -22,47 +22,47 @@ public class MenuGroupController {
     // =================== 점주 기능 ======================
     @PostMapping("/add")
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #request.shopId)")
-    public MenuGroupAddResponse add(@RequestBody MenuGroupAddRequest request) {
-        Long menuGroupId = menuGroupService.add(request.toEntity());
-        return MenuGroupAddResponse.builder()
+    public MenuGroupCreateResponse create(@RequestBody MenuGroupCreateRequest request) {
+        Long menuGroupId = menuGroupService.create(request.toMenuGroup());
+        return MenuGroupCreateResponse.builder()
                 .id(menuGroupId)
                 .build();
     }
 
     @PostMapping("/{menuGroupId}/add-menu")
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public MenuAddResponse addMenu(@PathVariable Long menuGroupId, @RequestBody MenuAddRequest request) {
-        Menu menu = request.toEntity(menuGroupId);
-        Long menuId = menuService.add(menu);
+    public MenuCreateResponse createMenu(@PathVariable Long menuGroupId, @RequestBody MenuCreateRequest request) {
+        Menu menu = request.toMenu(menuGroupId);
+        Long menuId = menuService.create(menu);
 
-        return MenuAddResponse.builder()
+        return MenuCreateResponse.builder()
                 .id(menuId)
                 .build();
     }
 
     @GetMapping("/shop/{shopId}")
     public MenuGroupsGetResponse getMenuGroups(@PathVariable Long shopId) {
-        List<MenuGroup> menuGroups = menuGroupService.findMenuGroups(shopId);
+        List<MenuGroup> menuGroups = menuGroupService.getMenuGroups(shopId);
         return MenuGroupsGetResponse.from(menuGroups);
     }
 
     @GetMapping("/{menuGroupId}")
     public MenuGroupGetResponse getMenuGroup(@PathVariable Long menuGroupId) {
-        MenuGroup menuGroup = menuGroupService.find(menuGroupId);
+        MenuGroup menuGroup = menuGroupService.get(menuGroupId);
 
         return MenuGroupGetResponse.from(menuGroup);
     }
 
     @GetMapping("/{menuGroupId}/menu")
     public MenuGroupGetMenusResponse getMenus(@PathVariable Long menuGroupId) {
-        List<Menu> menus = menuService.findMenus(menuGroupId);
+        List<Menu> menus = menuService.getMenus(menuGroupId);
         return MenuGroupGetMenusResponse.from(menus);
     }
 
     @PatchMapping("/{menuGroupId}")
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
     public String update(@PathVariable Long menuGroupId, @RequestBody MenuGroupUpdateRequest request) {
-        MenuGroup menuGroup = request.toEntity(menuGroupId);
+        MenuGroup menuGroup = request.toMenuGroup(menuGroupId);
         menuGroupService.update(menuGroup);
         return "success";
     }
@@ -92,12 +92,11 @@ public class MenuGroupController {
 
     @PatchMapping("/{menuGroupId}/change-menu-order")
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public String changeOrder(@PathVariable Long menuGroupId, @RequestBody MenuGroupChangeMenuOrderRequest request) {
-        List<Menu> menus = request.toEntity();
-        menuGroupService.changeMenuOrder(menuGroupId, menus);
+    public String changePosition(@PathVariable Long menuGroupId, @RequestBody MenuGroupUpdateMenuPositionRequest request) {
+        List<Menu> menus = request.toMenus();
+        menuGroupService.updateMenuPosition(menuGroupId, menus);
         return "success";
     }
-
 
     // =================== 고객 기능 ======================
 

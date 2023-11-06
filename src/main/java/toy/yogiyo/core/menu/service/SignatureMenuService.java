@@ -21,14 +21,14 @@ public class SignatureMenuService {
     @Transactional
     public Long create(SignatureMenu signatureMenu) {
         Integer maxOrder = signatureMenuRepository.findMaxOrder(signatureMenu.getShop().getId());
-        signatureMenu.changePosition(maxOrder == null ? 1 : maxOrder + 1);
+        signatureMenu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
         signatureMenuRepository.save(signatureMenu);
         return signatureMenu.getId();
     }
 
     @Transactional(readOnly = true)
-    public List<SignatureMenu> findAll(Long shopId) {
+    public List<SignatureMenu> getAll(Long shopId) {
         return signatureMenuRepository.findAlLByShopId(shopId);
     }
 
@@ -47,7 +47,7 @@ public class SignatureMenuService {
 
 
     @Transactional
-    public void changeMenuOrder(Long shopId, List<SignatureMenu> params) {
+    public void updateMenuPosition(Long shopId, List<SignatureMenu> params) {
 
         List<SignatureMenu> signatureMenus = signatureMenuRepository.findAlLByShopId(shopId);
 
@@ -55,6 +55,6 @@ public class SignatureMenuService {
                 .forEach(i -> signatureMenus.stream()
                         .filter(signatureMenu -> Objects.equals(signatureMenu.getMenu().getId(), params.get(i).getMenu().getId()))
                         .findFirst()
-                        .ifPresent(signatureMenu -> signatureMenu.changePosition(i + 1)));
+                        .ifPresent(signatureMenu -> signatureMenu.updatePosition(i + 1)));
     }
 }

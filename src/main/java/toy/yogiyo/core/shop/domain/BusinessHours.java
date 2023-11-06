@@ -29,7 +29,7 @@ public class BusinessHours {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    public void changeShop(Shop shop) {
+    public void setShop(Shop shop) {
         this.shop = shop;
     }
 

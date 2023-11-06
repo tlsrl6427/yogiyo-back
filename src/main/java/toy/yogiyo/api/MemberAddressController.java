@@ -3,10 +3,10 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
-import toy.yogiyo.core.Address.dto.AddressRegisterRequest;
-import toy.yogiyo.core.Address.dto.MemberAddressResponse;
-import toy.yogiyo.core.Address.service.MemberAddressService;
-import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.address.dto.AddressRegisterRequest;
+import toy.yogiyo.core.address.dto.MemberAddressResponse;
+import toy.yogiyo.core.address.service.MemberAddressService;
+import toy.yogiyo.core.member.domain.Member;
 
 @RestController
 @RequiredArgsConstructor

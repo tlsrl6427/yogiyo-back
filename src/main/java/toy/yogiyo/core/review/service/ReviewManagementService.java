@@ -24,7 +24,7 @@ public class ReviewManagementService {
 
         validateWithin90Days(review.getCreatedAt());
 
-        review.changeOwnerReply(ownerReply);
+        review.updateOwnerReply(ownerReply);
     }
 
     @Transactional
@@ -32,7 +32,7 @@ public class ReviewManagementService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REVIEW_NOT_FOUNT));
 
-        review.changeOwnerReply(null);
+        review.updateOwnerReply(null);
     }
 
     private void validateWithin90Days(LocalDateTime dateTime) {

@@ -14,7 +14,7 @@ public class MenuOptionGroupUpdateRequest {
 
     private String name;
 
-    public MenuOptionGroup toEntity(Long menuOptionGroupId) {
+    public MenuOptionGroup toMenuOptionGroup(Long menuOptionGroupId) {
         return MenuOptionGroup.builder()
                 .id(menuOptionGroupId)
                 .name(name)

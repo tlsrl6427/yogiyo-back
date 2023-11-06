@@ -11,7 +11,7 @@ public class MemberJoinResponse {
 
     private Long id;
 
-    public static MemberJoinResponse of(Member member) {
+    public static MemberJoinResponse from(Member member) {
         return MemberJoinResponse.builder()
                 .id(member.getId())
                 .build();

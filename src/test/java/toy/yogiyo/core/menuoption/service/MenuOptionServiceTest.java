@@ -40,7 +40,7 @@ class MenuOptionServiceTest {
                 .build();
 
         // when
-        Long addedId = menuOptionService.add(menuOption);
+        Long addedId = menuOptionService.create(menuOption);
 
         // then
         assertThat(addedId).isEqualTo(1L);
@@ -59,7 +59,7 @@ class MenuOptionServiceTest {
         given(menuOptionRepository.findById(anyLong())).willReturn(Optional.of(menuOption));
 
         // when
-        MenuOption findMenuOption = menuOptionService.find(1L);
+        MenuOption findMenuOption = menuOptionService.get(1L);
 
         // then
         assertThat(findMenuOption).isEqualTo(menuOption);
@@ -146,7 +146,7 @@ class MenuOptionServiceTest {
         );
 
         // when
-        menuOptionService.changeOrder(1L, params);
+        menuOptionService.updatePosition(1L, params);
 
         // then
         assertThat(menuOptions.get(0).getPosition()).isEqualTo(5);

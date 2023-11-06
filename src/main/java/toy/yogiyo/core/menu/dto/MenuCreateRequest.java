@@ -11,13 +11,13 @@ import toy.yogiyo.core.menu.domain.MenuGroup;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuAddRequest {
+public class MenuCreateRequest {
 
     private String name;
     private String content;
     private int price;
 
-    public Menu toEntity(Long menuGroupId) {
+    public Menu toMenu(Long menuGroupId) {
         return Menu.builder()
                 .name(name)
                 .content(content)

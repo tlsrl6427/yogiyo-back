@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import toy.yogiyo.core.menuoption.domain.MenuOption;
+import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuOptionChangeOrderRequest {
+public class MenuOptionGroupUpdatePositionRequest {
 
-    private List<Long> menuOptionIds;
+    private List<Long> menuOptionGroupIds;
 
-    public List<MenuOption> toEntity() {
-        return menuOptionIds.stream()
-                .map(id -> MenuOption.builder()
+    public List<MenuOptionGroup> toMenuOptionGroups() {
+        return menuOptionGroupIds.stream()
+                .map(id -> MenuOptionGroup.builder()
                         .id(id)
                         .build())
                 .collect(Collectors.toList());

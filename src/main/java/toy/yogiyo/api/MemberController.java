@@ -24,8 +24,8 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    public MemberMypageResponse showMypage(@LoginUser Member member){
-        return memberService.findOne(member);
+    public MemberMypageResponse getMypage(@LoginUser Member member){
+        return memberService.get(member);
     }
 
     @PatchMapping("/update")

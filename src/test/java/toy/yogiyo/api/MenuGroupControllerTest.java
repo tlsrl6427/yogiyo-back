@@ -23,9 +23,9 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.dto.MenuAddRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupAddRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupChangeMenuOrderRequest;
+import toy.yogiyo.core.menu.dto.MenuCreateRequest;
+import toy.yogiyo.core.menu.dto.MenuGroupCreateRequest;
+import toy.yogiyo.core.menu.dto.MenuGroupUpdateMenuPositionRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupUpdateRequest;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
@@ -87,13 +87,13 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 추가")
         void add() throws Exception {
             // given
-            MenuGroupAddRequest request = MenuGroupAddRequest.builder()
+            MenuGroupCreateRequest request = MenuGroupCreateRequest.builder()
                     .name("순살 메뉴")
                     .content("순살")
                     .shopId(1L)
                     .build();
 
-            given(menuGroupService.add(any())).willReturn(1L);
+            given(menuGroupService.create(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(post("/menu-group/add")
@@ -139,7 +139,7 @@ class MenuGroupControllerTest {
                     MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").menus(menus1).build(),
                     MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").menus(menus2).build()
             );
-            given(menuGroupService.findMenuGroups(anyLong())).willReturn(menuGroups);
+            given(menuGroupService.getMenuGroups(anyLong())).willReturn(menuGroups);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1)
@@ -183,7 +183,7 @@ class MenuGroupControllerTest {
             // given
             Shop shop = Shop.builder().id(1L).build();
             MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build();
-            given(menuGroupService.find(anyLong())).willReturn(menuGroup);
+            given(menuGroupService.get(anyLong())).willReturn(menuGroup);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1)
@@ -277,13 +277,13 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 추가")
         void addMenu() throws Exception {
             // given
-            MenuAddRequest request = MenuAddRequest.builder()
+            MenuCreateRequest request = MenuCreateRequest.builder()
                     .name("양념치킨")
                     .content("양념치킨")
                     .price(19000)
                     .build();
 
-            given(menuService.add(any())).willReturn(1L);
+            given(menuService.create(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
@@ -323,7 +323,7 @@ class MenuGroupControllerTest {
                 Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build()
             );
 
-            given(menuService.findMenus(anyLong())).willReturn(menus);
+            given(menuService.getMenus(anyLong())).willReturn(menus);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1)
@@ -383,10 +383,10 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 메뉴 순서 변경")
         void changeOrder() throws Exception {
             // given
-            MenuGroupChangeMenuOrderRequest request = MenuGroupChangeMenuOrderRequest.builder()
+            MenuGroupUpdateMenuPositionRequest request = MenuGroupUpdateMenuPositionRequest.builder()
                     .menuIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
                     .build();
-            doNothing().when(menuGroupService).changeMenuOrder(anyLong(), anyList());
+            doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}/change-menu-order", 1)

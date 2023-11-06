@@ -2,6 +2,8 @@ package toy.yogiyo.common.security.oauth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import toy.yogiyo.common.exception.ErrorCode;
+import toy.yogiyo.common.exception.IllegalArgumentException;
 import toy.yogiyo.core.member.domain.ProviderType;
 
 @Component
@@ -17,7 +19,7 @@ public class OAuthManager {
             case GOOGLE: return googleProvider;
             case KAKAO: return kakaoProvider;
             case DEFAULT: return defaultProvider;
-            default: throw new IllegalArgumentException();
+            default: throw new IllegalArgumentException(ErrorCode.OAUTH_PROVIDER_NOT_FOUND);
         }
     }
 

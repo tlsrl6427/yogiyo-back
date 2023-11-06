@@ -115,7 +115,7 @@ class MemberControllerTest {
                 .email("test@gmail.com")
                 .build();
 
-        given(memberService.findOne(any())).willReturn(memberMypageResponse);
+        given(memberService.get(any())).willReturn(memberMypageResponse);
 
         mockMvc.perform(
                     get("/member/mypage")
@@ -135,7 +135,7 @@ class MemberControllerTest {
                                 )
                         );
 
-        verify(memberService).findOne(any());
+        verify(memberService).get(any());
     }
 
     @DisplayName("멤버정보 업데이트 API")

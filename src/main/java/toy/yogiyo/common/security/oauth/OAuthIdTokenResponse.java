@@ -15,7 +15,7 @@ public class OAuthIdTokenResponse {
     private String nickname;
     private ProviderType providerType;
 
-    public static OAuthIdTokenResponse of(GoogleIdToken.Payload payload){
+    public static OAuthIdTokenResponse from(GoogleIdToken.Payload payload){
         return OAuthIdTokenResponse.builder()
                 .email(payload.getEmail())
                 .nickname((String) payload.get("name"))

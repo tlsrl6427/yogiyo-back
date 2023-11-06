@@ -23,11 +23,11 @@ public class MenuOption {
     @JoinColumn(name = "menu_option_group_id")
     private MenuOptionGroup menuOptionGroup;
 
-    public void changePosition(int position) {
+    public void updatePosition(int position) {
         this.position = position;
     }
 
-    public void changeInfo(MenuOption param) {
+    public void updateInfo(MenuOption param) {
         this.content = param.getContent();
         this.price = param.getPrice();
     }

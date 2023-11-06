@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MenuAddResponse {
+public class MenuCreateResponse {
 
     private Long id;
 

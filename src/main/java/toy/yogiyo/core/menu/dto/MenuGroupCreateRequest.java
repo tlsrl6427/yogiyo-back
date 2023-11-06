@@ -11,12 +11,12 @@ import toy.yogiyo.core.shop.domain.Shop;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuGroupAddRequest {
+public class MenuGroupCreateRequest {
 
     private Long shopId;
     private String name;
     private String content;
-    public MenuGroup toEntity() {
+    public MenuGroup toMenuGroup() {
         return MenuGroup.builder()
                 .shop(Shop.builder().id(shopId).build())
                 .name(name)

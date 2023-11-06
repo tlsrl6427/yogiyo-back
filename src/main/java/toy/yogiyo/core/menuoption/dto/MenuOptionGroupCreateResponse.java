@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MenuOptionGroupAddResponse {
+public class MenuOptionGroupCreateResponse {
 
     private Long menuOptionGroupId;
 

@@ -82,7 +82,7 @@ class MemberServiceTest {
     @DisplayName("마이페이지 조회")
     @Test
     void findOne(){
-        MemberMypageResponse response = memberService.findOne(member);
+        MemberMypageResponse response = memberService.get(member);
 
         assertAll(
             () -> assertThat(response.getNickname()).isEqualTo(member.getNickname()),

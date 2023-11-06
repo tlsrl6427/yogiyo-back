@@ -9,7 +9,7 @@ import toy.yogiyo.core.review.domain.Review;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReviewWriteRequest {
+public class ReviewCreateRequest {
 
     private Long orderId;
     private float tasteScore;

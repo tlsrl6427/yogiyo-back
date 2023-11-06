@@ -9,7 +9,7 @@ import toy.yogiyo.core.order.domain.Order;
 import toy.yogiyo.core.order.repository.OrderRepository;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
-import toy.yogiyo.core.review.dto.ReviewWriteRequest;
+import toy.yogiyo.core.review.dto.ReviewCreateRequest;
 import toy.yogiyo.core.review.dto.ShopReviewScrollRequest;
 import toy.yogiyo.core.review.dto.ShopReviewScrollResponse;
 import toy.yogiyo.core.review.repository.ReviewRepository;
@@ -26,7 +26,7 @@ public class ReviewService {
     private final OrderRepository orderRepository;
     private final ShopRepository shopRepository;
 
-    public void write(Member member, ReviewWriteRequest request){
+    public void create(Member member, ReviewCreateRequest request){
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ORDER_NOT_FOUND));
         Review review = request.toReview(member, order);
@@ -47,9 +47,5 @@ public class ReviewService {
                 .nextLastId(nextLastId)
                 .hasNext(hasNext)
                 .build();
-    }
-
-    public ShopReviewScrollResponse getShopReviews(ShopReviewScrollRequest request){
-        return null;
     }
 }

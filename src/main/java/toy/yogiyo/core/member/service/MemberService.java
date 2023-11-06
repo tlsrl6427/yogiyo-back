@@ -26,13 +26,13 @@ public class MemberService {
                 .ifPresent(member -> {throw new EntityExistsException(ErrorCode.MEMBER_ALREADY_EXIST);});
 
         Member savedMember = memberRepository.save(memberJoinRequest.toMember());
-        return MemberJoinResponse.of(savedMember);
+        return MemberJoinResponse.from(savedMember);
     }
 
     @Transactional(readOnly = true)
-    public MemberMypageResponse findOne(Member member){
+    public MemberMypageResponse get(Member member){
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
-        return MemberMypageResponse.of(member);
+        return MemberMypageResponse.from(member);
     }
 
     public void update(Member member, MemberUpdateRequest memberUpdateRequest){

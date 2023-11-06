@@ -22,6 +22,7 @@ public class ReviewQueryCondition extends BaseScrollRequest {
     private int size = 10;
     private int number;
 
+    // 삭제 하면 안됨
     public ReviewQueryCondition(int size, int number, LocalDate startDate, LocalDate endDate, Sort sort, Status status) {
         super(size, number);
         this.startDate = startDate;

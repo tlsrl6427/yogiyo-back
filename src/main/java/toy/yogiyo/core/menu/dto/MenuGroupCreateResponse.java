@@ -6,12 +6,12 @@ import toy.yogiyo.core.menu.domain.MenuGroup;
 
 @Getter
 @Builder
-public class MenuGroupAddResponse {
+public class MenuGroupCreateResponse {
 
     private Long id;
 
-    public static MenuGroupAddResponse from(MenuGroup menuGroup) {
-        return MenuGroupAddResponse.builder()
+    public static MenuGroupCreateResponse from(MenuGroup menuGroup) {
+        return MenuGroupCreateResponse.builder()
                 .id(menuGroup.getId())
                 .build();
     }

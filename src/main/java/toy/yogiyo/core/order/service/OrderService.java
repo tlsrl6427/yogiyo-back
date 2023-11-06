@@ -30,17 +30,6 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    /*public OrderHistoryResponse getOrderHistory(Member member, Long lastId){
-        List<OrderHistory> orderDetails = orderRepository.scrollOrderDetails(member.getId(), lastId);
-        Long nextLastId = orderDetails.get(orderDetails.size()-1).getOrderId();
-        boolean hasNext = orderDetails.size() >= 6;
-        return OrderHistoryResponse.builder()
-                .orderDetailsList(orderDetails)
-                .lastId(nextLastId)
-                .hasNext(hasNext)
-                .build();
-    }*/
-
     public OrderHistoryResponse getOrderHistory(Member member, Long lastId){
         List<Order> orders = orderRepository.scrollOrders(member.getId(), lastId);
         boolean hasNext = orders.size() >= 6;

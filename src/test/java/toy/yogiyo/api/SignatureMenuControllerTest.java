@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
-import toy.yogiyo.core.menu.dto.SignatureMenuChangeOrderRequest;
+import toy.yogiyo.core.menu.dto.SignatureMenuUpdatePositionRequest;
 import toy.yogiyo.core.menu.dto.SignatureMenuSetRequest;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
 
@@ -109,7 +109,7 @@ class SignatureMenuControllerTest {
                     .menu(Menu.builder().id(i + 1L).name("메뉴" + i).content("메뉴" + i + " 설명").picture("image.png").price(10000).build())
                     .build());
         }
-        given(signatureMenuService.findAll(anyLong())).willReturn(signatureMenus);
+        given(signatureMenuService.getAll(anyLong())).willReturn(signatureMenus);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1)
@@ -167,8 +167,8 @@ class SignatureMenuControllerTest {
     @DisplayName("대표 메뉴 정렬 순서 변경")
     void changeOrder() throws Exception {
         // given
-        doNothing().when(signatureMenuService).changeMenuOrder(anyLong(), anyList());
-        SignatureMenuChangeOrderRequest request = SignatureMenuChangeOrderRequest.builder()
+        doNothing().when(signatureMenuService).updateMenuPosition(anyLong(), anyList());
+        SignatureMenuUpdatePositionRequest request = SignatureMenuUpdatePositionRequest.builder()
                 .menuIds(Arrays.asList(1L, 2L, 3L, 4L, 5L))
                 .build();
 

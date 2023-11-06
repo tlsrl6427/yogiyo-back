@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuOptionGroupAddRequest {
+public class MenuOptionGroupCreateRequest {
 
     private String name;
     private OptionType optionType;
@@ -30,7 +30,7 @@ public class MenuOptionGroupAddRequest {
         private int price;
     }
 
-    public MenuOptionGroup toEntity(Long shopId) {
+    public MenuOptionGroup toMenuOptionGroup(Long shopId) {
         MenuOptionGroup menuOptionGroup = MenuOptionGroup.builder()
                 .name(name)
                 .optionType(optionType)

@@ -81,7 +81,7 @@ class CategoryControllerTest {
     void findOne() throws Exception {
         // given
         Category category = givenCategory();
-        when(categoryService.findCategory(category.getId())).thenReturn(category);
+        when(categoryService.getCategory(category.getId())).thenReturn(category);
 
 
         // when
@@ -93,7 +93,7 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$.id").value(category.getId()))
                 .andExpect(jsonPath("$.name").value(category.getName()))
                 .andDo(print());
-        verify(categoryService).findCategory(category.getId());
+        verify(categoryService).getCategory(category.getId());
     }
 
     @Test
@@ -161,7 +161,7 @@ class CategoryControllerTest {
         Shop shop = givenShop();
         Category category = givenCategory();
         for (int i = 0; i < 10; i++) {
-            categoryShopResponses.add(new CategoryShopResponse(
+            categoryShopResponses.add(CategoryShopResponse.from(
                     new CategoryShop((long) i, category, shop), 168));
         }
 
@@ -239,7 +239,7 @@ class CategoryControllerTest {
                 new DeliveryPriceInfo(20000, 4000),
                 new DeliveryPriceInfo(30000, 3000)));
 
-        shop.changeLatLng(36.674648, 127.448544);
+        shop.updateLatLng(36.674648, 127.448544);
 
         return shop;
     }

@@ -11,12 +11,12 @@ import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuOptionAddRequest {
+public class MenuOptionCreateRequest {
 
     private String content;
     private int price;
 
-    public MenuOption toEntity(Long optionGroupId) {
+    public MenuOption toMenuOption(Long optionGroupId) {
         return MenuOption.builder()
                 .menuOptionGroup(MenuOptionGroup.builder().id(optionGroupId).build())
                 .content(content)

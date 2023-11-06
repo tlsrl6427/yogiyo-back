@@ -53,7 +53,7 @@ public class MenuOptionGroup {
         getMenuOptions().add(menuOption);
     }
 
-    public void changeLinkMenus(List<Menu> menus) {
+    public void updateLinkMenus(List<Menu> menus) {
         this.linkMenus.clear();
         menus.forEach(menu -> {
             OptionGroupLinkMenu linkMenu = OptionGroupLinkMenu.builder()
@@ -65,11 +65,11 @@ public class MenuOptionGroup {
         });
     }
 
-    public void changePosition(int position) {
+    public void updatePosition(int position) {
         this.position = position;
     }
 
-    public void changeName(String name) {
+    public void updateName(String name) {
         this.name = name;
     }
 }

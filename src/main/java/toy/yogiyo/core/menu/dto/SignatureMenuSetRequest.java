@@ -23,7 +23,7 @@ public class SignatureMenuSetRequest {
     @Builder.Default
     private List<Long> menuIds = new ArrayList<>();
 
-    public List<SignatureMenu> toEntity() {
+    public List<SignatureMenu> toSignatureMenus() {
         return menuIds.stream()
                 .map(menuId -> SignatureMenu.builder()
                         .menu(Menu.builder().id(menuId).build())

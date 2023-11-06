@@ -15,14 +15,14 @@ public class MenuGroupUpdateRequest {
     private String name;
     private String content;
 
-    public MenuGroup toEntity() {
+    public MenuGroup toMenuGroup() {
         return MenuGroup.builder()
                 .name(name)
                 .content(content)
                 .build();
     }
 
-    public MenuGroup toEntity(Long menuGroupId) {
+    public MenuGroup toMenuGroup(Long menuGroupId) {
         return MenuGroup.builder()
                 .id(menuGroupId)
                 .name(name)

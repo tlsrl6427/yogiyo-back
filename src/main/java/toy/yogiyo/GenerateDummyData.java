@@ -163,7 +163,7 @@ public class GenerateDummyData {
                         .latitude(37.512460 + random.nextDouble() * 0.1)
                         .longitude(127.102546 + random.nextDouble() * 0.1)
                         .reviewNum(random.nextInt(500))
-                        .wishNum(random.nextInt(500))
+                        .likeNum(random.nextInt(500))
                         .quantityScore(5 * random.nextDouble())
                         .tasteScore(5 * random.nextDouble())
                         .deliveryScore(5 * random.nextDouble())
@@ -171,7 +171,7 @@ public class GenerateDummyData {
                         .banner(getFilePath("banner.jpg"))
                         .build();
 
-                shop.changeBusinessHours(generateBusinessHours());
+                shop.updateBusinessHours(generateBusinessHours());
                 shop.changeDeliveryPrices(generateDeliveryPrices());
 
                 CategoryShop categoryShop = CategoryShop.builder()

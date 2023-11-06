@@ -23,45 +23,45 @@ public class MenuService {
     private final ImageFileHandler imageFileHandler;
 
     @Transactional
-    public Long add(Menu menu) {
+    public Long create(Menu menu) {
         Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
-        menu.changePosition(maxOrder == null ? 1 : maxOrder + 1);
+        menu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
         menuRepository.save(menu);
         return menu.getId();
     }
 
     @Transactional
-    public void changePicture(Long menuId, MultipartFile picture) throws IOException {
-        Menu menu = find(menuId);
+    public void updatePicture(Long menuId, MultipartFile picture) throws IOException {
+        Menu menu = get(menuId);
 
         if(null != menu.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
 
-        menu.changePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
     }
 
     @Transactional(readOnly = true)
-    public Menu find(Long menuId) {
+    public Menu get(Long menuId) {
         return menuRepository.findById(menuId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> findMenus(Long menuGroupId) {
+    public List<Menu> getMenus(Long menuGroupId) {
         return menuRepository.findMenus(menuGroupId);
     }
 
     @Transactional
     public void update(Menu updateParam) {
-        Menu menu = find(updateParam.getId());
-        menu.changeInfo(updateParam);
+        Menu menu = get(updateParam.getId());
+        menu.updateInfo(updateParam);
     }
 
     @Transactional
     public void delete(Menu param) {
-        Menu menu = find(param.getId());
+        Menu menu = get(param.getId());
 
         if(!imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);

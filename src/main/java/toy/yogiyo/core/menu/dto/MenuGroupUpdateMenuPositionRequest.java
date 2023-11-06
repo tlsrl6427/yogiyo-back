@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.Menu;
-import toy.yogiyo.core.menu.domain.SignatureMenu;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,16 +13,16 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignatureMenuChangeOrderRequest {
+public class MenuGroupUpdateMenuPositionRequest {
 
     List<Long> menuIds;
 
-    public List<SignatureMenu> toEntity() {
+    public List<Menu> toMenus() {
         return menuIds.stream()
-                .map(menuId -> SignatureMenu.builder()
-                        .menu(Menu.builder().id(menuId).build())
+                .map(menuId -> Menu.builder()
+                        .id(menuId)
                         .build())
                 .collect(Collectors.toList());
     }
-}
 
+}

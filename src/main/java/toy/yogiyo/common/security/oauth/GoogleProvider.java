@@ -56,7 +56,7 @@ public class GoogleProvider implements OAuthProvider {
                 .setAudience(Collections.singletonList(googleProperties.getClientId())).build();
         try {
             GoogleIdToken googleIdToken = verifier.verify(idToken);
-            return OAuthIdTokenResponse.of(googleIdToken.getPayload());
+            return OAuthIdTokenResponse.from(googleIdToken.getPayload());
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

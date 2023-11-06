@@ -78,18 +78,18 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 추가")
         void add() throws Exception {
             // given
-            given(menuOptionGroupService.add(any())).willReturn(1L);
+            given(menuOptionGroupService.create(any())).willReturn(1L);
 
-            MenuOptionGroupAddRequest request = MenuOptionGroupAddRequest.builder()
+            MenuOptionGroupCreateRequest request = MenuOptionGroupCreateRequest.builder()
                     .name("옵션 그룹")
                     .optionType(OptionType.OPTIONAL)
                     .count(4)
                     .isPossibleCount(false)
                     .options(Arrays.asList(
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션1").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션2").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션3").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션4").price(1000).build()
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션1").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션2").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션3").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션4").price(1000).build()
                     ))
                     .build();
 
@@ -129,7 +129,7 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 조회")
         void find() throws Exception {
             // given
-            given(menuOptionGroupService.find(anyLong()))
+            given(menuOptionGroupService.get(anyLong()))
                     .willReturn(MenuOptionGroup.builder()
                             .id(1L)
                             .name("옵션 그룹")
@@ -196,7 +196,7 @@ class MenuOptionGroupControllerTest {
                     .menuOptions(menuOptions2)
                     .linkMenus(menus)
                     .build();
-            given(menuOptionGroupService.findAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
+            given(menuOptionGroupService.getAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/shop/{shopId}", 1)
@@ -327,8 +327,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 정렬 순서 변경")
         void changeOrder() throws Exception {
             // given
-            doNothing().when(menuOptionGroupService).changeOrder(anyLong(), anyList());
-            MenuOptionGroupChangeOrderRequest request = MenuOptionGroupChangeOrderRequest.builder()
+            doNothing().when(menuOptionGroupService).updatePosition(anyLong(), anyList());
+            MenuOptionGroupUpdatePositionRequest request = MenuOptionGroupUpdatePositionRequest.builder()
                     .menuOptionGroupIds(Arrays.asList(4L, 2L, 1L, 3L, 5L))
                     .build();
 
@@ -364,8 +364,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 추가")
         void addOption() throws Exception {
             // given
-            given(menuOptionService.add(any())).willReturn(1L);
-            MenuOptionAddRequest request = MenuOptionAddRequest.builder()
+            given(menuOptionService.create(any())).willReturn(1L);
+            MenuOptionCreateRequest request = MenuOptionCreateRequest.builder()
                     .content("옵션1")
                     .price(1000)
                     .build();
@@ -401,7 +401,7 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 조회")
         void getMenuOption() throws Exception {
             // given
-            given(menuOptionService.find(anyLong()))
+            given(menuOptionService.get(anyLong()))
                     .willReturn(MenuOption.builder()
                             .id(1L)
                             .content("옵션1")
@@ -496,8 +496,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 정렬 순서 변경")
         void changeOptionOrder() throws Exception {
             // given
-            doNothing().when(menuOptionService).changeOrder(anyLong(), anyList());
-            MenuOptionChangeOrderRequest request = MenuOptionChangeOrderRequest.builder()
+            doNothing().when(menuOptionService).updatePosition(anyLong(), anyList());
+            MenuOptionUpdatePositionRequest request = MenuOptionUpdatePositionRequest.builder()
                     .menuOptionIds(Arrays.asList(3L, 2L, 1L, 4L, 5L))
                     .build();
 

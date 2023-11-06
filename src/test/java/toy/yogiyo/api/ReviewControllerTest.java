@@ -17,7 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.domain.ReviewImage;
 import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
-import toy.yogiyo.core.review.dto.ReviewWriteRequest;
+import toy.yogiyo.core.review.dto.ReviewCreateRequest;
 import toy.yogiyo.core.review.service.ReviewService;
 
 import java.time.LocalDateTime;
@@ -67,7 +67,7 @@ class ReviewControllerTest {
     @DisplayName("리뷰 생성")
     @Test
     void write() throws Exception {
-        ReviewWriteRequest reviewWriteRequest = ReviewWriteRequest.builder()
+        ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
                 .orderId(1L)
                 .tasteScore(3.5f)
                 .quantityScore(3.0f)
@@ -77,13 +77,13 @@ class ReviewControllerTest {
                 .shopName("BHC 행당점")
                 .build();
 
-        doNothing().when(reviewService).write(any(), any());
+        doNothing().when(reviewService).create(any(), any());
 
         mockMvc.perform(
                     post("/review/write")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", jwt)
-                    .content(objectMapper.writeValueAsString(reviewWriteRequest))
+                    .content(objectMapper.writeValueAsString(reviewCreateRequest))
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -104,7 +104,7 @@ class ReviewControllerTest {
                                 )
                         );
 
-        verify(reviewService).write(any(), any());
+        verify(reviewService).create(any(), any());
     }
 
     @DisplayName("멤버 리뷰 조회")

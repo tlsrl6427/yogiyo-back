@@ -118,7 +118,7 @@ class OwnerControllerTest {
                 .email("test@gmail.com")
                 .build();
 
-        given(ownerService.showMypage(any())).willReturn(ownerMypageResponse);
+        given(ownerService.getMypage(any())).willReturn(ownerMypageResponse);
 
         mockMvc.perform(
                         get("/owner/mypage")
@@ -138,7 +138,7 @@ class OwnerControllerTest {
                         )
                 );
 
-        verify(ownerService).showMypage(any());
+        verify(ownerService).getMypage(any());
     }
 
     @DisplayName("점주정보 업데이트 API")

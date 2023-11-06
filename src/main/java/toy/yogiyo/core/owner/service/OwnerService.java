@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityExistsException;
-import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.owner.dto.OwnerJoinRequest;
 import toy.yogiyo.core.owner.dto.OwnerJoinResponse;
@@ -31,12 +30,7 @@ public class OwnerService {
     }
 
     @Transactional(readOnly = true)
-    public Owner findOne(Long ownerId) {
-        return ownerRepository.findById(ownerId).orElseThrow(() -> {throw new EntityNotFoundException(ErrorCode.OWNER_NOT_FOUND);});
-    }
-
-    @Transactional(readOnly = true)
-    public OwnerMypageResponse showMypage(Owner owner){
+    public OwnerMypageResponse getMypage(Owner owner){
         if(owner.getId() == null) throw new AuthenticationException(ErrorCode.OWNER_UNAUTHORIZATION);
         return OwnerMypageResponse.of(owner);
     }

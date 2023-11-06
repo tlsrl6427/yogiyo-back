@@ -20,7 +20,7 @@ public class ShopCloseDayUpdateRequest {
     @Builder.Default
     private List<CloseDayDto> closeDays = new ArrayList<>();
 
-    public List<CloseDay> toEntity() {
+    public List<CloseDay> toCloseDays() {
         return closeDays.stream()
                 .map(closeDay -> CloseDay.builder()
                         .dayOfWeek(closeDay.getDayOfWeek())

@@ -61,7 +61,7 @@ public class Review extends BaseTimeEntity {
         this.reviewImages = reviewImages;
     }
 
-    public void changeOwnerReply(String reply) {
+    public void updateOwnerReply(String reply) {
         if (this.ownerReply == null) {
             this.ownerReplyCreatedAt = LocalDateTime.now();
         }

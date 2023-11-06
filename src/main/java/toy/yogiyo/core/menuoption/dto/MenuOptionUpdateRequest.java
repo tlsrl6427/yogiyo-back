@@ -15,7 +15,7 @@ public class MenuOptionUpdateRequest {
     private String content;
     private int price;
 
-    public MenuOption toEntity(Long menuOptionId) {
+    public MenuOption toMenuOption(Long menuOptionId) {
         return MenuOption.builder()
                 .id(menuOptionId)
                 .content(content)

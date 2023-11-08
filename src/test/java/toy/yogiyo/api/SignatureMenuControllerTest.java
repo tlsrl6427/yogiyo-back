@@ -23,6 +23,7 @@ import toy.yogiyo.core.menu.domain.SignatureMenu;
 import toy.yogiyo.core.menu.dto.SignatureMenuUpdatePositionRequest;
 import toy.yogiyo.core.menu.dto.SignatureMenuSetRequest;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +86,7 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
+        ConstrainedFields fields = new ConstrainedFields(SignatureMenuSetRequest.class);
         result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/set",
@@ -92,8 +94,8 @@ class SignatureMenuControllerTest {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
                         requestFields(
-                                fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID"),
-                                fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, Array 순서대로 position 지정")
+                                fields.withPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, Array 순서대로 position 지정")
                         )
                 ));
     }
@@ -173,6 +175,7 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
+        ConstrainedFields fields = new ConstrainedFields(SignatureMenuUpdatePositionRequest.class);
         result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/change-order",
@@ -183,7 +186,7 @@ class SignatureMenuControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 정렬됨")
+                                fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 정렬됨")
                         )
                 ));
     }

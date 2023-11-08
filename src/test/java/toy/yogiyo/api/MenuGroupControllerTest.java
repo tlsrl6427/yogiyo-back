@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +31,7 @@ import toy.yogiyo.core.menu.dto.MenuGroupUpdateRequest;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -102,6 +105,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupCreateRequest.class);
             result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
@@ -110,9 +114,9 @@ class MenuGroupControllerTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
-                                    fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fields.withPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID")
                             ),
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 그룹 ID")
@@ -218,6 +222,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(updateRequest)));
 
             // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/update",
@@ -228,8 +233,8 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
                             )
                     ));
         }
@@ -282,6 +287,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
+            ConstrainedFields fields = new ConstrainedFields(MenuCreateRequest.class);
             result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
@@ -293,9 +299,9 @@ class MenuGroupControllerTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
-                                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
                             ),
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 ID")
@@ -380,6 +386,7 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/change-menu-order",
@@ -390,7 +397,7 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
                             )
                     ));
         }

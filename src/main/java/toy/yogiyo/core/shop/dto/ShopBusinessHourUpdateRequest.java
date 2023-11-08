@@ -9,6 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.*;
 import toy.yogiyo.core.shop.domain.BusinessHours;
 import toy.yogiyo.core.shop.domain.Days;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ShopBusinessHourUpdateRequest {
 
+    @NotNull @Valid
     private List<BusinessHoursDto> businessHours;
 
     public List<BusinessHours> toBusinessHours() {
@@ -37,14 +41,17 @@ public class ShopBusinessHourUpdateRequest {
     @Getter
     @AllArgsConstructor
     public static class BusinessHoursDto {
+        @NotNull
         private Days dayOfWeek;
         private boolean isOpen;
 
+        @NotNull
         @JsonSerialize(using = LocalTimeSerializer.class)
         @JsonDeserialize(using = LocalTimeDeserializer.class)
         @JsonFormat(pattern = "HH:mm:ss")
         private LocalTime openTime;
 
+        @NotNull
         @JsonSerialize(using = LocalTimeSerializer.class)
         @JsonDeserialize(using = LocalTimeDeserializer.class)
         @JsonFormat(pattern = "HH:mm:ss")

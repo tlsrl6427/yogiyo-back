@@ -5,10 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
@@ -17,16 +22,23 @@ import java.util.List;
 @AllArgsConstructor
 public class MenuOptionGroupCreateRequest {
 
+    @NotBlank
     private String name;
+    @NotNull
     private OptionType optionType;
+    @NotNull
+    @Min(0)
     private Integer count;
     private boolean isPossibleCount;
+    @NotNull @Valid
     private List<OptionDto> options;
 
     @Getter
     @Builder
     public static class OptionDto {
+        @NotBlank
         private String content;
+        @Min(0)
         private int price;
     }
 

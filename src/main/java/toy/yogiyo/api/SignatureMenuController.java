@@ -3,6 +3,7 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
 import toy.yogiyo.core.menu.dto.SignatureMenuUpdatePositionRequest;
@@ -22,7 +23,7 @@ public class SignatureMenuController {
     @PutMapping("/set")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #request.shopId)")
-    public void setSignatureMenus(@RequestBody SignatureMenuSetRequest request) {
+    public void setSignatureMenus(@Validated @RequestBody SignatureMenuSetRequest request) {
         List<SignatureMenu> signatureMenus = request.toSignatureMenus();
         signatureMenuService.deleteAll(request.getShopId());
 
@@ -47,7 +48,7 @@ public class SignatureMenuController {
     @PutMapping("/{shopId}/change-order")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
-    public void updatePosition(@PathVariable Long shopId, @RequestBody SignatureMenuUpdatePositionRequest request) {
+    public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody SignatureMenuUpdatePositionRequest request) {
         signatureMenuService.updateMenuPosition(shopId, request.toSignatureMenus());
     }
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SignatureMenuUpdatePositionRequest {
 
+    @NotNull
     List<Long> menuIds;
 
     public List<SignatureMenu> toSignatureMenus() {

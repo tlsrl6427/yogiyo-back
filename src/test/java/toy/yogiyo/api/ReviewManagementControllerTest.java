@@ -167,8 +167,7 @@ class ReviewManagementControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("management/review/reply",
                         requestHeaders(
@@ -194,8 +193,7 @@ class ReviewManagementControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("management/review/reply-delete",
                         requestHeaders(

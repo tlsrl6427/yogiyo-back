@@ -24,26 +24,26 @@ public enum ErrorCode {
 
     OAUTH_PROVIDER_NOT_FOUND(404, "OA_001", "OAuth 공급자를 찾을 수 없습니다."),
 
-    SHOP_NOT_FOUND(400, "SH_001", "가게를 찾을 수 없습니다."),
-    SHOP_ACCESS_DENIED(400, "SH_002", "가게에 대한 권한이 없습니다."),
-    SHOP_ALREADY_EXIST(400, "SH_003", "이미 존재하는 가게명 입니다."),
+    SHOP_NOT_FOUND(404, "SH_001", "가게를 찾을 수 없습니다."),
+    SHOP_ACCESS_DENIED(403, "SH_002", "가게에 대한 권한이 없습니다."),
+    SHOP_ALREADY_EXIST(409, "SH_003", "이미 존재하는 가게명 입니다."),
 
-    CATEGORY_NOT_FOUND(400, "C_001", "카테고리를 찾을 수 없습니다."),
-    CATEGORY_ALREADY_EXIST(400, "C_002", "이미 존재하는 카테고리명 입니다."),
+    CATEGORY_NOT_FOUND(404, "C_001", "카테고리를 찾을 수 없습니다."),
+    CATEGORY_ALREADY_EXIST(409, "C_002", "이미 존재하는 카테고리명 입니다."),
 
-    MENU_NOT_FOUND(400, "M_001", "메뉴를 찾을 수 없습니다."),
+    MENU_NOT_FOUND(404, "M_001", "메뉴를 찾을 수 없습니다."),
 
-    MENUGROUP_NOT_FOUND(400, "MG_001", "메뉴 그룹을 찾을 수 없습니다."),
+    MENUGROUP_NOT_FOUND(404, "MG_001", "메뉴 그룹을 찾을 수 없습니다."),
 
-    MENUGROUPITEM_NOT_FOUND(400, "MGI_001", "메뉴를 찾을 수 없습니다."),
+    MENUGROUPITEM_NOT_FOUND(404, "MGI_001", "메뉴를 찾을 수 없습니다."),
 
-    SIGNATUREMENU_NOT_FOUND(400, "SM_001", "대표 메뉴를 찾을 수 없습니다."),
+    SIGNATUREMENU_NOT_FOUND(404, "SM_001", "대표 메뉴를 찾을 수 없습니다."),
 
-    MENUOPTION_NOT_FOUND(400, "MO_001", "옵션을 찾을 수 없습니다."),
+    MENUOPTION_NOT_FOUND(404, "MO_001", "옵션을 찾을 수 없습니다."),
 
-    MENUOPTIONGROUP_NOT_FOUND(400, "MOG_001", "옵션 그룹을 찾을 수 없습니다."),
+    MENUOPTIONGROUP_NOT_FOUND(404, "MOG_001", "옵션 그룹을 찾을 수 없습니다."),
 
-    FILE_NOT_REMOVED(400, "F_001", "관련 파일을 삭제하지 못했습니다."),
+    FILE_NOT_REMOVED(500, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다."),
 
     REVIEW_NOT_FOUNT(400, "R_001", "리뷰를 찾을 수 없습니다."),

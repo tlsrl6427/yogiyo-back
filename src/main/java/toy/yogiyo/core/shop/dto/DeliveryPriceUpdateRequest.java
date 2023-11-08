@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DeliveryPriceUpdateRequest {
 
+    @NotNull
     private List<DeliveryPriceDto> deliveryPrices;
 
     public List<DeliveryPriceInfo> toDeliveryPriceInfos() {

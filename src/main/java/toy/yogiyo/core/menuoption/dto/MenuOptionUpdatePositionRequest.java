@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class MenuOptionUpdatePositionRequest {
 
+    @NotNull
     private List<Long> menuOptionIds;
 
     public List<MenuOption> toMenuOptions() {

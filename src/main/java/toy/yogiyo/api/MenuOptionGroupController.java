@@ -1,7 +1,9 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
@@ -21,8 +23,9 @@ public class MenuOptionGroupController {
 
     // ============= 옵션 그룹 =============
     @PostMapping("/shop/{shopId}/add")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
-    public MenuOptionGroupCreateResponse create(@PathVariable Long shopId, @RequestBody MenuOptionGroupCreateRequest request) {
+    public MenuOptionGroupCreateResponse create(@PathVariable Long shopId, @Validated @RequestBody MenuOptionGroupCreateRequest request) {
         Long optionGroupId = menuOptionGroupService.create(request.toMenuOptionGroup(shopId));
         return MenuOptionGroupCreateResponse.builder()
                 .menuOptionGroupId(optionGroupId)
@@ -42,37 +45,38 @@ public class MenuOptionGroupController {
     }
 
     @PatchMapping("/{menuOptionGroupId}/update")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
-    public String update(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionGroupUpdateRequest request) {
+    public void update(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionGroupUpdateRequest request) {
         menuOptionGroupService.update(request.toMenuOptionGroup(menuOptionGroupId));
-        return "success";
     }
 
     @DeleteMapping("/{menuOptionGroupId}/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
-    public String delete(@PathVariable Long menuOptionGroupId) {
+    public void delete(@PathVariable Long menuOptionGroupId) {
         menuOptionGroupService.delete(menuOptionGroupId);
-        return "success";
     }
 
     @PutMapping("/{menuOptionGroupId}/link-menu")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
-    public String linkMenu(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionGroupLinkMenuRequest request) {
+    public void linkMenu(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionGroupLinkMenuRequest request) {
         menuOptionGroupService.linkMenu(menuOptionGroupId, request.toMenus());
-        return "success";
     }
 
     @PutMapping("/shop/{shopId}/change-order")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
-    public String changePosition(@PathVariable Long shopId, @RequestBody MenuOptionGroupUpdatePositionRequest request) {
+    public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody MenuOptionGroupUpdatePositionRequest request) {
         menuOptionGroupService.updatePosition(shopId, request.toMenuOptionGroups());
-        return "success";
     }
 
     // ============= 옵션 =============
     @PostMapping("/{menuOptionGroupId}/add-option")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
-    public MenuOptionCreateResponse createOption(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionCreateRequest request) {
+    public MenuOptionCreateResponse createOption(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionCreateRequest request) {
         Long menuOptionId = menuOptionService.create(request.toMenuOption(menuOptionGroupId));
         return MenuOptionCreateResponse.builder()
                 .menuOptionId(menuOptionId)
@@ -86,23 +90,23 @@ public class MenuOptionGroupController {
     }
 
     @PatchMapping("/option/{menuOptionId}/update")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionPermissionEvaluator.hasWritePermission(authentication, #menuOptionId)")
-    public String updateMenuOption(@PathVariable Long menuOptionId, @RequestBody MenuOptionUpdateRequest request) {
+    public void updateMenuOption(@PathVariable Long menuOptionId, @Validated @RequestBody MenuOptionUpdateRequest request) {
         menuOptionService.update(request.toMenuOption(menuOptionId));
-        return "success";
     }
 
     @DeleteMapping("/option/{menuOptionId}/delete")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionPermissionEvaluator.hasWritePermission(authentication, #menuOptionId)")
-    public String deleteMenuOption(@PathVariable Long menuOptionId) {
+    public void deleteMenuOption(@PathVariable Long menuOptionId) {
         menuOptionService.delete(menuOptionId);
-        return "success";
     }
 
     @PutMapping("/{menuOptionGroupId}/change-option-order")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
-    public String changeOptionPosition(@PathVariable Long menuOptionGroupId, @RequestBody MenuOptionUpdatePositionRequest request) {
+    public void updateOptionPosition(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionUpdatePositionRequest request) {
         menuOptionService.updatePosition(menuOptionGroupId, request.toMenuOptions());
-        return "success";
     }
 }

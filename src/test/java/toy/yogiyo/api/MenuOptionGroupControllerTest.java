@@ -27,6 +27,7 @@ import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.menuoption.dto.*;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
 import toy.yogiyo.core.menuoption.service.MenuOptionService;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;
@@ -41,6 +42,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.OPTION_TYPE;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(MenuOptionGroupController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -114,7 +117,7 @@ class MenuOptionGroupControllerTest {
                             ),
                             requestFields(
                                     fields.withPath("name").type(JsonFieldType.STRING).description("옵션그룹명"),
-                                    fields.withPath("optionType").type(JsonFieldType.STRING).description("옵션유형"),
+                                    fields.withPath("optionType").type(JsonFieldType.STRING).description(generateLinkCode(OPTION_TYPE)),
                                     fields.withPath("count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
                                     fields.withPath("isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
                                     fields.withPath("options").type(JsonFieldType.ARRAY).description("옵션 내용"),
@@ -219,7 +222,7 @@ class MenuOptionGroupControllerTest {
                                     fieldWithPath("menuOptionGroups[].position").type(JsonFieldType.NUMBER).description("옵션그룹 정렬순서"),
                                     fieldWithPath("menuOptionGroups[].count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
                                     fieldWithPath("menuOptionGroups[].isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
-                                    fieldWithPath("menuOptionGroups[].optionType").type(JsonFieldType.STRING).description("옵션 유형"),
+                                    fieldWithPath("menuOptionGroups[].optionType").type(JsonFieldType.STRING).description(generateLinkCode(OPTION_TYPE)),
                                     fieldWithPath("menuOptionGroups[].menuOptions").type(JsonFieldType.ARRAY).description("옵션 리스트"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].id").type(JsonFieldType.NUMBER).description("옵션 ID"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].content").type(JsonFieldType.STRING).description("옵션명"),

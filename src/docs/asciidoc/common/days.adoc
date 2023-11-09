@@ -1,0 +1,2 @@
+[[days]]
+include::{snippets}/common/enum-response/enum-response-fields-days.adoc[]

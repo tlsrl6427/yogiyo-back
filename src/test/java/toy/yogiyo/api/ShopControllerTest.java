@@ -26,6 +26,7 @@ import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
@@ -43,6 +44,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.DAYS;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ShopController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -228,7 +231,7 @@ class ShopControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
-                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS)),
                                 fieldWithPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
                                 fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
                                 fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
@@ -293,7 +296,7 @@ class ShopControllerTest {
                         responseFields(
                                 fieldWithPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
                                 fieldWithPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
-                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
+                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS))
                         )
                 ));
     }
@@ -421,7 +424,7 @@ class ShopControllerTest {
                         ),
                         requestFields(
                                 fields.withPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
-                                fields.withPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
+                                fields.withPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS)),
                                 fields.withPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
                                 fields.withPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
                                 fields.withPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
@@ -501,7 +504,7 @@ class ShopControllerTest {
                         requestFields(
                                 fields.withPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
                                 fields.withPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
-                                fields.withPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
+                                fields.withPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS))
                         )
                 ));
     }

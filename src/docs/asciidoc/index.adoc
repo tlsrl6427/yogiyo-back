@@ -4,6 +4,7 @@
 :source-highlighter: highlightjs
 :toc: left
 :toclevels: 2
+:docinfo: shared-head
 
 include::Member-API.adoc[]
 include::Owner-API.adoc[]

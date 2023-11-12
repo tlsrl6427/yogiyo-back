@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,13 +24,14 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.dto.MenuAddRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupAddRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupChangeMenuOrderRequest;
+import toy.yogiyo.core.menu.dto.MenuCreateRequest;
+import toy.yogiyo.core.menu.dto.MenuGroupCreateRequest;
+import toy.yogiyo.core.menu.dto.MenuGroupUpdateMenuPositionRequest;
 import toy.yogiyo.core.menu.dto.MenuGroupUpdateRequest;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -87,13 +90,13 @@ class MenuGroupControllerTest {
         @DisplayName("메뉴 그룹 추가")
         void add() throws Exception {
             // given
-            MenuGroupAddRequest request = MenuGroupAddRequest.builder()
+            MenuGroupCreateRequest request = MenuGroupCreateRequest.builder()
                     .name("순살 메뉴")
                     .content("순살")
                     .shopId(1L)
                     .build();
 
-            given(menuGroupService.add(any())).willReturn(1L);
+            given(menuGroupService.create(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(post("/menu-group/add")
@@ -102,7 +105,8 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupCreateRequest.class);
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
                     .andDo(document("menu-group/add",
@@ -110,9 +114,9 @@ class MenuGroupControllerTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
-                                    fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fields.withPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID")
                             ),
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 그룹 ID")
@@ -139,11 +143,10 @@ class MenuGroupControllerTest {
                     MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").menus(menus1).build(),
                     MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").menus(menus2).build()
             );
-            given(menuGroupService.findMenuGroups(anyLong())).willReturn(menuGroups);
+            given(menuGroupService.getMenuGroups(anyLong())).willReturn(menuGroups);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -156,9 +159,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menuGroups[0].menus[2].id").value(3))
                     .andDo(print())
                     .andDo(document("menu-group/find-all",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("shopId").description("가게 ID")
                             ),
@@ -183,11 +183,10 @@ class MenuGroupControllerTest {
             // given
             Shop shop = Shop.builder().id(1L).build();
             MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build();
-            given(menuGroupService.find(anyLong())).willReturn(menuGroup);
+            given(menuGroupService.get(anyLong())).willReturn(menuGroup);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -196,9 +195,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.content").value("메뉴 그룹1 설명"))
                     .andDo(print())
                     .andDo(document("menu-group/find-one",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -226,8 +222,8 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(updateRequest)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/update",
                             requestHeaders(
@@ -237,8 +233,8 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
                             )
                     ));
         }
@@ -255,8 +251,7 @@ class MenuGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/delete",
                             requestHeaders(
@@ -275,15 +270,15 @@ class MenuGroupControllerTest {
 
         @Test
         @DisplayName("메뉴 그룹 메뉴 추가")
-        void addMenu() throws Exception {
+        void createMenu() throws Exception {
             // given
-            MenuAddRequest request = MenuAddRequest.builder()
+            MenuCreateRequest request = MenuCreateRequest.builder()
                     .name("양념치킨")
                     .content("양념치킨")
                     .price(19000)
                     .build();
 
-            given(menuService.add(any())).willReturn(1L);
+            given(menuService.create(any())).willReturn(1L);
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
@@ -292,7 +287,8 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            ConstrainedFields fields = new ConstrainedFields(MenuCreateRequest.class);
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andDo(print())
                     .andDo(document("menu-group/add-menu",
@@ -303,9 +299,9 @@ class MenuGroupControllerTest {
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
-                                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
                             ),
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 ID")
@@ -323,11 +319,10 @@ class MenuGroupControllerTest {
                 Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build()
             );
 
-            given(menuService.findMenus(anyLong())).willReturn(menus);
+            given(menuService.getMenus(anyLong())).willReturn(menus);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -338,9 +333,6 @@ class MenuGroupControllerTest {
                     .andExpect(jsonPath("$.menus[2].name").value("메뉴3"))
                     .andDo(print())
                     .andDo(document("menu-group/find-menus",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
@@ -366,8 +358,7 @@ class MenuGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/delete-menu",
                             requestHeaders(
@@ -381,12 +372,12 @@ class MenuGroupControllerTest {
 
         @Test
         @DisplayName("메뉴 그룹 메뉴 순서 변경")
-        void changeOrder() throws Exception {
+        void updatePosition() throws Exception {
             // given
-            MenuGroupChangeMenuOrderRequest request = MenuGroupChangeMenuOrderRequest.builder()
+            MenuGroupUpdateMenuPositionRequest request = MenuGroupUpdateMenuPositionRequest.builder()
                     .menuIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
                     .build();
-            doNothing().when(menuGroupService).changeMenuOrder(anyLong(), anyList());
+            doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
             ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}/change-menu-order", 1)
@@ -395,8 +386,8 @@ class MenuGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-group/change-menu-order",
                             requestHeaders(
@@ -406,7 +397,7 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
                             )
                     ));
         }

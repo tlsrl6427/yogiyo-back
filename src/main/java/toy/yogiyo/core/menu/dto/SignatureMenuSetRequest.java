@@ -8,6 +8,7 @@ import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +19,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SignatureMenuSetRequest {
 
+    @NotNull
     private Long shopId;
 
+    @NotNull
     @Builder.Default
     private List<Long> menuIds = new ArrayList<>();
 
-    public List<SignatureMenu> toEntity() {
+    public List<SignatureMenu> toSignatureMenus() {
         return menuIds.stream()
                 .map(menuId -> SignatureMenu.builder()
                         .menu(Menu.builder().id(menuId).build())

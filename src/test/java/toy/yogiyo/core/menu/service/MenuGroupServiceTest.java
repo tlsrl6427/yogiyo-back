@@ -50,7 +50,7 @@ class MenuGroupServiceTest {
             given(menuGroupRepository.save(any())).willReturn(menuGroup);
 
             // when
-            Long addId = menuGroupService.add(menuGroup);
+            Long addId = menuGroupService.create(menuGroup);
 
             // then
             assertThat(addId).isEqualTo(1L);
@@ -74,7 +74,7 @@ class MenuGroupServiceTest {
                 given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(menuGroup));
 
                 // when
-                MenuGroup findMenuGroup = menuGroupService.find(1L);
+                MenuGroup findMenuGroup = menuGroupService.get(1L);
 
                 // then
                 assertThat(findMenuGroup).isEqualTo(menuGroup);
@@ -87,7 +87,7 @@ class MenuGroupServiceTest {
                 given(menuGroupRepository.findById(anyLong())).willReturn(Optional.empty());
 
                 // when & then
-                assertThatThrownBy(() -> menuGroupService.find(1L))
+                assertThatThrownBy(() -> menuGroupService.get(1L))
                         .isInstanceOf(EntityNotFoundException.class);
             }
         }
@@ -159,7 +159,7 @@ class MenuGroupServiceTest {
                     Menu.builder().id(5L).build()
             );
 
-            given(menuService.findMenus(anyLong())).willReturn(menus);
+            given(menuService.getMenus(anyLong())).willReturn(menus);
 
             List<Menu> params = Arrays.asList(
                     Menu.builder().id(5L).build(),
@@ -170,7 +170,7 @@ class MenuGroupServiceTest {
             );
 
             // when
-            menuGroupService.changeMenuOrder(1L, params);
+            menuGroupService.updateMenuPosition(1L, params);
 
             // then
             assertThat(menus.get(0).getPosition()).isEqualTo(5);

@@ -2,7 +2,7 @@ package toy.yogiyo.common.login.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.owner.domain.Owner;
 
 @Getter

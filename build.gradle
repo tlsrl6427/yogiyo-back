@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation "io.jsonwebtoken:jjwt:0.9.1"
     implementation group: 'com.google.api-client', name: 'google-api-client-jackson2', version: '1.30.10'
     compileOnly 'com.google.api-client:google-api-client:1.32.1'
@@ -55,10 +56,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
 
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
@@ -72,6 +74,7 @@ tasks.named('test') {
     outputs.dir snippetsDir
     filter {
         includeTestsMatching "toy.yogiyo.api.*"
+        includeTestsMatching "toy.yogiyo.document.*"
     }
 }
 

@@ -83,7 +83,7 @@ class SignatureMenuServiceTest {
                 ));
 
         // when
-        List<SignatureMenu> signatureMenus = signatureMenuService.findAll(1L);
+        List<SignatureMenu> signatureMenus = signatureMenuService.getAll(1L);
 
         // then
         assertThat(signatureMenus.size()).isEqualTo(5);
@@ -151,7 +151,7 @@ class SignatureMenuServiceTest {
         );
 
         // when
-        signatureMenuService.changeMenuOrder(1L, params);
+        signatureMenuService.updateMenuPosition(1L, params);
 
         // then
         assertThat(signatureMenus.get(0).getPosition()).isEqualTo(5);

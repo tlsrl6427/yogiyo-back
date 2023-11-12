@@ -19,20 +19,23 @@ public class CategoryShopResponse {
     private int deliveryTime;
     private List<Integer> deliveryPriceInfos;
 
-    public CategoryShopResponse(CategoryShop categoryShop, int distance) {
+    public static CategoryShopResponse from(CategoryShop categoryShop, int distance) {
         Shop shop = categoryShop.getShop();
 
-        this.name = shop.getName();
-        this.icon = shop.getIcon();
-        this.distance = distance;
-        this.stars = (shop.getDeliveryScore() +
+        CategoryShopResponse categoryShopResponse = new CategoryShopResponse();
+        categoryShopResponse.name = shop.getName();
+        categoryShopResponse.icon = shop.getIcon();
+        categoryShopResponse.distance = distance;
+        categoryShopResponse.stars = (shop.getDeliveryScore() +
                 shop.getTasteScore() +
                 shop.getQuantityScore()) / 3;
-        this.reviewNum = shop.getReviewNum();
-        this.deliveryTime = shop.getDeliveryTime();
-        this.deliveryPriceInfos = shop.getDeliveryPriceInfos().stream()
+        categoryShopResponse.reviewNum = shop.getReviewNum();
+        categoryShopResponse.deliveryTime = shop.getDeliveryTime();
+        categoryShopResponse.deliveryPriceInfos = shop.getDeliveryPriceInfos().stream()
                 .map(DeliveryPriceInfo::getDeliveryPrice)
                 .collect(Collectors.toList());
+
+        return categoryShopResponse;
     }
 
 }

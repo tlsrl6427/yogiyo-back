@@ -6,23 +6,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class MenuGroupUpdateRequest {
 
+    @NotBlank
     private String name;
+    @NotBlank
     private String content;
 
-    public MenuGroup toEntity() {
+    public MenuGroup toMenuGroup() {
         return MenuGroup.builder()
                 .name(name)
                 .content(content)
                 .build();
     }
 
-    public MenuGroup toEntity(Long menuGroupId) {
+    public MenuGroup toMenuGroup(Long menuGroupId) {
         return MenuGroup.builder()
                 .id(menuGroupId)
                 .name(name)

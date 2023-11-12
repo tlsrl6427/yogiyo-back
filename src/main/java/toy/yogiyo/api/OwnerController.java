@@ -22,8 +22,8 @@ public class OwnerController {
     }
 
     @GetMapping("/mypage")
-    public OwnerMypageResponse showMypage(@LoginOwner Owner owner){
-        return ownerService.showMypage(owner);
+    public OwnerMypageResponse getMypage(@LoginOwner Owner owner){
+        return ownerService.getMypage(owner);
     }
 
     @PatchMapping("/update")

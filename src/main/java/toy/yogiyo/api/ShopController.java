@@ -1,6 +1,8 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.login.LoginOwner;
@@ -20,8 +22,9 @@ public class ShopController {
     private final ShopService shopService;
 
     @PostMapping(value = "/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public ShopRegisterResponse register(@LoginOwner Owner owner,
-                                         @RequestPart("shopData") ShopRegisterRequest request,
+                                         @Validated @RequestPart("shopData") ShopRegisterRequest request,
                                          @RequestPart("icon") MultipartFile icon,
                                          @RequestPart("banner") MultipartFile banner) throws IOException {
 
@@ -55,55 +58,55 @@ public class ShopController {
     }
 
     @PatchMapping("/{shopId}/call-number/update")
-    public String updateCallNumber(@LoginOwner Owner owner,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCallNumber(@LoginOwner Owner owner,
                              @PathVariable Long shopId,
-                             @RequestBody ShopUpdateCallNumberRequest request) {
+                             @Validated @RequestBody ShopUpdateCallNumberRequest request) {
 
         shopService.updateCallNumber(shopId, owner, request);
-        return "success";
     }
 
     @PostMapping("/{shopId}/notice/update")
-    public String updateNotice(@LoginOwner Owner owner,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateNotice(@LoginOwner Owner owner,
                                @PathVariable Long shopId,
-                               @RequestPart("noticeData") ShopNoticeUpdateRequest request,
+                               @Validated @RequestPart("noticeData") ShopNoticeUpdateRequest request,
                                @RequestPart(value = "images", required = false) List<MultipartFile> imageFiles) throws IOException {
 
         shopService.updateNotice(shopId, owner, request, imageFiles);
-        return "success";
     }
 
     @PatchMapping("/{shopId}/business-hours/update")
-    public String updateBusinessHours(@LoginOwner Owner owner,
-                                      @PathVariable Long shopId,
-                                      @RequestBody ShopBusinessHourUpdateRequest request) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateBusinessHours(@LoginOwner Owner owner,
+                                    @PathVariable Long shopId,
+                                    @Validated @RequestBody ShopBusinessHourUpdateRequest request) {
 
         shopService.updateBusinessHours(shopId, owner, request);
-        return "success";
     }
 
     @PatchMapping("/{shopId}/delivery-price/update")
-    public String updateNotice(@LoginOwner Owner owner,
-                         @PathVariable Long shopId,
-                         @RequestBody DeliveryPriceUpdateRequest request) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateNotice(@LoginOwner Owner owner,
+                             @PathVariable Long shopId,
+                             @Validated @RequestBody DeliveryPriceUpdateRequest request) {
 
         shopService.updateDeliveryPrice(shopId, owner, request);
-        return "success";
     }
 
     @PatchMapping("/{shopId}/close-day/update")
-    public String updateCloseDays(@LoginOwner Owner owner,
-                                  @PathVariable Long shopId,
-                                  @RequestBody ShopCloseDayUpdateRequest request) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateCloseDays(@LoginOwner Owner owner,
+                                @PathVariable Long shopId,
+                                @Validated @RequestBody ShopCloseDayUpdateRequest request) {
 
         shopService.updateCloseDays(shopId, owner, request);
-        return "success";
     }
 
     @DeleteMapping("/{shopId}/delete")
-    public String delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
         shopService.delete(shopId, owner);
-        return "success";
     }
 
     @GetMapping("/list")

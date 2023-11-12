@@ -18,7 +18,7 @@ public class CategoryDto {
         this.name = name;
     }
 
-    public Category toEntity() {
+    public Category toCategory() {
         return new Category(id, name);
     }
 }

@@ -14,11 +14,10 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.service.CategoryService;
-import toy.yogiyo.core.category.service.CategoryShopService;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
@@ -71,7 +70,7 @@ class ShopServiceTest {
             when(imageFileHandler.store(banner))
                     .thenReturn("792c0741-f234-448e-ba3f-35b5a394f33d.png");
 
-            when(categoryService.findCategory(anyString())).thenReturn(Category.builder().build());
+            when(categoryService.getCategory(anyString())).thenReturn(Category.builder().build());
 
             when(shopRepository.save(any())).thenReturn(any());
 
@@ -465,7 +464,7 @@ class ShopServiceTest {
 
     private Shop getShopWithOwner(Long ownerId) {
         Shop shop = getShop();
-        shop.changeOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", ProviderType.DEFAULT));
+        shop.setOwner(new Owner(ownerId, "owner", "owner@yogiyo.com", "owner", ProviderType.DEFAULT));
         return shop;
     }
 }

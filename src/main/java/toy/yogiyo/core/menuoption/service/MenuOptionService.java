@@ -19,29 +19,29 @@ public class MenuOptionService {
     private final MenuOptionRepository menuOptionRepository;
 
     @Transactional
-    public Long add(MenuOption menuOption) {
+    public Long create(MenuOption menuOption) {
         Integer maxOrder = menuOptionRepository.findMaxOrder(menuOption.getMenuOptionGroup().getId());
-        menuOption.changePosition(maxOrder == null ? 1 : maxOrder + 1);
+        menuOption.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
         menuOptionRepository.save(menuOption);
         return menuOption.getId();
     }
 
     @Transactional(readOnly = true)
-    public MenuOption find(Long menuOptionId) {
+    public MenuOption get(Long menuOptionId) {
         return menuOptionRepository.findById(menuOptionId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUOPTION_NOT_FOUND));
     }
 
     @Transactional
     public void update(MenuOption updateParam) {
-        MenuOption menuOption = find(updateParam.getId());
-        menuOption.changeInfo(updateParam);
+        MenuOption menuOption = get(updateParam.getId());
+        menuOption.updateInfo(updateParam);
     }
 
     @Transactional
     public void delete(Long menuOptionId) {
-        MenuOption menuOption = find(menuOptionId);
+        MenuOption menuOption = get(menuOptionId);
         menuOptionRepository.delete(menuOption);
     }
 
@@ -51,14 +51,14 @@ public class MenuOptionService {
     }
 
     @Transactional
-    public void changeOrder(Long menuOptionGroupId, List<MenuOption> params) {
+    public void updatePosition(Long menuOptionGroupId, List<MenuOption> params) {
         List<MenuOption> options = menuOptionRepository.findAllByMenuOptionGroupId(menuOptionGroupId);
 
         IntStream.range(0, params.size())
                 .forEach(i -> options.stream()
                         .filter(option -> Objects.equals(option.getId(), params.get(i).getId()))
                         .findFirst()
-                        .ifPresent(option -> option.changePosition(i + 1)));
+                        .ifPresent(option -> option.updatePosition(i + 1)));
     }
 
 }

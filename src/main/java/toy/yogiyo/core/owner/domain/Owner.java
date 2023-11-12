@@ -2,7 +2,7 @@ package toy.yogiyo.core.owner.domain;
 
 import lombok.*;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 
 import javax.persistence.*;
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.menu.domain.Menu;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,9 +16,10 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class MenuOptionGroupLinkMenuRequest {
 
+    @NotNull
     private List<Long> menuIds;
 
-    public List<Menu> toEntity() {
+    public List<Menu> toMenus() {
         return menuIds.stream()
                 .map(id -> Menu.builder()
                         .id(id)

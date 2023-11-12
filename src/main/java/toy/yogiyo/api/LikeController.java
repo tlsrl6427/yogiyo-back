@@ -3,10 +3,9 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
-import toy.yogiyo.core.Like.dto.LikeResponse;
-import toy.yogiyo.core.Like.dto.LikeScrollResponse;
-import toy.yogiyo.core.Like.service.LikeService;
-import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.like.dto.LikeScrollResponse;
+import toy.yogiyo.core.like.service.LikeService;
+import toy.yogiyo.core.member.domain.Member;
 
 @RestController
 @RequiredArgsConstructor

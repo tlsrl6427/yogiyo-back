@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import toy.yogiyo.core.shop.domain.CloseDay;
 import toy.yogiyo.core.shop.domain.Days;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,10 +18,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ShopCloseDayUpdateRequest {
 
+    @NotNull
     @Builder.Default
     private List<CloseDayDto> closeDays = new ArrayList<>();
 
-    public List<CloseDay> toEntity() {
+    public List<CloseDay> toCloseDays() {
         return closeDays.stream()
                 .map(closeDay -> CloseDay.builder()
                         .dayOfWeek(closeDay.getDayOfWeek())

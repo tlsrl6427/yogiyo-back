@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.dto.MemberJoinRequest;
-import toy.yogiyo.core.Member.dto.MemberJoinResponse;
-import toy.yogiyo.core.Member.dto.MemberMypageResponse;
-import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
-import toy.yogiyo.core.Member.service.MemberService;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.dto.MemberJoinRequest;
+import toy.yogiyo.core.member.dto.MemberJoinResponse;
+import toy.yogiyo.core.member.dto.MemberMypageResponse;
+import toy.yogiyo.core.member.dto.MemberUpdateRequest;
+import toy.yogiyo.core.member.service.MemberService;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +24,8 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    public MemberMypageResponse showMypage(@LoginUser Member member){
-        return memberService.findOne(member);
+    public MemberMypageResponse getMypage(@LoginUser Member member){
+        return memberService.get(member);
     }
 
     @PatchMapping("/update")

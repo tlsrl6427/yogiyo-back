@@ -26,7 +26,7 @@ public class SignatureMenu {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    public void changePosition(int position) {
+    public void updatePosition(int position) {
         this.position = position;
     }
 

@@ -27,6 +27,8 @@ import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.menuoption.dto.*;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
 import toy.yogiyo.core.menuoption.service.MenuOptionService;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.OPTION_TYPE;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(MenuOptionGroupController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -78,18 +82,18 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 추가")
         void add() throws Exception {
             // given
-            given(menuOptionGroupService.add(any())).willReturn(1L);
+            given(menuOptionGroupService.create(any())).willReturn(1L);
 
-            MenuOptionGroupAddRequest request = MenuOptionGroupAddRequest.builder()
+            MenuOptionGroupCreateRequest request = MenuOptionGroupCreateRequest.builder()
                     .name("옵션 그룹")
                     .optionType(OptionType.OPTIONAL)
                     .count(4)
                     .isPossibleCount(false)
                     .options(Arrays.asList(
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션1").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션2").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션3").price(1000).build(),
-                            MenuOptionGroupAddRequest.OptionDto.builder().content("옵션4").price(1000).build()
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션1").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션2").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션3").price(1000).build(),
+                            MenuOptionGroupCreateRequest.OptionDto.builder().content("옵션4").price(1000).build()
                     ))
                     .build();
 
@@ -100,7 +104,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupCreateRequest.class);
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.menuOptionGroupId").value(1))
                     .andDo(print())
                     .andDo(document("menu-option-group/add-group",
@@ -111,13 +116,13 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("shopId").description("가게 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("옵션그룹명"),
-                                    fieldWithPath("optionType").type(JsonFieldType.STRING).description("옵션유형"),
-                                    fieldWithPath("count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
-                                    fieldWithPath("isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
-                                    fieldWithPath("options").type(JsonFieldType.ARRAY).description("옵션 내용"),
-                                    fieldWithPath("options[].content").type(JsonFieldType.STRING).description("옵션명"),
-                                    fieldWithPath("options[].price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("옵션그룹명"),
+                                    fields.withPath("optionType").type(JsonFieldType.STRING).description(generateLinkCode(OPTION_TYPE)),
+                                    fields.withPath("count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
+                                    fields.withPath("isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
+                                    fields.withPath("options").type(JsonFieldType.ARRAY).description("옵션 내용"),
+                                    fields.withPath("options[].content").type(JsonFieldType.STRING).description("옵션명"),
+                                    fields.withPath("options[].price").type(JsonFieldType.NUMBER).description("가격")
                             ),
                             responseFields(
                                     fieldWithPath("menuOptionGroupId").type(JsonFieldType.NUMBER).description("옵션그룹 ID")
@@ -129,15 +134,14 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 조회")
         void find() throws Exception {
             // given
-            given(menuOptionGroupService.find(anyLong()))
+            given(menuOptionGroupService.get(anyLong()))
                     .willReturn(MenuOptionGroup.builder()
                             .id(1L)
                             .name("옵션 그룹")
                             .build());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/{menuOptionGroupId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/{menuOptionGroupId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -145,9 +149,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.name").value("옵션 그룹"))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-one",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuOptionGroupId").description("옵션 그룹 ID")
                             ),
@@ -196,11 +197,10 @@ class MenuOptionGroupControllerTest {
                     .menuOptions(menuOptions2)
                     .linkMenus(menus)
                     .build();
-            given(menuOptionGroupService.findAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
+            given(menuOptionGroupService.getAll(anyLong())).willReturn(Arrays.asList(menuOptionGroup1, menuOptionGroup2));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/shop/{shopId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/shop/{shopId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -212,9 +212,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.menuOptionGroups[0].menuOptions.length()").value(3))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-all",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("shopId").description("가게 ID")
                             ),
@@ -225,7 +222,7 @@ class MenuOptionGroupControllerTest {
                                     fieldWithPath("menuOptionGroups[].position").type(JsonFieldType.NUMBER).description("옵션그룹 정렬순서"),
                                     fieldWithPath("menuOptionGroups[].count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
                                     fieldWithPath("menuOptionGroups[].isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
-                                    fieldWithPath("menuOptionGroups[].optionType").type(JsonFieldType.STRING).description("옵션 유형"),
+                                    fieldWithPath("menuOptionGroups[].optionType").type(JsonFieldType.STRING).description(generateLinkCode(OPTION_TYPE)),
                                     fieldWithPath("menuOptionGroups[].menuOptions").type(JsonFieldType.ARRAY).description("옵션 리스트"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].id").type(JsonFieldType.NUMBER).description("옵션 ID"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].content").type(JsonFieldType.STRING).description("옵션명"),
@@ -252,8 +249,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupUpdateRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/update",
                             requestHeaders(
@@ -263,7 +260,7 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("menuOptionGroupId").description("옵션그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("name").type(JsonFieldType.STRING).description("옵션그룹명")
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("옵션그룹명")
                             )
                     ));
         }
@@ -278,8 +275,7 @@ class MenuOptionGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/delete",
                             requestHeaders(
@@ -307,8 +303,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupLinkMenuRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/link-menu",
                             requestHeaders(
@@ -318,7 +314,7 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("menuOptionGroupId").description("옵션그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID 리스트")
+                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID 리스트")
                             )
                     ));
         }
@@ -327,8 +323,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 그룹 정렬 순서 변경")
         void changeOrder() throws Exception {
             // given
-            doNothing().when(menuOptionGroupService).changeOrder(anyLong(), anyList());
-            MenuOptionGroupChangeOrderRequest request = MenuOptionGroupChangeOrderRequest.builder()
+            doNothing().when(menuOptionGroupService).updatePosition(anyLong(), anyList());
+            MenuOptionGroupUpdatePositionRequest request = MenuOptionGroupUpdatePositionRequest.builder()
                     .menuOptionGroupIds(Arrays.asList(4L, 2L, 1L, 3L, 5L))
                     .build();
 
@@ -339,8 +335,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupUpdatePositionRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/change-order",
                             requestHeaders(
@@ -350,7 +346,7 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("shopId").description("가게 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("menuOptionGroupIds").type(JsonFieldType.ARRAY).description("옵션그룹 ID 리스트, 리스트 순서대로 정렬됨")
+                                    fields.withPath("menuOptionGroupIds").type(JsonFieldType.ARRAY).description("옵션그룹 ID 리스트, 리스트 순서대로 정렬됨")
                             )
                     ));
         }
@@ -364,8 +360,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 추가")
         void addOption() throws Exception {
             // given
-            given(menuOptionService.add(any())).willReturn(1L);
-            MenuOptionAddRequest request = MenuOptionAddRequest.builder()
+            given(menuOptionService.create(any())).willReturn(1L);
+            MenuOptionCreateRequest request = MenuOptionCreateRequest.builder()
                     .content("옵션1")
                     .price(1000)
                     .build();
@@ -377,7 +373,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionCreateRequest.class);
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.menuOptionId").value(1))
                     .andDo(print())
                     .andDo(document("menu-option-group/add-option",
@@ -388,8 +385,8 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("menuOptionGroupId").description("옵션그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("옵션명"),
-                                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("옵션명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
                             ),
                             responseFields(
                                     fieldWithPath("menuOptionId").type(JsonFieldType.NUMBER).description("옵션 ID")
@@ -401,7 +398,7 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 조회")
         void getMenuOption() throws Exception {
             // given
-            given(menuOptionService.find(anyLong()))
+            given(menuOptionService.get(anyLong()))
                     .willReturn(MenuOption.builder()
                             .id(1L)
                             .content("옵션1")
@@ -410,8 +407,7 @@ class MenuOptionGroupControllerTest {
                             .build());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/option/{menuOptionId}", 1)
-                    .header(HttpHeaders.AUTHORIZATION, jwt));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-option-group/option/{menuOptionId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -420,9 +416,6 @@ class MenuOptionGroupControllerTest {
                     .andExpect(jsonPath("$.price").value(1000))
                     .andDo(print())
                     .andDo(document("menu-option-group/find-option",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                            ),
                             pathParameters(
                                     parameterWithName("menuOptionId").description("옵션 ID")
                             ),
@@ -451,8 +444,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionUpdateRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/update-option",
                             requestHeaders(
@@ -462,8 +455,8 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("menuOptionId").description("옵션 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("옵션명"),
-                                    fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("옵션명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
                             )
                     ));
         }
@@ -479,8 +472,7 @@ class MenuOptionGroupControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/delete-option",
                             requestHeaders(
@@ -496,8 +488,8 @@ class MenuOptionGroupControllerTest {
         @DisplayName("옵션 정렬 순서 변경")
         void changeOptionOrder() throws Exception {
             // given
-            doNothing().when(menuOptionService).changeOrder(anyLong(), anyList());
-            MenuOptionChangeOrderRequest request = MenuOptionChangeOrderRequest.builder()
+            doNothing().when(menuOptionService).updatePosition(anyLong(), anyList());
+            MenuOptionUpdatePositionRequest request = MenuOptionUpdatePositionRequest.builder()
                     .menuOptionIds(Arrays.asList(3L, 2L, 1L, 4L, 5L))
                     .build();
 
@@ -508,8 +500,8 @@ class MenuOptionGroupControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            result.andExpect(status().isOk())
-                    .andExpect(content().string("success"))
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionUpdatePositionRequest.class);
+            result.andExpect(status().isNoContent())
                     .andDo(print())
                     .andDo(document("menu-option-group/change-option-order",
                             requestHeaders(
@@ -519,7 +511,7 @@ class MenuOptionGroupControllerTest {
                                     parameterWithName("menuOptionGroupId").description("옵션그룹 ID")
                             ),
                             requestFields(
-                                    fieldWithPath("menuOptionIds").type(JsonFieldType.ARRAY).description("옵션 ID 리스트, 리스트 순서대로 정렬됨")
+                                    fields.withPath("menuOptionIds").type(JsonFieldType.ARRAY).description("옵션 ID 리스트, 리스트 순서대로 정렬됨")
                             )
                     ));
         }

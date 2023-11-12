@@ -11,8 +11,8 @@ import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.common.exception.IllegalArgumentException;
 import toy.yogiyo.common.login.UserType;
 import toy.yogiyo.common.login.service.LoginService;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.owner.domain.Owner;
 
 import java.util.Date;

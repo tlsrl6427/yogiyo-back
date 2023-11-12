@@ -15,13 +15,13 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Member.domain.ProviderType;
-import toy.yogiyo.core.Member.dto.MemberJoinRequest;
-import toy.yogiyo.core.Member.dto.MemberJoinResponse;
-import toy.yogiyo.core.Member.dto.MemberMypageResponse;
-import toy.yogiyo.core.Member.dto.MemberUpdateRequest;
-import toy.yogiyo.core.Member.service.MemberService;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.member.domain.ProviderType;
+import toy.yogiyo.core.member.dto.MemberJoinRequest;
+import toy.yogiyo.core.member.dto.MemberJoinResponse;
+import toy.yogiyo.core.member.dto.MemberMypageResponse;
+import toy.yogiyo.core.member.dto.MemberUpdateRequest;
+import toy.yogiyo.core.member.service.MemberService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -115,7 +115,7 @@ class MemberControllerTest {
                 .email("test@gmail.com")
                 .build();
 
-        given(memberService.findOne(any())).willReturn(memberMypageResponse);
+        given(memberService.get(any())).willReturn(memberMypageResponse);
 
         mockMvc.perform(
                     get("/member/mypage")
@@ -135,7 +135,7 @@ class MemberControllerTest {
                                 )
                         );
 
-        verify(memberService).findOne(any());
+        verify(memberService).get(any());
     }
 
     @DisplayName("멤버정보 업데이트 API")

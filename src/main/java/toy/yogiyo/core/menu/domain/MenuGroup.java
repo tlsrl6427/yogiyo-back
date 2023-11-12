@@ -30,7 +30,7 @@ public class MenuGroup {
     @OneToMany(mappedBy = "menuGroup")
     private List<Menu> menus = new ArrayList<>();
 
-    public void changeInfo(MenuGroup param) {
+    public void updateInfo(MenuGroup param) {
         this.name = param.getName();
         this.content = param.getContent();
     }

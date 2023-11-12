@@ -12,25 +12,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.headers.HeaderDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.restdocs.payload.PayloadDocumentation;
-import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.Member.domain.Member;
-import toy.yogiyo.core.Review.domain.Review;
-import toy.yogiyo.core.Review.domain.ReviewImage;
-import toy.yogiyo.core.Review.dto.ReplyRequest;
-import toy.yogiyo.core.Review.dto.ReviewQueryCondition;
-import toy.yogiyo.core.Review.repository.ReviewQueryRepository;
-import toy.yogiyo.core.Review.service.ReviewManagementService;
+import toy.yogiyo.core.member.domain.Member;
+import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.domain.ReviewImage;
+import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewQueryCondition;
+import toy.yogiyo.core.review.repository.ReviewQueryRepository;
+import toy.yogiyo.core.review.service.ReviewManagementService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -172,8 +167,7 @@ class ReviewManagementControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("management/review/reply",
                         requestHeaders(
@@ -199,8 +193,7 @@ class ReviewManagementControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("management/review/reply-delete",
                         requestHeaders(

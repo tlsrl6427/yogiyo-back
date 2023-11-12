@@ -33,21 +33,21 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.REMOVE)
     private List<OptionGroupLinkMenu> linkMenus = new ArrayList<>();
 
-    public void changePicture(String picture) {
+    public void updatePicture(String picture) {
         this.picture = picture;
     }
 
-    public void changeInfo(Menu updateParam) {
+    public void updateInfo(Menu updateParam) {
         this.name = updateParam.getName();
         this.content = updateParam.getContent();
         this.price = updateParam.getPrice();
     }
 
-    public void changePosition(int position) {
+    public void updatePosition(int position) {
         this.position = position;
     }
 
-    public void changeMenuGroup(MenuGroup menuGroup) {
+    public void updateMenuGroup(MenuGroup menuGroup) {
         this.menuGroup = menuGroup;
     }
 

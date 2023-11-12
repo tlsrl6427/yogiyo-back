@@ -15,7 +15,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.core.Member.domain.ProviderType;
+import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.owner.dto.OwnerJoinRequest;
 import toy.yogiyo.core.owner.dto.OwnerJoinResponse;
@@ -118,7 +118,7 @@ class OwnerControllerTest {
                 .email("test@gmail.com")
                 .build();
 
-        given(ownerService.showMypage(any())).willReturn(ownerMypageResponse);
+        given(ownerService.getMypage(any())).willReturn(ownerMypageResponse);
 
         mockMvc.perform(
                         get("/owner/mypage")
@@ -138,7 +138,7 @@ class OwnerControllerTest {
                         )
                 );
 
-        verify(ownerService).showMypage(any());
+        verify(ownerService).getMypage(any());
     }
 
     @DisplayName("점주정보 업데이트 API")

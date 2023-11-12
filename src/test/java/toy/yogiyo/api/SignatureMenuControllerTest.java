@@ -20,9 +20,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
-import toy.yogiyo.core.menu.dto.SignatureMenuChangeOrderRequest;
+import toy.yogiyo.core.menu.dto.SignatureMenuUpdatePositionRequest;
 import toy.yogiyo.core.menu.dto.SignatureMenuSetRequest;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,16 +86,16 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(SignatureMenuSetRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/set",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),
                         requestFields(
-                                fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID"),
-                                fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, Array 순서대로 position 지정")
+                                fields.withPath("shopId").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, Array 순서대로 position 지정")
                         )
                 ));
     }
@@ -109,11 +110,10 @@ class SignatureMenuControllerTest {
                     .menu(Menu.builder().id(i + 1L).name("메뉴" + i).content("메뉴" + i + " 설명").picture("image.png").price(10000).build())
                     .build());
         }
-        given(signatureMenuService.findAll(anyLong())).willReturn(signatureMenus);
+        given(signatureMenuService.getAll(anyLong())).willReturn(signatureMenus);
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1)
-                .header(HttpHeaders.AUTHORIZATION, jwt));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1));
 
         // then
         result.andExpect(status().isOk())
@@ -126,9 +126,6 @@ class SignatureMenuControllerTest {
                 .andExpect(jsonPath("$.signatureMenus[4].id").value(5))
                 .andDo(print())
                 .andDo(document("signature-menu/find-all",
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                        ),
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
                         ),
@@ -153,8 +150,7 @@ class SignatureMenuControllerTest {
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/signature-menu/delete/{menuId}", 1));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/delete-one",
                         pathParameters(
@@ -167,8 +163,8 @@ class SignatureMenuControllerTest {
     @DisplayName("대표 메뉴 정렬 순서 변경")
     void changeOrder() throws Exception {
         // given
-        doNothing().when(signatureMenuService).changeMenuOrder(anyLong(), anyList());
-        SignatureMenuChangeOrderRequest request = SignatureMenuChangeOrderRequest.builder()
+        doNothing().when(signatureMenuService).updateMenuPosition(anyLong(), anyList());
+        SignatureMenuUpdatePositionRequest request = SignatureMenuUpdatePositionRequest.builder()
                 .menuIds(Arrays.asList(1L, 2L, 3L, 4L, 5L))
                 .build();
 
@@ -179,8 +175,8 @@ class SignatureMenuControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(SignatureMenuUpdatePositionRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("signature-menu/change-order",
                         requestHeaders(
@@ -190,7 +186,7 @@ class SignatureMenuControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 정렬됨")
+                                fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 정렬됨")
                         )
                 ));
     }

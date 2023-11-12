@@ -1,16 +1,16 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.Review.domain.Review;
-import toy.yogiyo.core.Review.dto.ReplyRequest;
-import toy.yogiyo.core.Review.dto.ReviewManagementResponse;
-import toy.yogiyo.core.Review.dto.ReviewQueryCondition;
-import toy.yogiyo.core.Review.repository.ReviewQueryRepository;
-import toy.yogiyo.core.Review.service.ReviewManagementService;
-import toy.yogiyo.core.Review.service.ReviewService;
+import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewManagementResponse;
+import toy.yogiyo.core.review.dto.ReviewQueryCondition;
+import toy.yogiyo.core.review.repository.ReviewQueryRepository;
+import toy.yogiyo.core.review.service.ReviewManagementService;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,17 +29,17 @@ public class ReviewManagementController {
     }
 
     @PatchMapping("/{reviewId}/reply")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@reviewManagementPermissionEvaluator.hasPermission(authentication, #reviewId)")
-    public String reply(@PathVariable Long reviewId, @RequestBody ReplyRequest request) {
+    public void reply(@PathVariable Long reviewId, @RequestBody ReplyRequest request) {
         reviewManagementService.reply(reviewId, request.getReply());
-        return "success";
     }
 
     @DeleteMapping("/{reviewId}/reply")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@reviewManagementPermissionEvaluator.hasPermission(authentication, #reviewId)")
-    public String deleteReply(@PathVariable Long reviewId) {
+    public void deleteReply(@PathVariable Long reviewId) {
         reviewManagementService.deleteReply(reviewId);
-        return "success";
     }
 
 }

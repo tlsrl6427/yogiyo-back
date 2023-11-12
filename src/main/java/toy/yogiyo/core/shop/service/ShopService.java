@@ -40,10 +40,10 @@ public class ShopService {
         String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(icon));
         String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
 
-        Shop shop = request.toEntity(iconStoredName, bannerStoredName, owner);
+        Shop shop = request.toShop(iconStoredName, bannerStoredName, owner);
 
         request.getCategories().forEach(categoryName -> {
-            Category category = categoryService.findCategory(categoryName);
+            Category category = categoryService.getCategory(categoryName);
             shop.getCategoryShop().add(CategoryShop.builder()
                     .category(category)
                     .shop(shop)
@@ -102,7 +102,7 @@ public class ShopService {
 
         validatePermission(owner, shop);
 
-        shop.changeCallNumber(request.getCallNumber());
+        shop.updateCallNumber(request.getCallNumber());
     }
 
     @Transactional
@@ -126,7 +126,7 @@ public class ShopService {
             storedImages.add(storedFilePath);
         }
 
-        shop.changeNotice(request.getTitle(), request.getNotice(), storedImages);
+        shop.updateNotice(request.getTitle(), request.getNotice(), storedImages);
     }
 
     @Transactional
@@ -136,7 +136,7 @@ public class ShopService {
 
         validatePermission(owner, shop);
 
-        shop.changeBusinessHours(request.toEntity());
+        shop.updateBusinessHours(request.toBusinessHours());
     }
 
     @Transactional
@@ -146,7 +146,7 @@ public class ShopService {
 
         validatePermission(owner, shop);
 
-        shop.changeDeliveryPrices(request.toEntity());
+        shop.changeDeliveryPrices(request.toDeliveryPriceInfos());
     }
 
     @Transactional
@@ -156,7 +156,7 @@ public class ShopService {
 
         validatePermission(owner, shop);
 
-        shop.changeCloseDays(request.toEntity());
+        shop.updateCloseDays(request.toCloseDays());
     }
 
     @Transactional

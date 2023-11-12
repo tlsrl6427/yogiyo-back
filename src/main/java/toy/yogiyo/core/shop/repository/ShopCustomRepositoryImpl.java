@@ -13,20 +13,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import toy.yogiyo.api.ShopScrollListRequest;
-import toy.yogiyo.core.Like.domain.QLike;
-import toy.yogiyo.core.category.domain.QCategory;
-import toy.yogiyo.core.category.domain.QCategoryShop;
-import toy.yogiyo.core.shop.domain.QDeliveryPriceInfo;
-import toy.yogiyo.core.shop.domain.QShop;
+import toy.yogiyo.api.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
-
-import static toy.yogiyo.core.Like.domain.QLike.like;
-import static toy.yogiyo.core.Order.domain.QOrder.order;
 import static toy.yogiyo.core.category.domain.QCategory.category;
 import static toy.yogiyo.core.category.domain.QCategoryShop.categoryShop;
 import static toy.yogiyo.core.shop.domain.QDeliveryPriceInfo.deliveryPriceInfo;
+import static toy.yogiyo.core.like.domain.QLike.like;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
 @Repository
@@ -50,7 +44,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     }
 
     @Override
-    public List<Shop> scrollShopList(ShopScrollListRequest request) {
+    public List<ShopScrollResponse> scrollShopList(ShopScrollListRequest request) {
 
         OrderSpecifier<?> orderSpecifier;
         if(request.getSortOption() == null || request.getSortOption().isEmpty()){
@@ -62,7 +56,16 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
         }
 
         return jpaQueryFactory
-                .select(shop)
+                .select(Projections.fields(ShopScrollResponse.class,
+                            shop.id.as("shopId"),
+                            shop.name.as("shopName"),
+                            shop.totalScore,
+                            getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+                            shop.deliveryTime,
+                            shop.minDeliveryPrice,
+                            shop.maxDeliveryPrice,
+                            shop.icon
+                        ))
                 .from(shop)
                 .join(categoryShop).on(shop.id.eq(categoryShop.shop.id))
                 .join(category).on(categoryShop.category.id.eq(category.id))

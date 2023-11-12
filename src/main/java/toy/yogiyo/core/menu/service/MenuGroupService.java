@@ -8,8 +8,6 @@ import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
-import toy.yogiyo.core.menuoption.domain.MenuOption;
-import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 
 import java.util.Comparator;
 import java.util.List;
@@ -26,19 +24,19 @@ public class MenuGroupService {
 
     // =================== 점주 기능 ======================
     @Transactional
-    public Long add(MenuGroup menuGroup) {
+    public Long create(MenuGroup menuGroup) {
         menuGroupRepository.save(menuGroup);
         return menuGroup.getId();
     }
 
     @Transactional(readOnly = true)
-    public MenuGroup find(Long id) {
+    public MenuGroup get(Long id) {
         return menuGroupRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MENUGROUP_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
-    public List<MenuGroup> findMenuGroups(Long shopId) {
+    public List<MenuGroup> getMenuGroups(Long shopId) {
         List<MenuGroup> menuGroups = menuGroupRepository.findAllByShopId(shopId);
 
         menuGroups.forEach(menuGroup ->
@@ -49,28 +47,28 @@ public class MenuGroupService {
 
     @Transactional
     public void update(MenuGroup updateParam) {
-        MenuGroup menuGroup = find(updateParam.getId());
-        menuGroup.changeInfo(updateParam);
+        MenuGroup menuGroup = get(updateParam.getId());
+        menuGroup.updateInfo(updateParam);
     }
 
     @Transactional
     public void delete(MenuGroup deleteParam) {
-        MenuGroup menuGroup = find(deleteParam.getId());
-        List<Menu> menus = menuService.findMenus(deleteParam.getId());
+        MenuGroup menuGroup = get(deleteParam.getId());
+        List<Menu> menus = menuService.getMenus(deleteParam.getId());
 
         menus.forEach(menuService::delete);
         menuGroupRepository.delete(menuGroup);
     }
 
     @Transactional
-    public void changeMenuOrder(Long menuGroupId, List<Menu> params) {
-        List<Menu> menus = menuService.findMenus(menuGroupId);
+    public void updateMenuPosition(Long menuGroupId, List<Menu> params) {
+        List<Menu> menus = menuService.getMenus(menuGroupId);
 
         IntStream.range(0, params.size())
                 .forEach(i -> menus.stream()
                         .filter(menu -> Objects.equals(menu.getId(), params.get(i).getId()))
                         .findFirst()
-                        .ifPresent(menu -> menu.changePosition(i + 1)));
+                        .ifPresent(menu -> menu.updatePosition(i + 1)));
     }
 
 

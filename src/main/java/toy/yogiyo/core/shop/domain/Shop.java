@@ -3,7 +3,7 @@ package toy.yogiyo.core.shop.domain;
 import lombok.*;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.Review.domain.Review;
+import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
 
@@ -25,7 +25,7 @@ public class Shop extends BaseTimeEntity {
     private String name;
 
     private long orderNum;
-    private long wishNum;
+    private long likeNum;
     private long ownerReplyNum;
 
     // 리뷰
@@ -77,25 +77,25 @@ public class Shop extends BaseTimeEntity {
     private List<CloseDay> closeDays = new ArrayList<>();
 
 
-    public void changeOwner(Owner owner) {
+    public void setOwner(Owner owner) {
         this.owner = owner;
     }
 
-    public void changeCallNumber(String callNumber) {
+    public void updateCallNumber(String callNumber) {
         this.callNumber = callNumber;
     }
 
-    public void changeNotice(String title, String notice, List<String> images) {
+    public void updateNotice(String title, String notice, List<String> images) {
         this.noticeTitle = title;
         this.ownerNotice = notice;
         this.noticeImages = images;
     }
 
-    public void changeBusinessHours(List<BusinessHours> businessHours) {
+    public void updateBusinessHours(List<BusinessHours> businessHours) {
         this.businessHours.clear();
         for (BusinessHours businessHour : businessHours) {
             this.businessHours.add(businessHour);
-            businessHour.changeShop(this);
+            businessHour.setShop(this);
         }
     }
 
@@ -111,16 +111,16 @@ public class Shop extends BaseTimeEntity {
         }
     }
 
-    public void changeLatLng(double latitude, double longitude) {
+    public void updateLatLng(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public void changeCloseDays(List<CloseDay> closeDays) {
+    public void updateCloseDays(List<CloseDay> closeDays) {
         this.closeDays.clear();
         for (CloseDay closeDay : closeDays) {
             this.closeDays.add(closeDay);
-            closeDay.changeShop(this);
+            closeDay.setShop(this);
         }
     }
 
@@ -137,11 +137,11 @@ public class Shop extends BaseTimeEntity {
     }
 
     public void decreaseLikeNum() {
-        this.wishNum--;
+        this.likeNum--;
     }
 
     public void increaseLikeNum() {
-        this.wishNum++;
+        this.likeNum++;
     }
 }
 

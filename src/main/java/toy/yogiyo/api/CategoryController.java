@@ -3,6 +3,7 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.dto.*;
@@ -21,37 +22,38 @@ public class CategoryController {
     private final CategoryShopService categoryShopService;
 
     @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public Long create(@ModelAttribute CategoryCreateRequest request) throws IOException {
         return categoryService.createCategory(request);
     }
 
     @GetMapping("/{categoryId}")
-    public CategoryResponse find(@PathVariable("categoryId") Long categoryId) {
-        Category category = categoryService.findCategory(categoryId);
+    public CategoryResponse get(@PathVariable("categoryId") Long categoryId) {
+        Category category = categoryService.getCategory(categoryId);
         return CategoryResponse.from(category);
     }
 
     @GetMapping("/all")
-    public List<CategoryResponse> findAll() {
+    public List<CategoryResponse> getAll() {
         return categoryService.getCategories();
     }
 
     @PatchMapping("/{categoryId}")
-    public String update(@PathVariable("categoryId") Long categoryId, CategoryUpdateRequest request) throws IOException {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable("categoryId") Long categoryId, CategoryUpdateRequest request) throws IOException {
         categoryService.update(categoryId, request);
-        return "success";
     }
 
     @DeleteMapping("/{categoryId}")
-    public String delete(@PathVariable("categoryId") Long categoryId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("categoryId") Long categoryId) {
         categoryService.delete(categoryId);
-        return "success";
     }
 
     @GetMapping("/{categoryId}/shop")
-    public Slice<CategoryShopResponse> findAroundShop(@PathVariable("categoryId") Long categoryId,
-                                                      @ModelAttribute CategoryShopCondition condition,
-                                                      Pageable pageable) {
+    public Slice<CategoryShopResponse> getAroundShop(@PathVariable("categoryId") Long categoryId,
+                                                     @ModelAttribute CategoryShopCondition condition,
+                                                     Pageable pageable) {
 
         return categoryShopService.findShop(categoryId, condition, pageable);
     }

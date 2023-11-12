@@ -26,6 +26,8 @@ import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
+import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
 import java.time.LocalTime;
@@ -42,6 +44,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.DAYS;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ShopController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -101,7 +105,8 @@ class ShopControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        result.andExpect(status().isOk())
+        ConstrainedFields fields = new ConstrainedFields(ShopRegisterRequest.class);
+        result.andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andDo(print())
                 .andDo(document("shop/register",
@@ -114,12 +119,12 @@ class ShopControllerTest {
                                 partWithName("shopData").description("가게 정보")
                         ),
                         requestPartFields("shopData",
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
-                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
-                                fieldWithPath("address").type(JsonFieldType.STRING).description("주소"),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
-                                fieldWithPath("categories").type(JsonFieldType.ARRAY).description("카테고리 Array")
+                                fields.withPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fields.withPath("callNumber").type(JsonFieldType.STRING).description("전화번호"),
+                                fields.withPath("address").type(JsonFieldType.STRING).description("주소"),
+                                fields.withPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
+                                fields.withPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fields.withPath("categories").type(JsonFieldType.ARRAY).description("카테고리 Array")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID")
@@ -226,7 +231,7 @@ class ShopControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
-                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
+                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS)),
                                 fieldWithPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
                                 fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
                                 fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
@@ -291,7 +296,7 @@ class ShopControllerTest {
                         responseFields(
                                 fieldWithPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
                                 fieldWithPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
-                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
+                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS))
                         )
                 ));
     }
@@ -314,8 +319,8 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(updateRequest)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(ShopUpdateCallNumberRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-call-number",
                         requestHeaders(
@@ -325,7 +330,7 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("전화번호")
+                                fields.withPath("callNumber").type(JsonFieldType.STRING).description("전화번호")
                         )
                 ));
     }
@@ -351,6 +356,7 @@ class ShopControllerTest {
 
 
         // when
+        ConstrainedFields fields = new ConstrainedFields(ShopNoticeUpdateRequest.class);
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/shop/{shopId}/notice/update", 1)
                         .file(image1)
                         .file(image2)
@@ -360,8 +366,7 @@ class ShopControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-notice",
                         requestHeaders(
@@ -375,8 +380,8 @@ class ShopControllerTest {
                                 partWithName("noticeData").description("공지 Json")
                         ),
                         requestPartFields("noticeData",
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("공지 제목"),
-                                fieldWithPath("notice").type(JsonFieldType.STRING).description("공지 내용")
+                                fields.withPath("title").type(JsonFieldType.STRING).description("공지 제목"),
+                                fields.withPath("notice").type(JsonFieldType.STRING).description("공지 내용")
                         )
                 ));
     }
@@ -407,8 +412,8 @@ class ShopControllerTest {
                 .characterEncoding("utf8"));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(ShopBusinessHourUpdateRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-business-hours",
                         requestHeaders(
@@ -418,13 +423,13 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
-                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description("영업 요일"),
-                                fieldWithPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
-                                fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
-                                fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
-                                fieldWithPath("businessHours[].breakTimeStart").type(JsonFieldType.STRING).description("휴게 시간 (시작)").optional(),
-                                fieldWithPath("businessHours[].breakTimeEnd").type(JsonFieldType.STRING).description("휴게 시간 (종료)").optional()
+                                fields.withPath("businessHours").type(JsonFieldType.ARRAY).description("영업 시간"),
+                                fields.withPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS)),
+                                fields.withPath("businessHours[].isOpen").type(JsonFieldType.BOOLEAN).description("영업일"),
+                                fields.withPath("businessHours[].openTime").type(JsonFieldType.STRING).description("오픈 시간"),
+                                fields.withPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("마감 시간"),
+                                fields.withPath("businessHours[].breakTimeStart").type(JsonFieldType.STRING).description("휴게 시간 (시작)").optional(),
+                                fields.withPath("businessHours[].breakTimeEnd").type(JsonFieldType.STRING).description("휴게 시간 (종료)").optional()
                         )
                 ));
     }
@@ -449,8 +454,8 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(DeliveryPriceUpdateRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-delivery-price",
                         requestHeaders(
@@ -460,9 +465,9 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
-                                fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
-                                fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액")
+                                fields.withPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
+                                fields.withPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                                fields.withPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액")
                         )
                 ));
     }
@@ -486,8 +491,8 @@ class ShopControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        ConstrainedFields fields = new ConstrainedFields(ShopCloseDayUpdateRequest.class);
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/update-close-day",
                         requestHeaders(
@@ -497,9 +502,9 @@ class ShopControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestFields(
-                                fieldWithPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
-                                fieldWithPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
-                                fieldWithPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description("요일")
+                                fields.withPath("closeDays").type(JsonFieldType.ARRAY).description("휴무일 리스트"),
+                                fields.withPath("closeDays[].weekNumOfMonth").type(JsonFieldType.NUMBER).description("(1~4)번째 주"),
+                                fields.withPath("closeDays[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS))
                         )
                 ));
     }
@@ -517,8 +522,7 @@ class ShopControllerTest {
 
         // then
         verify(shopService).delete(anyLong(), any());
-        result.andExpect(status().isOk())
-                .andExpect(content().string("success"))
+        result.andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("shop/delete",
                         requestHeaders(

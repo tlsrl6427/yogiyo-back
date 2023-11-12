@@ -14,7 +14,6 @@ import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.category.dto.CategoryShopCondition;
 import toy.yogiyo.core.category.dto.CategoryShopResponse;
 import toy.yogiyo.core.category.repository.CategoryShopQueryRepository;
-import toy.yogiyo.core.category.repository.CategoryShopRepository;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
@@ -87,7 +86,7 @@ class CategoryShopServiceTest {
                 new DeliveryPriceInfo(20000, 4000),
                 new DeliveryPriceInfo(30000, 3000)));
 
-        shop.changeLatLng(36.674648, 127.448544);
+        shop.updateLatLng(36.674648, 127.448544);
 
         return shop;
     }

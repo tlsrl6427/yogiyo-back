@@ -18,7 +18,7 @@ public class DeliveryPriceDto {
         this.deliveryPrice = deliveryPrice;
     }
 
-    public DeliveryPriceInfo toEntity() {
+    public DeliveryPriceInfo toDeliveryPriceInfo() {
         DeliveryPriceInfo deliveryPriceInfo = new DeliveryPriceInfo();
         deliveryPriceInfo.setOrderPrice(this.orderPrice);
         deliveryPriceInfo.setDeliveryPrice(this.deliveryPrice);

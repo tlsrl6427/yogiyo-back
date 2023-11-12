@@ -1,6 +1,6 @@
 package toy.yogiyo.common.login.dto;
 
-import toy.yogiyo.core.Member.domain.Member;
+import toy.yogiyo.core.member.domain.Member;
 
 public class EmptyMember extends Member {
     public EmptyMember() {

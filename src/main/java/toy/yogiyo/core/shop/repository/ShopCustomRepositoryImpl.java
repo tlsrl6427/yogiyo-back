@@ -1,19 +1,15 @@
 package toy.yogiyo.core.shop.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import toy.yogiyo.api.ShopScrollListRequest;
-import toy.yogiyo.api.ShopScrollResponse;
+import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;

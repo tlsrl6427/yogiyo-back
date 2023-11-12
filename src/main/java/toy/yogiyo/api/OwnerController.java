@@ -11,6 +11,8 @@ import toy.yogiyo.core.owner.dto.OwnerMypageResponse;
 import toy.yogiyo.core.owner.dto.OwnerUpdateRequest;
 import toy.yogiyo.core.owner.service.OwnerService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/owner")
@@ -19,7 +21,7 @@ public class OwnerController {
     private final OwnerService ownerService;
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.CREATED)
-    public OwnerJoinResponse join(@RequestBody OwnerJoinRequest ownerJoinRequest){
+    public OwnerJoinResponse join(@Valid @RequestBody OwnerJoinRequest ownerJoinRequest){
         return ownerService.join(ownerJoinRequest);
     }
 

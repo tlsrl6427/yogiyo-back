@@ -10,6 +10,8 @@ import toy.yogiyo.core.order.dto.OrderDetailResponse;
 import toy.yogiyo.core.order.dto.OrderHistoryResponse;
 import toy.yogiyo.core.order.service.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/order")
@@ -19,7 +21,7 @@ public class OrderController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOrder(@LoginUser Member member, @RequestBody OrderCreateRequest orderCreateRequest){
+    public void createOrder(@LoginUser Member member, @Valid  @RequestBody OrderCreateRequest orderCreateRequest){
         orderService.createOrder(member, orderCreateRequest);
     }
 

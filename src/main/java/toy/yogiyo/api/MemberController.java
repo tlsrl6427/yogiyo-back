@@ -12,6 +12,8 @@ import toy.yogiyo.core.member.dto.MemberMypageResponse;
 import toy.yogiyo.core.member.dto.MemberUpdateRequest;
 import toy.yogiyo.core.member.service.MemberService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -21,7 +23,7 @@ public class MemberController {
 
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.CREATED)
-    public MemberJoinResponse join(@RequestBody MemberJoinRequest memberJoinRequest){
+    public MemberJoinResponse join(@Valid  @RequestBody MemberJoinRequest memberJoinRequest){
         return memberService.join(memberJoinRequest);
     }
 

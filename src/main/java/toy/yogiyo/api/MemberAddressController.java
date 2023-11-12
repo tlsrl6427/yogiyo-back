@@ -9,6 +9,8 @@ import toy.yogiyo.core.address.dto.MemberAddressResponse;
 import toy.yogiyo.core.address.service.MemberAddressService;
 import toy.yogiyo.core.member.domain.Member;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/address")
@@ -18,7 +20,7 @@ public class MemberAddressController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(@LoginUser Member member, @RequestBody AddressRegisterRequest request){
+    public void register(@LoginUser Member member, @Valid @RequestBody AddressRegisterRequest request){
         memberAddressService.register(member, request);
     }
 

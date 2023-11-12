@@ -9,6 +9,8 @@ import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
 import toy.yogiyo.core.review.dto.ReviewCreateRequest;
 import toy.yogiyo.core.review.service.ReviewService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/review")
@@ -18,7 +20,7 @@ public class ReviewController {
 
     @PostMapping("/write")
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@LoginUser Member member, @RequestBody ReviewCreateRequest request){
+    public void create(@LoginUser Member member, @Valid @RequestBody ReviewCreateRequest request){
         reviewService.create(member, request);
     }
 

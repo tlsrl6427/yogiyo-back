@@ -51,7 +51,16 @@ public class Member extends BaseTimeEntity {
         this.likes.add(like);
     }
     public void addMemberAddresses(MemberAddress memberAddress){
+        this.memberAddresses.forEach(memberAddress1 -> memberAddress1.isHere(false));
         this.memberAddresses.add(memberAddress);
         memberAddress.setMember(this);
+    }
+
+    public void setHere(Long memberAddressId){
+        this.memberAddresses
+                .forEach(memberAddress -> memberAddress.isHere(memberAddress.getId().equals(memberAddressId)));
+    }
+    public void setEncodedPassword(String password){
+        this.password = password;
     }
 }

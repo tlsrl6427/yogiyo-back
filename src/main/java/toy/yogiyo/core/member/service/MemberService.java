@@ -2,6 +2,7 @@ package toy.yogiyo.core.member.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
@@ -20,12 +21,14 @@ import toy.yogiyo.core.member.dto.MemberJoinRequest;
 @Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder encoder;
 
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest){
         memberRepository.findByEmailAndProvider(memberJoinRequest.getEmail(), memberJoinRequest.getProviderType())
                 .ifPresent(member -> {throw new EntityExistsException(ErrorCode.MEMBER_ALREADY_EXIST);});
 
         Member savedMember = memberRepository.save(memberJoinRequest.toMember());
+        savedMember.setEncodedPassword(encoder.encode(memberJoinRequest.getPassword()));
         return MemberJoinResponse.from(savedMember);
     }
 

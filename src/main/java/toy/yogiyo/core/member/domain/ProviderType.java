@@ -1,5 +1,5 @@
 package toy.yogiyo.core.member.domain;
 
 public enum ProviderType {
-    GOOGLE, KAKAO, DEFAULT
+    GOOGLE, KAKAO, NAVER, DEFAULT
 }

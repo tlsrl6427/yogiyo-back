@@ -19,4 +19,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "and m.password=:password " +
             "and m.providerType='DEFAULT'")
     Optional<Member> findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+
+    Optional<Member> findByEmail(String email);
 }

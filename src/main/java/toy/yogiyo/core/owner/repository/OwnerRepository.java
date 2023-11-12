@@ -20,4 +20,6 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
             "and o.password=:password " +
             "and o.providerType='DEFAULT'")
     Optional<Owner> findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
+
+    Optional<Owner> findByEmail(String email);
 }

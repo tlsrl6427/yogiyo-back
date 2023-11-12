@@ -115,5 +115,7 @@ public class Order extends BaseTimeEntity {
         return order;
     }
 
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

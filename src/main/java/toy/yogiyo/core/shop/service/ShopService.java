@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.api.ShopScrollListRequest;
 import toy.yogiyo.api.ShopScrollListResponse;
+import toy.yogiyo.api.ShopScrollResponse;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -190,13 +192,15 @@ public class ShopService {
     }
 
     public ShopScrollListResponse getList(ShopScrollListRequest request) {
-        List<Shop> shops = shopRepository.scrollShopList(request);
-        for (Shop shop : shops) {
-            log.info(shop.getName());
-        }
+        List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
         boolean hasNext = shops.size() >= 6;
         if(hasNext) shops.remove(shops.size()-1);
         Long nextOffset = (long) shops.size();
-        return  null;
+
+        return ShopScrollListResponse.builder()
+                .shopScrollResponses(shops)
+                .nextOffset(nextOffset)
+                .hasNext(hasNext)
+                .build();
     }
 }

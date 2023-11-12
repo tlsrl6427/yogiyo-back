@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.*;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
 
@@ -11,6 +12,6 @@ import java.util.List;
 public class ShopScrollListResponse {
 
     private List<ShopScrollResponse> shopScrollResponses;
-    private Long lastId;
+    private Long nextOffset;
     private boolean hasNext;
 }

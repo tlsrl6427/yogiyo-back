@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.member.domain.Member;
@@ -17,16 +18,19 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public void createOrder(@LoginUser Member member, @RequestBody OrderCreateRequest orderCreateRequest){
         orderService.createOrder(member, orderCreateRequest);
     }
 
     @GetMapping("/scroll")
+    @ResponseStatus(HttpStatus.OK)
     public OrderHistoryResponse scrollOrderHistories(@LoginUser Member member, @RequestParam(defaultValue = "-1") Long lastId){
         return orderService.getOrderHistory(member, lastId);
     }
 
     @GetMapping("/details")
+    @ResponseStatus(HttpStatus.OK)
     public OrderDetailResponse getOrderDetails(@LoginUser Member member, @RequestParam Long orderId){
         return orderService.getOrderDetail(member, orderId);
     }

@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.like.dto.LikeScrollResponse;
@@ -15,12 +16,13 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/{shopId}")
-    public String toggleLike(@LoginUser Member member, @PathVariable Long shopId) {
+    @ResponseStatus(HttpStatus.OK)
+    public void toggleLike(@LoginUser Member member, @PathVariable Long shopId) {
         likeService.toggleLike(member, shopId);
-        return "like success";
     }
 
     @GetMapping("/scroll")
+    @ResponseStatus(HttpStatus.OK)
     public LikeScrollResponse getLikes(@LoginUser Member member, @RequestParam(defaultValue = "-1") Long lastId){
         return likeService.getLikes(member, lastId);
     }

@@ -6,6 +6,7 @@ import toy.yogiyo.core.order.domain.OrderItem;
 import toy.yogiyo.core.order.domain.OrderType;
 import toy.yogiyo.core.order.domain.PaymentType;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Getter
@@ -14,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderCreateRequest {
 
+    @NotBlank(message = "음식점 ID가 반드시 들어가야 합니다")
     private Long shopId;
     private Address address;
     private List<OrderItem> orderItems;

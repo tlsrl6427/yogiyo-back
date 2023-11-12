@@ -1,7 +1,9 @@
 package toy.yogiyo.common.security.oauth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.common.exception.EntityNotFoundException;
@@ -17,13 +19,16 @@ public class DefaultProvider implements OAuthProvider {
 
     private final MemberRepository memberRepository;
     private final OwnerRepository ownerRepository;
+    private final BCryptPasswordEncoder encoder;
 
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        Member findMember = memberRepository.findByEmailAndPassword(email, password)
+        Member findMember = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBER_NOT_FOUND));
+        if(!encoder.matches(password, findMember.getPassword()))
+            throw new AuthenticationException(ErrorCode.MEMBER_INVALID_PASSWORD);
         return LoginResponse.of(findMember);
     }
 
@@ -31,8 +36,10 @@ public class DefaultProvider implements OAuthProvider {
     public LoginResponse getOwnerInfo(LoginRequest request) {
         String email = request.getEmail();
         String password = request.getPassword();
-        Owner findOwner = ownerRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.OWNER_NOT_FOUND));
+        Owner findOwner = ownerRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.OWNER_INVALID_PASSWORD));
+        if(!encoder.matches(password, findOwner.getPassword()))
+            throw new AuthenticationException(ErrorCode.OWNER_INVALID_PASSWORD);
         return LoginResponse.of(findOwner);
     }
 }

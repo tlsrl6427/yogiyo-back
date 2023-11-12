@@ -22,6 +22,12 @@ public class OAuthIdTokenResponse {
                 .build();
     }
 
+    public static OAuthIdTokenResponse from(KakaoUser kakaoUser){
+        return OAuthIdTokenResponse.builder()
+                .nickname(kakaoUser.getNickname())
+                .build();
+    }
+
     public Member toMember(ProviderType providerType){
         return Member.builder()
                 .email(email)

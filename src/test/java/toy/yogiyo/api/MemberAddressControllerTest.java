@@ -37,6 +37,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,14 +87,15 @@ class MemberAddressControllerTest {
                 .header("Authorization", jwt)
                 .content(objectMapper.writeValueAsString(request))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("address/register",
                         requestHeaders(
                                 headerWithName("Authorization").description("Access Token")
                         ),
                         requestFields(
-                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("주소 별칭"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING).description("주소 별칭")
+                                        .attributes(key("constraints").value("Not Blank")),
                                 fieldWithPath("addressType").type(JsonFieldType.STRING).description("주소 타입(HOME, COMPANY, ELSE)"),
                                 fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                 fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
@@ -169,7 +171,7 @@ class MemberAddressControllerTest {
         mockMvc.perform(delete("/address/{memberAddressId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", jwt))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(document("address",
                         requestHeaders(

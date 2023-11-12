@@ -37,6 +37,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -85,7 +86,7 @@ class ReviewControllerTest {
                     .header("Authorization", jwt)
                     .content(objectMapper.writeValueAsString(reviewCreateRequest))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print())
                         .andDo(
                                 document("review/write",
@@ -93,12 +94,15 @@ class ReviewControllerTest {
                                             headerWithName("Authorization").description("Access Token")
                                     ),
                                     requestFields(
-                                            fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                                            fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("주문 ID")
+                                                    .attributes(key("constraints").value("Not Blank")),
                                             fieldWithPath("tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),
                                             fieldWithPath("quantityScore").type(JsonFieldType.NUMBER).description("양 점수"),
                                             fieldWithPath("deliveryScore").type(JsonFieldType.NUMBER).description("배달 점수"),
-                                            fieldWithPath("content").type(JsonFieldType.STRING).description("내용"),
-                                            fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                            fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
+                                                    .attributes(key("constraints").value("Not Empty")),
+                                            fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
+                                                    .attributes(key("constraints").value("Not Blank")),
                                             fieldWithPath("shopName").type(JsonFieldType.STRING).description("음식점 이름")
                                     )
                                 )

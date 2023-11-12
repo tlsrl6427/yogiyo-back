@@ -33,6 +33,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -91,14 +92,17 @@ class OwnerControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(ownerJoinRequest))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(
                         document("owner/join",
                                 requestFields(
-                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
-                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임")
+                                                .attributes(key("constraints").value("2~16자")),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
+                                                .attributes(key("constraints").value("이메일 형식")),
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                                                .attributes(key("constraints").value("8자 이상")),
                                         fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입")
                                 ),
                                 responseFields(
@@ -154,7 +158,7 @@ class OwnerControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(ownerUpdateRequest))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(
                         document("owner/update",
@@ -175,7 +179,7 @@ class OwnerControllerTest {
                         delete("/owner/delete")
                                 .header("Authorization", jwt)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andDo(print())
                 .andDo(
                         document("owner/delete",

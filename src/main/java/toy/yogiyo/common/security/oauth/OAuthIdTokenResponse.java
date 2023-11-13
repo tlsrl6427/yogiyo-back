@@ -25,6 +25,7 @@ public class OAuthIdTokenResponse {
     public static OAuthIdTokenResponse from(KakaoUser kakaoUser){
         return OAuthIdTokenResponse.builder()
                 .nickname(kakaoUser.getNickname())
+                .email(kakaoUser.getEmail())
                 .build();
     }
 

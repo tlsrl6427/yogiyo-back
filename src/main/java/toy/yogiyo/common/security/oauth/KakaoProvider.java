@@ -37,10 +37,9 @@ public class KakaoProvider implements OAuthProvider {
     public LoginResponse getMemberInfo(LoginRequest request) {
         String idToken = getIdToken(request.getAuthCode());
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
-//        Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.GOOGLE)
-//                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
-//        return LoginResponse.of(member);
-        return null;
+        Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
+                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
+        return LoginResponse.of(member);
     }
 
     private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {

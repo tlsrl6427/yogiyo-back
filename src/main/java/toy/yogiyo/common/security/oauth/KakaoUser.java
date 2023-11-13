@@ -12,4 +12,5 @@ public class KakaoUser {
     private String nickname;
     private String exp;
     private String iat;
+    private String email;
 }

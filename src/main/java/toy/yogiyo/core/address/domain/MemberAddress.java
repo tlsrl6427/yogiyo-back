@@ -27,23 +27,30 @@ public class MemberAddress {
     private Double longitude;
     private Double latitude;
 
+    private boolean isHere;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @Builder
-    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, Member member) {
+    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, boolean isHere, Member member) {
         this.id = id;
         this.address = address;
         this.addressType = addressType;
         this.nickname = nickname;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.isHere = isHere;
         this.member = member;
     }
 
     public void setMember(Member member){
         this.member = member;
+    }
+
+    public void isHere(boolean bool){
+        this.isHere = bool;
     }
 }

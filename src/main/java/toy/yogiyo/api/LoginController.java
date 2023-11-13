@@ -20,6 +20,7 @@ public class LoginController {
     private final JwtProvider jwtProvider;
 
     @PostMapping("/memberLogin")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LoginResponse> memberLogin(@RequestBody LoginRequest loginRequest){
 
         LoginResponse loginResponse = loginService.memberLogin(loginRequest);
@@ -33,6 +34,7 @@ public class LoginController {
     }
 
     @PostMapping("/ownerLogin")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest loginRequest){
 
         LoginResponse loginResponse = loginService.ownerLogin(loginRequest);

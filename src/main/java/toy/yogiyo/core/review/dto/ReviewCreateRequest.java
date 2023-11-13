@@ -5,17 +5,24 @@ import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.order.domain.Order;
 import toy.yogiyo.core.review.domain.Review;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
+    @NotBlank(message = "주문 ID가 반드시 들어가야 합니다")
     private Long orderId;
     private float tasteScore;
     private float quantityScore;
     private float deliveryScore;
+    @NotEmpty
     private String content;
+
+    @NotBlank(message = "음식점 ID가 반드시 들어가야 합니다")
     private Long shopId;
     private String shopName;
 

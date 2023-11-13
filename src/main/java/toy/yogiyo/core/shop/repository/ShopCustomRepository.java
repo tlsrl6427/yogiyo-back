@@ -1,8 +1,7 @@
 package toy.yogiyo.core.shop.repository;
 
-import com.querydsl.core.Tuple;
-import toy.yogiyo.api.ShopScrollListRequest;
-import toy.yogiyo.api.ShopScrollResponse;
+import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;

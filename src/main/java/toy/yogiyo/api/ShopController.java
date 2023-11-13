@@ -10,6 +10,7 @@ import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class ShopController {
     }
 
     @GetMapping("/list")
-    public ShopScrollListResponse getList(@RequestBody ShopScrollListRequest request){
+    public ShopScrollListResponse getList(@Valid @RequestBody ShopScrollListRequest request){
         return shopService.getList(request);
     }
 }

@@ -35,6 +35,7 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,7 +109,7 @@ class OrderControllerTest {
                     .header("Authorization", jwt)
                     .content(objectMapper.writeValueAsString(orderCreateRequest))
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(
                         document("order/create",
@@ -116,7 +117,8 @@ class OrderControllerTest {
                                         headerWithName("Authorization").description("Access Token")
                                 ),
                                 requestFields(
-                                        fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
+                                                .attributes(key("constraints").value("Not Blank")),
                                         fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                         fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                         fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),

@@ -52,4 +52,8 @@ public class MemberAddressService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.MEMBERADDRESS_NOT_FOUND));
         if(findMemberAddress.getMember() != member) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
     }
+
+    public void setHere(Member member, Long memberAddressId) {
+        member.setHere(memberAddressId);
+    }
 }

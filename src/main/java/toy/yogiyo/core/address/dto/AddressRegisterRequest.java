@@ -1,9 +1,12 @@
 package toy.yogiyo.core.address.dto;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import toy.yogiyo.core.address.domain.Address;
 import toy.yogiyo.core.address.domain.AddressType;
 import toy.yogiyo.core.address.domain.MemberAddress;
+
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Builder
@@ -12,6 +15,7 @@ import toy.yogiyo.core.address.domain.MemberAddress;
 public class AddressRegisterRequest {
 
     private Address address;
+    @NotBlank
     private String nickname;
     private AddressType addressType;
     private Double longitude;
@@ -24,6 +28,7 @@ public class AddressRegisterRequest {
                 .nickname(nickname)
                 .longitude(longitude)
                 .latitude(latitude)
+                .isHere(true)
                 .build();
     }
 }

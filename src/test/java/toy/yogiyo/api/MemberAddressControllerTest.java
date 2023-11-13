@@ -187,4 +187,26 @@ class MemberAddressControllerTest {
 
         verify(memberAddressService).delete(any(), any());
     }
+
+    @DisplayName("요기 표시")
+    @Test
+    void setHere() throws Exception {
+        doNothing().when(memberAddressService).setHere(any(), any());
+
+        mockMvc.perform(patch("/address/here/{memberAddressId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", jwt))
+                .andExpect(status().isNoContent())
+                .andDo(print())
+                .andDo(document("address/here",
+                        requestHeaders(
+                                headerWithName("Authorization").description("Access Token")
+                        ),
+                        pathParameters(
+                                parameterWithName("memberAddressId").description("주소 ID")
+                        )
+                ));
+
+        verify(memberAddressService).setHere(any(), any());
+    }
 }

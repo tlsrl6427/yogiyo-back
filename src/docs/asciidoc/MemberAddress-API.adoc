@@ -18,3 +18,9 @@ operation::address/view[snippets='http-request,http-response,request-headers,res
 `DELETE /address/{memberAddressId}`
 
 operation::address[snippets='http-request,http-response,request-headers,path-parameters']
+
+[[MemberAddress-setHere]]
+=== "요기" 위치 설정
+`PATCH /address/here/{memberAddressId}`
+
+operation::address/here[snippets='http-request,http-response,request-headers,path-parameters']

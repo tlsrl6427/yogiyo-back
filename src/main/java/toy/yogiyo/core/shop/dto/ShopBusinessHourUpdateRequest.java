@@ -40,6 +40,7 @@ public class ShopBusinessHourUpdateRequest {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class BusinessHoursDto {
         @NotNull
         private Days dayOfWeek;

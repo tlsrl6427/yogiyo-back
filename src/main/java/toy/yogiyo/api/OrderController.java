@@ -21,7 +21,7 @@ public class OrderController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOrder(@LoginUser Member member, @Valid  @RequestBody OrderCreateRequest orderCreateRequest){
+    public void createOrder(@LoginUser Member member, @Valid @RequestBody OrderCreateRequest orderCreateRequest){
         orderService.createOrder(member, orderCreateRequest);
     }
 

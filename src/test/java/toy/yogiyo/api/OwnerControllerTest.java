@@ -77,7 +77,7 @@ class OwnerControllerTest {
         OwnerJoinRequest ownerJoinRequest = OwnerJoinRequest.builder()
                 .nickname("test")
                 .email("test@gmail.com")
-                .password("1234")
+                .password("12345678")
                 .providerType(ProviderType.DEFAULT)
                 .build();
 

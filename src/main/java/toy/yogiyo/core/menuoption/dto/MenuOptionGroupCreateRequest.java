@@ -35,6 +35,8 @@ public class MenuOptionGroupCreateRequest {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class OptionDto {
         @NotBlank
         private String content;

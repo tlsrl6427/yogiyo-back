@@ -95,14 +95,14 @@ class ReviewControllerTest {
                                     ),
                                     requestFields(
                                             fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("주문 ID")
-                                                    .attributes(key("constraints").value("Not Blank")),
+                                                    .attributes(key("constraints").value("Not Null")),
                                             fieldWithPath("tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),
                                             fieldWithPath("quantityScore").type(JsonFieldType.NUMBER).description("양 점수"),
                                             fieldWithPath("deliveryScore").type(JsonFieldType.NUMBER).description("배달 점수"),
                                             fieldWithPath("content").type(JsonFieldType.STRING).description("내용")
                                                     .attributes(key("constraints").value("Not Empty")),
                                             fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
-                                                    .attributes(key("constraints").value("Not Blank")),
+                                                    .attributes(key("constraints").value("Not Null")),
                                             fieldWithPath("shopName").type(JsonFieldType.STRING).description("음식점 이름")
                                     )
                                 )

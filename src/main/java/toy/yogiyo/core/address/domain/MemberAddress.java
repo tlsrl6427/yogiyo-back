@@ -27,7 +27,7 @@ public class MemberAddress {
     private Double longitude;
     private Double latitude;
 
-    private boolean isHere;
+    private boolean here;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,14 +35,14 @@ public class MemberAddress {
     private Member member;
 
     @Builder
-    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, boolean isHere, Member member) {
+    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, boolean here, Member member) {
         this.id = id;
         this.address = address;
         this.addressType = addressType;
         this.nickname = nickname;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.isHere = isHere;
+        this.here = here;
         this.member = member;
     }
 
@@ -51,6 +51,6 @@ public class MemberAddress {
     }
 
     public void isHere(boolean bool){
-        this.isHere = bool;
+        this.here = bool;
     }
 }

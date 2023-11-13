@@ -7,6 +7,7 @@ import toy.yogiyo.core.review.domain.Review;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class ReviewCreateRequest {
 
-    @NotBlank(message = "주문 ID가 반드시 들어가야 합니다")
+    @NotNull(message = "주문 ID가 반드시 들어가야 합니다")
     private Long orderId;
     private float tasteScore;
     private float quantityScore;
@@ -22,7 +23,7 @@ public class ReviewCreateRequest {
     @NotEmpty
     private String content;
 
-    @NotBlank(message = "음식점 ID가 반드시 들어가야 합니다")
+    @NotNull(message = "음식점 ID가 반드시 들어가야 합니다")
     private Long shopId;
     private String shopName;
 

@@ -118,7 +118,7 @@ class OrderControllerTest {
                                 ),
                                 requestFields(
                                         fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
-                                                .attributes(key("constraints").value("Not Blank")),
+                                                .attributes(key("constraints").value("Not Null")),
                                         fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                         fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                         fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),

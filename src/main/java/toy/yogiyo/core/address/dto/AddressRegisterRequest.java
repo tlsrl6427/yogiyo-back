@@ -28,7 +28,7 @@ public class AddressRegisterRequest {
                 .nickname(nickname)
                 .longitude(longitude)
                 .latitude(latitude)
-                .isHere(true)
+                .here(true)
                 .build();
     }
 }

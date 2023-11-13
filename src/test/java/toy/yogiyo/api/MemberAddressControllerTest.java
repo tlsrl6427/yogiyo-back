@@ -122,6 +122,7 @@ class MemberAddressControllerTest {
                                         .address(new Address("02833", "공릉로 232", "대성빌라 504호"))
                                         .latitude(34.2323494)
                                         .longitude(43.5549921)
+                                        .here(true)
                                         .build(),
                                 MemberAddress.builder()
                                         .id(2L)
@@ -130,6 +131,7 @@ class MemberAddressControllerTest {
                                         .address(new Address("23452", "양재대로 9길", "롯데빌딩 603호"))
                                         .latitude(24.11121)
                                         .longitude(84.123882)
+                                        .here(false)
                                         .build()
                         )
                 )
@@ -155,7 +157,8 @@ class MemberAddressControllerTest {
                                 fieldWithPath("memberAddresses[].address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                 fieldWithPath("memberAddresses[].address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                 fieldWithPath("memberAddresses[].latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("memberAddresses[].longitude").type(JsonFieldType.NUMBER).description("경도")
+                                fieldWithPath("memberAddresses[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("memberAddresses[].here").type(JsonFieldType.BOOLEAN).description("\"요기\"")
                         )
                         ));
 

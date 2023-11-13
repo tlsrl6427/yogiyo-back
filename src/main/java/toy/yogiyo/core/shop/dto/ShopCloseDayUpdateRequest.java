@@ -33,6 +33,7 @@ public class ShopCloseDayUpdateRequest {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class CloseDayDto {
 
         private int weekNumOfMonth;

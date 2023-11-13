@@ -53,6 +53,7 @@ public class Shop extends BaseTimeEntity {
     private Double latitude;
 
     private int minDeliveryPrice;
+    private int maxDeliveryPrice;
     private int minOrderPrice;
     private int deliveryTime;
 
@@ -102,6 +103,7 @@ public class Shop extends BaseTimeEntity {
     public void changeDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {
         if(deliveryPriceInfos != null && !deliveryPriceInfos.isEmpty()) {
             this.minDeliveryPrice = deliveryPriceInfos.get(deliveryPriceInfos.size()-1).getDeliveryPrice();
+            this.maxDeliveryPrice = deliveryPriceInfos.get(0).getDeliveryPrice();
             this.minOrderPrice = deliveryPriceInfos.get(0).getOrderPrice();
         }
         this.deliveryPriceInfos.clear();

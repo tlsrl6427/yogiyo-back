@@ -108,4 +108,9 @@ public class ShopController {
     public void delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
         shopService.delete(shopId, owner);
     }
+
+    @GetMapping("/list")
+    public ShopScrollListResponse getList(@RequestBody ShopScrollListRequest request){
+        return shopService.getList(request);
+    }
 }

@@ -1,6 +1,7 @@
 package toy.yogiyo.core.owner.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
@@ -19,6 +20,7 @@ import toy.yogiyo.core.owner.repository.OwnerRepository;
 public class OwnerService {
 
     private final OwnerRepository ownerRepository;
+    private final BCryptPasswordEncoder encoder;
 
 
     public OwnerJoinResponse join(OwnerJoinRequest ownerJoinRequest) {
@@ -26,6 +28,7 @@ public class OwnerService {
                 .ifPresent(owner -> {throw new EntityExistsException(ErrorCode.OWNER_ALREADY_EXIST);});
 
         Owner savedOwner = ownerRepository.save(ownerJoinRequest.toOwner());
+        savedOwner.setEncodedPassword(encoder.encode(ownerJoinRequest.getPassword()));
         return OwnerJoinResponse.of(savedOwner);
     }
 

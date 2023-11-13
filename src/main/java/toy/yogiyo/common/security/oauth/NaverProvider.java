@@ -1,8 +1,5 @@
 package toy.yogiyo.common.security.oauth;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,65 +17,68 @@ import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.member.repository.MemberRepository;
 
-import java.util.Base64;
+import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class KakaoProvider implements OAuthProvider {
+public class NaverProvider implements OAuthProvider{
 
-    private final String KAKAO_AUTH_URL = "https://kauth.kakao.com/oauth/token";
+    private final String NAVER_AUTH_URL = "https://nid.naver.com/oauth2.0/token";
+    private final String NAVER_PROFILE_URL = "https://openapi.naver.com/v1/nid/me";
+    private final String BEARER = "Bearer ";
     private final RestTemplate restTemplate = new RestTemplate();
-    private final OAuthKakaoProperties kakaoProperties;
+    private final OAuthNaverProperties naverProperties;
     private final MemberRepository memberRepository;
 
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
-        String idToken = getIdToken(request.getAuthCode());
-        OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
-        Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
+        String accessToken = getAccessToken(request.getAuthCode());
+        OAuthIdTokenResponse oAuthIdTokenResponse = getUserInfo(accessToken);
+        Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.NAVER)
                 .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
         return LoginResponse.of(member);
     }
 
     private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {
-        return memberRepository.save(oAuthIdTokenResponse.toMember(ProviderType.KAKAO));
+        return memberRepository.save(oAuthIdTokenResponse.toMember(ProviderType.NAVER));
     }
 
-    private OAuthIdTokenResponse decodeIdToken(String idToken){
-        String encodedPayload = idToken.split("\\.")[1];
-        Base64.Decoder decoder = Base64.getDecoder();
-        String payload = new String(decoder.decode(encodedPayload));
-        ObjectMapper objectMapper = new ObjectMapper();
-        KakaoUser kakaoUser;
-        try {
-            kakaoUser = objectMapper.readValue(payload, KakaoUser.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    private OAuthIdTokenResponse getUserInfo(String accessToken) {
 
-        return OAuthIdTokenResponse.from(kakaoUser);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", BEARER + accessToken);
+
+        ResponseEntity<NaverUser> exchange = restTemplate.exchange(NAVER_PROFILE_URL, HttpMethod.POST, new HttpEntity<>(headers), NaverUser.class);
+
+        NaverUser naverUser = exchange.getBody();
+        NaverUser.Response response = naverUser.getResponse();
+
+        return OAuthIdTokenResponse.builder()
+                .nickname(response.getName())
+                .email(response.getEmail())
+                .build();
     }
 
-    private String getIdToken(String authCode) {
+    private String getAccessToken(String authCode) {
         // body 설정
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("code", authCode);
-        multiValueMap.add("client_id", kakaoProperties.getClientId());
-        multiValueMap.add("client_secret", kakaoProperties.getClientSecret());
-        multiValueMap.add("redirect_uri", kakaoProperties.getRedirectUri());
+        multiValueMap.add("client_id", naverProperties.getClientId());
+        multiValueMap.add("client_secret", naverProperties.getClientSecret());
         multiValueMap.add("grant_type", "authorization_code");
 
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(multiValueMap, headers);
 
         // 요청 보내기
-        ResponseEntity<Map<String, String>> result = restTemplate.exchange(KAKAO_AUTH_URL, HttpMethod.POST, httpEntity, new ParameterizedTypeReference<>() {
+        ResponseEntity<Map<String, String>> result = restTemplate.exchange(NAVER_AUTH_URL, HttpMethod.POST, httpEntity, new ParameterizedTypeReference<>() {
         });
 
 
-        return result.getBody().get("id_token");
+        return result.getBody().get("access_token");
     }
 
     @Override

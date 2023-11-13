@@ -32,4 +32,8 @@ public class Owner extends BaseTimeEntity {
     public void update(Owner owner) {
         if(this.nickname != owner.getNickname()) this.nickname = owner.getNickname();
     }
+
+    public void setEncodedPassword(String password){
+        this.password = password;
+    }
 }

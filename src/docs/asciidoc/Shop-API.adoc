@@ -11,6 +11,12 @@ operation::shop/register[snippets='http-request,http-response,request-headers,re
 
 operation::shop/get-info[snippets='http-request,http-response,path-parameters,response-fields']
 
+=== 상점 리스트 조회
+`GET /shop/list`
+
+operation::shop/list[snippets='http-request,http-response,request-fields,response-fields']
+
+
 === 사장님 공지 조회
 `GET /shop/{shop id}/notice`
 

@@ -43,7 +43,7 @@ operation::shop/get-close-day[snippets='http-request,http-response,path-paramete
 operation::shop/update-call-number[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 사장님 공지 수정
-`PATCH /shop/{shop id}/notice/update`
+`POST /shop/{shop id}/notice/update`
 
 operation::shop/update-notice[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-noticeData-fields']
 

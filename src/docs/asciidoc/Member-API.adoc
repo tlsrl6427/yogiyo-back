@@ -21,18 +21,18 @@ operation::social/login[snippets='http-request,http-response,request-fields,resp
 
 [[Member-mypage]]
 === 멤버 마이페이지 조회
-`POST /member/mypage`
+`GET /member/mypage`
 
 operation::member/mypage[snippets='http-request,http-response,request-headers,response-fields']
 
 [[Member-update]]
 === 멤버 회원정보 수정
-`POST /member/update`
+`PATCH /member/update`
 
 operation::member/update[snippets='http-request,http-response,request-headers,request-fields']
 
 [[Member-delete]]
 === 멤버삭제
-`POST /member/delete`
+`DELETE /member/delete`
 
 operation::member/delete[snippets='http-request,http-response,request-headers']

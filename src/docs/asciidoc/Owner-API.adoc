@@ -21,18 +21,18 @@ operation::owner/social/login[snippets='http-request,http-response,request-field
 
 [[Owner-mypage]]
 === 점주 마이페이지 조회
-`POST /owner/mypage`
+`GET /owner/mypage`
 
 operation::owner/mypage[snippets='http-request,http-response,request-headers,response-fields']
 
 [[Owner-update]]
 === 점주정보 수정
-`POST /owner/update`
+`PATCH /owner/update`
 
 operation::owner/update[snippets='http-request,http-response,request-headers,request-fields']
 
 [[Owner-delete]]
 === 점주삭제
-`POST /owner/delete`
+`DELETE /owner/delete`
 
 operation::owner/delete[snippets='http-request,http-response,request-headers']

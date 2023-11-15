@@ -72,6 +72,7 @@ class LoginControllerTest {
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(1L)
+                .email("test@gmail.com")
                 .build();
 
         given(loginService.memberLogin(any())).willReturn(loginResponse);
@@ -92,7 +93,8 @@ class LoginControllerTest {
                                     fieldWithPath("providerType").type(JsonFieldType.STRING).description("DEFAULT")
                             ),
                             responseFields(
-                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                    fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),
+                                    fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일")
                             ),
                             responseHeaders(
                                     headerWithName("Authorization").description("Access Token")
@@ -114,6 +116,7 @@ class LoginControllerTest {
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(1L)
+                .email("test@gmail.com")
                 .build();
 
         given(loginService.memberLogin(any())).willReturn(loginResponse);
@@ -134,7 +137,8 @@ class LoginControllerTest {
                                         fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일")
                                 ),
                                 responseHeaders(
                                         headerWithName("Authorization").description("Access Token")
@@ -157,6 +161,7 @@ class LoginControllerTest {
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(1L)
+                .email("test@gmail.com")
                 .build();
 
         given(loginService.ownerLogin(any())).willReturn(loginResponse);
@@ -177,7 +182,8 @@ class LoginControllerTest {
                                         fieldWithPath("providerType").type(JsonFieldType.STRING).description("DEFAULT")
                                 ),
                                 responseFields(
-                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일")
                                 ),
                                 responseHeaders(
                                         headerWithName("Authorization").description("Access Token")
@@ -199,6 +205,7 @@ class LoginControllerTest {
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .userId(1L)
+                .email("test@gmail.com")
                 .build();
 
         given(loginService.ownerLogin(any())).willReturn(loginResponse);
@@ -219,7 +226,8 @@ class LoginControllerTest {
                                         fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디")
+                                        fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),
+                                        fieldWithPath("email").type(JsonFieldType.STRING).description("유저 이메일")
                                 ),
                                 responseHeaders(
                                         headerWithName("Authorization").description("Access Token")

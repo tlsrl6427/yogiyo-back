@@ -24,7 +24,7 @@ public class LoginController {
     public ResponseEntity<LoginResponse> memberLogin(@RequestBody LoginRequest loginRequest){
 
         LoginResponse loginResponse = loginService.memberLogin(loginRequest);
-        String accessToken = jwtProvider.createToken(loginRequest.getEmail(), loginRequest.getProviderType(), UserType.Member);
+        String accessToken = jwtProvider.createToken(loginResponse.getEmail(), loginRequest.getProviderType(), UserType.Member);
 
         //Authorization Header
         HttpHeaders headers = new HttpHeaders();

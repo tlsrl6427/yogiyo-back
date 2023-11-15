@@ -10,16 +10,19 @@ import toy.yogiyo.core.owner.domain.Owner;
 public class LoginResponse {
 
     private Long userId;
+    private String email;
 
     public static LoginResponse of(Member member){
         return LoginResponse.builder()
                 .userId(member.getId())
+                .email(member.getEmail())
                 .build();
     }
 
     public static LoginResponse of(Owner owner){
         return LoginResponse.builder()
                 .userId(owner.getId())
+                .email(owner.getEmail())
                 .build();
     }
 }

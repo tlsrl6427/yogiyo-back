@@ -32,6 +32,11 @@ operation::menu-group/add-menu[snippets='http-request,http-response,request-head
 
 operation::menu-group/find-menus[snippets='http-request,http-response,path-parameters,response-fields']
 
+=== 메뉴 그룹 메뉴 정보 수정
+`POST /menu-group/update-menu/{menu Id}`
+
+operation::menu-group/update-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields']
+
 === 메뉴 그룹 삭제
 `DELETE /menu-group/{menu group id}`
 

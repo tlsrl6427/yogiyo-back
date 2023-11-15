@@ -74,6 +74,17 @@ public class MenuGroupController {
         menuGroupService.update(menuGroup);
     }
 
+    @PostMapping("/update-menu/{menuId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
+    public void updateMenu(@PathVariable Long menuId,
+                           @RequestPart(required = false) MultipartFile picture,
+                           @Validated @RequestPart("menuData") MenuUpdateRequest request) {
+
+        Menu menu = request.toMenu(menuId);
+        menuService.update(menu, picture);
+    }
+
     @DeleteMapping("/{menuGroupId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")

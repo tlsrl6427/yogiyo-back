@@ -71,31 +71,6 @@ class MenuServiceTest {
         then(imageFileHandler).should().store(picture);
     }
 
-    @Test
-    @DisplayName("메뉴 사진 교체")
-    void changePicture() throws Exception {
-        // given
-        Menu menu = Menu.builder()
-                .id(1L)
-                .name("피자")
-                .content("피자 설명")
-                .price(20000)
-                .picture("/images/picture.png")
-                .build();
-
-        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
-        given(imageFileHandler.remove(anyString())).willReturn(true);
-        given(imageFileHandler.store(any())).willReturn("new_picture.png");
-        given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
-
-        // when
-        menuService.updatePicture(1L, picture);
-
-        // then
-        assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
-        then(imageFileHandler).should().store(picture);
-    }
-
     @Nested
     @DisplayName("메뉴 조회")
     class Find {
@@ -181,15 +156,18 @@ class MenuServiceTest {
                 .price(19000)
                 .build();
 
+        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+        given(imageFileHandler.store(any())).willReturn("new_picture.png");
         given(menuRepository.findById(any())).willReturn(Optional.of(menu));
 
         // when
-        menuService.update(updateParam);
+        menuService.update(updateParam, picture);
 
         // then
         assertThat(menu.getName()).isEqualTo("치킨");
         assertThat(menu.getContent()).isEqualTo("치킨 설명");
         assertThat(menu.getPrice()).isEqualTo(19000);
+        assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
     }
 
     @Nested

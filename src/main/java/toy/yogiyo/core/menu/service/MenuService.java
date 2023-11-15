@@ -35,17 +35,6 @@ public class MenuService {
         return menu.getId();
     }
 
-    @Transactional
-    public void updatePicture(Long menuId, MultipartFile picture) throws IOException {
-        Menu menu = get(menuId);
-
-        if(null != menu.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
-            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
-        }
-
-        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
-    }
-
     @Transactional(readOnly = true)
     public Menu get(Long menuId) {
         return menuRepository.findById(menuId)
@@ -58,8 +47,13 @@ public class MenuService {
     }
 
     @Transactional
-    public void update(Menu updateParam) {
+    public void update(Menu updateParam, MultipartFile picture) {
         Menu menu = get(updateParam.getId());
+        if(null != menu.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
+            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+        }
+
+        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
         menu.updateInfo(updateParam);
     }
 

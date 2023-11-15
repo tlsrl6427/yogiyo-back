@@ -25,10 +25,7 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.dto.MenuCreateRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupCreateRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupUpdateMenuPositionRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupUpdateRequest;
+import toy.yogiyo.core.menu.dto.*;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -350,6 +347,49 @@ class MenuGroupControllerTest {
                                     fieldWithPath("menus[].content").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fieldWithPath("menus[].picture").type(JsonFieldType.STRING).description("메뉴 사진"),
                                     fieldWithPath("menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격")
+                            )
+                    ));
+        }
+
+        @Test
+        @DisplayName("메뉴 그룹 메뉴 수정")
+        void updateMenu() throws Exception {
+            // given
+            doNothing().when(menuService).update(any(), any());
+            MenuUpdateRequest request = MenuUpdateRequest.builder()
+                    .name("치킨")
+                    .content("치킨 설명")
+                    .price(19000)
+                    .build();
+
+            MockMultipartFile picture = new MockMultipartFile("picture", "image.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+            MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/update-menu/{menuId}", 1)
+                    .file(picture)
+                    .file(menuData)
+                    .header(HttpHeaders.AUTHORIZATION, jwt));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuUpdateRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/update-menu",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                            ),
+                            pathParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            requestParts(
+                                    partWithName("picture").description("메뉴 사진"),
+                                    partWithName("menuData").description("메뉴 정보")
+                            ),
+                            requestPartFields("menuData",
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
                             )
                     ));
         }

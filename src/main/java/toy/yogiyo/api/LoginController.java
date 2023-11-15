@@ -38,7 +38,7 @@ public class LoginController {
     public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest loginRequest){
 
         LoginResponse loginResponse = loginService.ownerLogin(loginRequest);
-        String accessToken = jwtProvider.createToken(loginRequest.getEmail(), loginRequest.getProviderType(), UserType.Owner);
+        String accessToken = jwtProvider.createToken(loginResponse.getEmail(), loginRequest.getProviderType(), UserType.Owner);
 
         //Authorization Header
         HttpHeaders headers = new HttpHeaders();

@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.shop.dto.NewShopListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -73,6 +74,28 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                 .orderBy(orderSpecifier)
                 .limit(6)
                 .offset(request.getOffset()==null ? 0L : request.getOffset())
+                .fetch();
+    }
+
+    public List<ShopScrollResponse> newShopList(NewShopListRequest request){
+        return jpaQueryFactory
+                .select(Projections.fields(ShopScrollResponse.class,
+                        shop.id.as("shopId"),
+                        shop.name.as("shopName"),
+                        shop.totalScore,
+                        getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+                        shop.deliveryTime,
+                        shop.minDeliveryPrice,
+                        shop.maxDeliveryPrice,
+                        shop.icon
+                ))
+                .from(shop)
+                .where(
+                        shop.latitude.between(request.getLatitude()-0.001,request.getLatitude()+0.001),
+                        shop.longitude.between(request.getLongitude()-0.1,request.getLongitude()+0.1)
+                        )
+                .orderBy(shop.id.desc())
+                .limit(20)
                 .fetch();
     }
 

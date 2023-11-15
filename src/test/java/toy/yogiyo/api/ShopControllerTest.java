@@ -619,6 +619,70 @@ class ShopControllerTest {
         verify(shopService).getList(any());
     }
 
+    @DisplayName("상점 리스트 조회")
+    @Test
+    void getNewShopList() throws Exception {
+        NewShopListRequest request = NewShopListRequest.builder()
+                .longitude(127.0215778)
+                .latitude(37.5600233)
+                .build();
+
+        NewShopListResponse response = NewShopListResponse.builder()
+                .newShops(
+                        List.of(
+                                ShopScrollResponse.builder()
+                                        .shopId(9036L)
+                                        .shopName("음식점 9036")
+                                        .totalScore(1.124858862726861)
+                                        .distance(7364.810136664925)
+                                        .deliveryTime(37)
+                                        .minDeliveryPrice(1500)
+                                        .maxDeliveryPrice(0)
+                                        .icon("/images/yogiyo-logo.jpg")
+                                        .build(),
+                                ShopScrollResponse.builder()
+                                        .shopId(6640L)
+                                        .shopName("음식점 6640")
+                                        .totalScore(3.5151195901468153)
+                                        .distance(7420.250353367057)
+                                        .deliveryTime(51)
+                                        .minDeliveryPrice(3000)
+                                        .maxDeliveryPrice(0)
+                                        .icon("/images/yogiyo-logo.jpg")
+                                        .build()
+                        )
+                )
+                .build();
+
+        given(shopService.getNewShopList(any())).willReturn(response);
+
+        mockMvc.perform(get("/shop/newShops")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("shop/newShops",
+                        requestFields(
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도")
+                                        .attributes(key("constraints").value("Not Null")),
+                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도")
+                                        .attributes(key("constraints").value("Not Null"))
+                        ),
+                        responseFields(
+                                fieldWithPath("newShops[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                fieldWithPath("newShops[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                fieldWithPath("newShops[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
+                                fieldWithPath("newShops[].distance").type(JsonFieldType.NUMBER).description("거리"),
+                                fieldWithPath("newShops[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
+                                fieldWithPath("newShops[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
+                                fieldWithPath("newShops[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
+                                fieldWithPath("newShops[].icon").type(JsonFieldType.STRING).description("아이콘 URL")
+                        )
+                ));
+
+
+        verify(shopService).getNewShopList(any());
+    }
     private Shop givenShop() {
         Shop shop = Shop.builder()
                 .id(1L)

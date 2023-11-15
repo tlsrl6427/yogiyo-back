@@ -25,7 +25,7 @@ operation::menu-group/update[snippets='http-request,http-response,request-header
 === 메뉴 그룹 메뉴 추가
 `POST /menu-group/{menu group id}/add-menu`
 
-operation::menu-group/add-menu[snippets='http-request,http-response,request-headers,path-parameters,request-fields,response-fields']
+operation::menu-group/add-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields,response-fields']
 
 === 메뉴 그룹 메뉴 조회
 `GET /menu-group/{menu group id}/menu`

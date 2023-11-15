@@ -19,15 +19,17 @@ public class ImageFileHandler {
     @Value("${file.dir}")
     private String fileDir;
 
-    public String store(MultipartFile multipartFile) throws IOException {
+    public String store(MultipartFile multipartFile) {
         validationFile(multipartFile);
 
-        String originalFilename = multipartFile.getOriginalFilename();
-        String storeFileName = createStoreFileName(originalFilename);
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
-
-        // 692c0741-f234-448e-ba3f-35b5a394f33d.jpg
-        return storeFileName;
+        try {
+            String originalFilename = multipartFile.getOriginalFilename();
+            String storeFileName = createStoreFileName(originalFilename);
+            multipartFile.transferTo(new File(getFullPath(storeFileName)));
+            return storeFileName;
+        } catch (IOException e) {
+            throw new FileIOException(ErrorCode.FILE_NOT_SAVED);
+        }
     }
 
     public Resource load(String filename) throws MalformedURLException {
@@ -45,7 +47,7 @@ public class ImageFileHandler {
         }
 
         if (!multipartFile.getContentType().startsWith("image")) {
-            throw new IllegalArgumentException();
+            throw new FileIOException(ErrorCode.FILE_NOT_ALLOWED);
         }
     }
 

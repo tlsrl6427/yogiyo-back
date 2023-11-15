@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.dto.*;
@@ -35,9 +36,11 @@ public class MenuGroupController {
     @PostMapping("/{menuGroupId}/add-menu")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public MenuCreateResponse createMenu(@PathVariable Long menuGroupId, @Validated @RequestBody MenuCreateRequest request) {
+    public MenuCreateResponse createMenu(@PathVariable Long menuGroupId,
+                                         @RequestPart(required = false) MultipartFile picture,
+                                         @Validated @RequestPart("menuData") MenuCreateRequest request) {
         Menu menu = request.toMenu(menuGroupId);
-        Long menuId = menuService.create(menu);
+        Long menuId = menuService.create(menu, picture);
 
         return MenuCreateResponse.builder()
                 .id(menuId)

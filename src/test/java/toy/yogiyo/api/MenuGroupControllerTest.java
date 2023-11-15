@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
@@ -278,13 +279,15 @@ class MenuGroupControllerTest {
                     .price(19000)
                     .build();
 
-            given(menuService.create(any())).willReturn(1L);
+            given(menuService.create(any(), any())).willReturn(1L);
+            MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+            MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
-                            .header(HttpHeaders.AUTHORIZATION, jwt)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/{menuGroupId}/add-menu", 1)
+                            .file(picture)
+                            .file(menuData)
+                            .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
             ConstrainedFields fields = new ConstrainedFields(MenuCreateRequest.class);
@@ -298,7 +301,11 @@ class MenuGroupControllerTest {
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
-                            requestFields(
+                            requestParts(
+                                    partWithName("picture").description("메뉴 사진"),
+                                    partWithName("menuData").description("메뉴 정보")
+                            ),
+                            requestPartFields("menuData",
                                     fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")

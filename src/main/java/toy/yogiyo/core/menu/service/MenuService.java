@@ -23,9 +23,13 @@ public class MenuService {
     private final ImageFileHandler imageFileHandler;
 
     @Transactional
-    public Long create(Menu menu) {
+    public Long create(Menu menu, MultipartFile picture) {
         Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
         menu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
+
+        if (!picture.isEmpty()) {
+            menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+        }
 
         menuRepository.save(menu);
         return menu.getId();

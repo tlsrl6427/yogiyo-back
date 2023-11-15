@@ -56,15 +56,19 @@ class MenuServiceTest {
                 .menuGroup(MenuGroup.builder().id(1L).build())
                 .build();
 
+        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
         given(menuRepository.findMaxOrder(anyLong())).willReturn(null);
+        given(imageFileHandler.store(any())).willReturn("new_picture.png");
         given(menuRepository.save(any())).willReturn(menu);
 
         // when
-        Long savedId = menuService.create(menu);
+        Long savedId = menuService.create(menu, picture);
 
         // then
         assertThat(savedId).isEqualTo(1L);
+        assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
         then(menuRepository).should().save(menu);
+        then(imageFileHandler).should().store(picture);
     }
 
     @Test

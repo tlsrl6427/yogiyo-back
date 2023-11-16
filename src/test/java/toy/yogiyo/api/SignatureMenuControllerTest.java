@@ -169,7 +169,7 @@ class SignatureMenuControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/signature-menu/{shopId}/change-order", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/signature-menu/{shopId}/change-position", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -178,7 +178,7 @@ class SignatureMenuControllerTest {
         ConstrainedFields fields = new ConstrainedFields(SignatureMenuUpdatePositionRequest.class);
         result.andExpect(status().isNoContent())
                 .andDo(print())
-                .andDo(document("signature-menu/change-order",
+                .andDo(document("signature-menu/change-position",
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                         ),

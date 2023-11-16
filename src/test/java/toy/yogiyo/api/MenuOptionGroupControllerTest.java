@@ -329,7 +329,7 @@ class MenuOptionGroupControllerTest {
                     .build();
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-option-group/shop/{shopId}/change-order", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-option-group/shop/{shopId}/change-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -338,7 +338,7 @@ class MenuOptionGroupControllerTest {
             ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupUpdatePositionRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
-                    .andDo(document("menu-option-group/change-order",
+                    .andDo(document("menu-option-group/change-position",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -494,7 +494,7 @@ class MenuOptionGroupControllerTest {
                     .build();
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-option-group/{menuOptionGroupId}/change-option-order", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-option-group/{menuOptionGroupId}/change-option-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -503,7 +503,7 @@ class MenuOptionGroupControllerTest {
             ConstrainedFields fields = new ConstrainedFields(MenuOptionUpdatePositionRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
-                    .andDo(document("menu-option-group/change-option-order",
+                    .andDo(document("menu-option-group/change-option-position",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),

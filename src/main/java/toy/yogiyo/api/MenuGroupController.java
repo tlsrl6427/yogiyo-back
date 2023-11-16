@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.dto.*;
@@ -35,9 +36,11 @@ public class MenuGroupController {
     @PostMapping("/{menuGroupId}/add-menu")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public MenuCreateResponse createMenu(@PathVariable Long menuGroupId, @Validated @RequestBody MenuCreateRequest request) {
+    public MenuCreateResponse createMenu(@PathVariable Long menuGroupId,
+                                         @RequestPart(required = false) MultipartFile picture,
+                                         @Validated @RequestPart("menuData") MenuCreateRequest request) {
         Menu menu = request.toMenu(menuGroupId);
-        Long menuId = menuService.create(menu);
+        Long menuId = menuService.create(menu, picture);
 
         return MenuCreateResponse.builder()
                 .id(menuId)
@@ -71,6 +74,17 @@ public class MenuGroupController {
         menuGroupService.update(menuGroup);
     }
 
+    @PostMapping("/update-menu/{menuId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
+    public void updateMenu(@PathVariable Long menuId,
+                           @RequestPart(required = false) MultipartFile picture,
+                           @Validated @RequestPart("menuData") MenuUpdateRequest request) {
+
+        Menu menu = request.toMenu(menuId);
+        menuService.update(menu, picture);
+    }
+
     @DeleteMapping("/{menuGroupId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
@@ -93,10 +107,18 @@ public class MenuGroupController {
         menuService.delete(menuParam);
     }
 
-    @PatchMapping("/{menuGroupId}/change-menu-order")
+    @PutMapping("/shop/{shopId}/change-position")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
+    public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody MenuGroupUpdatePositionRequest request) {
+        List<MenuGroup> menuGroups = request.toMenuGroups();
+        menuGroupService.updatePosition(shopId, menuGroups);
+    }
+
+    @PutMapping("/{menuGroupId}/change-menu-position")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public void updatePosition(@PathVariable Long menuGroupId, @Validated @RequestBody MenuGroupUpdateMenuPositionRequest request) {
+    public void updateMenuPosition(@PathVariable Long menuGroupId, @Validated @RequestBody MenuGroupUpdateMenuPositionRequest request) {
         List<Menu> menus = request.toMenus();
         menuGroupService.updateMenuPosition(menuGroupId, menus);
     }

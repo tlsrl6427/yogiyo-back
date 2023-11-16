@@ -22,15 +22,25 @@ operation::menu-group/find-one[snippets='http-request,http-response,path-paramet
 
 operation::menu-group/update[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
+=== 메뉴 그룹 순서 변경
+`PUT /menu0group/shop/1/chenge-position`
+
+operation::menu-group/change-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
 === 메뉴 그룹 메뉴 추가
 `POST /menu-group/{menu group id}/add-menu`
 
-operation::menu-group/add-menu[snippets='http-request,http-response,request-headers,path-parameters,request-fields,response-fields']
+operation::menu-group/add-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields,response-fields']
 
 === 메뉴 그룹 메뉴 조회
 `GET /menu-group/{menu group id}/menu`
 
 operation::menu-group/find-menus[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 메뉴 그룹 메뉴 정보 수정
+`POST /menu-group/update-menu/{menu Id}`
+
+operation::menu-group/update-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields']
 
 === 메뉴 그룹 삭제
 `DELETE /menu-group/{menu group id}`
@@ -43,9 +53,9 @@ operation::menu-group/delete[snippets='http-request,http-response,request-header
 operation::menu-group/delete-menu[snippets='http-request,http-response,request-headers,path-parameters']
 
 === 메뉴 그룹 메뉴 순서 변경
-`PATCH /menu-group/{menu group id}/change-menu-order`
+`PATCH /menu-group/{menu group id}/change-menu-position`
 
-operation::menu-group/change-menu-order[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::menu-group/change-menu-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 
 

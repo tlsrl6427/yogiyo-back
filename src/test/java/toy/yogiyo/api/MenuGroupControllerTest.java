@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
@@ -24,10 +25,7 @@ import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
-import toy.yogiyo.core.menu.dto.MenuCreateRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupCreateRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupUpdateMenuPositionRequest;
-import toy.yogiyo.core.menu.dto.MenuGroupUpdateRequest;
+import toy.yogiyo.core.menu.dto.*;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -239,6 +237,40 @@ class MenuGroupControllerTest {
                     ));
         }
 
+
+
+        @Test
+        @DisplayName("메뉴 그룹 순서 변경")
+        void updatePosition() throws Exception {
+            // given
+            MenuGroupUpdatePositionRequest request = MenuGroupUpdatePositionRequest.builder()
+                    .menuGroupIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
+                    .build();
+            doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/shop/{shopId}/change-position", 1)
+                    .header(HttpHeaders.AUTHORIZATION, jwt)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/change-position",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                            ),
+                            pathParameters(
+                                    parameterWithName("shopId").description("가게 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("menuGroupIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                            )
+                    ));
+        }
+
         @Test
         @DisplayName("메뉴 그룹 삭제")
         void delete() throws Exception {
@@ -278,13 +310,15 @@ class MenuGroupControllerTest {
                     .price(19000)
                     .build();
 
-            given(menuService.create(any())).willReturn(1L);
+            given(menuService.create(any(), any())).willReturn(1L);
+            MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+            MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/menu-group/{menuGroupId}/add-menu", 1)
-                            .header(HttpHeaders.AUTHORIZATION, jwt)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/{menuGroupId}/add-menu", 1)
+                            .file(picture)
+                            .file(menuData)
+                            .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
             ConstrainedFields fields = new ConstrainedFields(MenuCreateRequest.class);
@@ -298,7 +332,11 @@ class MenuGroupControllerTest {
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
-                            requestFields(
+                            requestParts(
+                                    partWithName("picture").description("메뉴 사진"),
+                                    partWithName("menuData").description("메뉴 정보")
+                            ),
+                            requestPartFields("menuData",
                                     fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
@@ -348,6 +386,49 @@ class MenuGroupControllerTest {
         }
 
         @Test
+        @DisplayName("메뉴 그룹 메뉴 수정")
+        void updateMenu() throws Exception {
+            // given
+            doNothing().when(menuService).update(any(), any());
+            MenuUpdateRequest request = MenuUpdateRequest.builder()
+                    .name("치킨")
+                    .content("치킨 설명")
+                    .price(19000)
+                    .build();
+
+            MockMultipartFile picture = new MockMultipartFile("picture", "image.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+            MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/update-menu/{menuId}", 1)
+                    .file(picture)
+                    .file(menuData)
+                    .header(HttpHeaders.AUTHORIZATION, jwt));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuUpdateRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/update-menu",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                            ),
+                            pathParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            requestParts(
+                                    partWithName("picture").description("메뉴 사진"),
+                                    partWithName("menuData").description("메뉴 정보")
+                            ),
+                            requestPartFields("menuData",
+                                    fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
+                            )
+                    ));
+        }
+
+        @Test
         @DisplayName("메뉴 그룹 메뉴 삭제")
         void deleteMenu() throws Exception {
             // given
@@ -380,7 +461,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}/change-menu-order", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/{menuGroupId}/change-menu-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -389,7 +470,7 @@ class MenuGroupControllerTest {
             ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
-                    .andDo(document("menu-group/change-menu-order",
+                    .andDo(document("menu-group/change-menu-position",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -397,7 +478,7 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 메뉴가 정렬됨")
                             )
                     ));
         }

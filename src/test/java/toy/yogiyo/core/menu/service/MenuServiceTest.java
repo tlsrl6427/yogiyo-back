@@ -56,39 +56,18 @@ class MenuServiceTest {
                 .menuGroup(MenuGroup.builder().id(1L).build())
                 .build();
 
+        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
         given(menuRepository.findMaxOrder(anyLong())).willReturn(null);
+        given(imageFileHandler.store(any())).willReturn("new_picture.png");
         given(menuRepository.save(any())).willReturn(menu);
 
         // when
-        Long savedId = menuService.create(menu);
+        Long savedId = menuService.create(menu, picture);
 
         // then
         assertThat(savedId).isEqualTo(1L);
-        then(menuRepository).should().save(menu);
-    }
-
-    @Test
-    @DisplayName("메뉴 사진 교체")
-    void changePicture() throws Exception {
-        // given
-        Menu menu = Menu.builder()
-                .id(1L)
-                .name("피자")
-                .content("피자 설명")
-                .price(20000)
-                .picture("/images/picture.png")
-                .build();
-
-        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
-        given(imageFileHandler.remove(anyString())).willReturn(true);
-        given(imageFileHandler.store(any())).willReturn("new_picture.png");
-        given(menuRepository.findById(anyLong())).willReturn(Optional.of(menu));
-
-        // when
-        menuService.updatePicture(1L, picture);
-
-        // then
         assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
+        then(menuRepository).should().save(menu);
         then(imageFileHandler).should().store(picture);
     }
 
@@ -177,15 +156,18 @@ class MenuServiceTest {
                 .price(19000)
                 .build();
 
+        MockMultipartFile picture = new MockMultipartFile("picture", "images.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
+        given(imageFileHandler.store(any())).willReturn("new_picture.png");
         given(menuRepository.findById(any())).willReturn(Optional.of(menu));
 
         // when
-        menuService.update(updateParam);
+        menuService.update(updateParam, picture);
 
         // then
         assertThat(menu.getName()).isEqualTo("치킨");
         assertThat(menu.getContent()).isEqualTo("치킨 설명");
         assertThat(menu.getPrice()).isEqualTo(19000);
+        assertThat(menu.getPicture()).isEqualTo("/images/new_picture.png");
     }
 
     @Nested

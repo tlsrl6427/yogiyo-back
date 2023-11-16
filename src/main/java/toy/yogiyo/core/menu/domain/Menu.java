@@ -1,6 +1,7 @@
 package toy.yogiyo.core.menu.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Menu {
 
     private String name;
     private String content;
+    @ColumnDefault("/images/default.jpg")
     private String picture;
     private Integer price;
 

@@ -10,7 +10,10 @@ import java.util.List;
 
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
 
-    @Query("select mg from MenuGroup mg where mg.shop.id = :shopId")
+    @Query("select mg from MenuGroup mg where mg.shop.id = :shopId order by mg.position")
     List<MenuGroup> findAllByShopId(@Param("shopId") Long shopId);
+
+    @Query("select max(mg.position) from MenuGroup mg where mg.shop.id = :shopId")
+    Integer findMaxOrder(@Param("shopId") Long shopId);
 
 }

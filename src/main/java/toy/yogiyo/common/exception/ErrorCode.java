@@ -47,6 +47,8 @@ public enum ErrorCode {
 
     FILE_NOT_REMOVED(500, "F_001", "관련 파일을 삭제하지 못했습니다."),
     FILE_EMPTY(400, "F_002", "파일이 비어있습니다."),
+    FILE_NOT_SAVED(500, "F_003", "파일을 저장하지 못했습니다."),
+    FILE_NOT_ALLOWED(400, "F_004", "지원하지 않는 파일 형식입니다."),
 
     REVIEW_NOT_FOUNT(400, "R_001", "리뷰를 찾을 수 없습니다."),
     REVIEW_EXPIRED(400, "R_002", "리뷰 수정 기간이 지났습니다.");

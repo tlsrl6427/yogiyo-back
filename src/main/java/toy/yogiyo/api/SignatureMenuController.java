@@ -45,7 +45,7 @@ public class SignatureMenuController {
         signatureMenuService.delete(menuId);
     }
 
-    @PutMapping("/{shopId}/change-order")
+    @PutMapping("/{shopId}/change-position")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
     public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody SignatureMenuUpdatePositionRequest request) {

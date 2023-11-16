@@ -12,9 +12,9 @@ operation::signature-menu/set[snippets='http-request,http-response,request-heade
 operation::signature-menu/find-all[snippets='http-request,http-response,path-parameters,response-fields']
 
 === 대표 메뉴 순서 변경
-`PUT /signature-menu/{shop id}/change-order`
+`PUT /signature-menu/{shop id}/change-position`
 
-operation::signature-menu/change-order[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::signature-menu/change-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 대표 메뉴 삭제
 `DELETE /signature-menu/delete/{menu id}`

@@ -23,23 +23,16 @@ public class MenuService {
     private final ImageFileHandler imageFileHandler;
 
     @Transactional
-    public Long create(Menu menu) {
+    public Long create(Menu menu, MultipartFile picture) {
         Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
         menu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
-        menuRepository.save(menu);
-        return menu.getId();
-    }
-
-    @Transactional
-    public void updatePicture(Long menuId, MultipartFile picture) throws IOException {
-        Menu menu = get(menuId);
-
-        if(null != menu.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
-            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+        if (!picture.isEmpty()) {
+            menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
         }
 
-        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+        menuRepository.save(menu);
+        return menu.getId();
     }
 
     @Transactional(readOnly = true)
@@ -54,8 +47,13 @@ public class MenuService {
     }
 
     @Transactional
-    public void update(Menu updateParam) {
+    public void update(Menu updateParam, MultipartFile picture) {
         Menu menu = get(updateParam.getId());
+        if(hasPicture(menu.getPicture()) && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
+            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+        }
+
+        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
         menu.updateInfo(updateParam);
     }
 
@@ -70,4 +68,7 @@ public class MenuService {
         menuRepository.delete(menu);
     }
 
+    private boolean hasPicture(String picture) {
+        return null != picture && !picture.equals("/images/default.jpg");
+    }
 }

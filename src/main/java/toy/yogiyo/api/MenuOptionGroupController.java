@@ -65,7 +65,7 @@ public class MenuOptionGroupController {
         menuOptionGroupService.linkMenu(menuOptionGroupId, request.toMenus());
     }
 
-    @PutMapping("/shop/{shopId}/change-order")
+    @PutMapping("/shop/{shopId}/change-position")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
     public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody MenuOptionGroupUpdatePositionRequest request) {
@@ -103,7 +103,7 @@ public class MenuOptionGroupController {
         menuOptionService.delete(menuOptionId);
     }
 
-    @PutMapping("/{menuOptionGroupId}/change-option-order")
+    @PutMapping("/{menuOptionGroupId}/change-option-position")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public void updateOptionPosition(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionUpdatePositionRequest request) {

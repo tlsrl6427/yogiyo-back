@@ -33,9 +33,9 @@ operation::menu-option-group/delete[snippets='http-request,http-response,request
 operation::menu-option-group/link-menu[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 옵션 그룹 정렬 순서 변경
-`PUT /menu-option-group/shop/{shop id}/change-order`
+`PUT /menu-option-group/shop/{shop id}/change-position`
 
-operation::menu-option-group/change-order[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::menu-option-group/change-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 [[Option]]
 === 옵션 추가
@@ -59,6 +59,6 @@ operation::menu-option-group/update-option[snippets='http-request,http-response,
 operation::menu-option-group/delete-option[snippets='http-request,http-response,request-headers,path-parameters']
 
 === 옵션 정렬 순서 변경
-`PUT /menu-option-group/{menu option group id}/change-option-order`
+`PUT /menu-option-group/{menu option group id}/change-option-position`
 
-operation::menu-option-group/change-option-order[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+operation::menu-option-group/change-option-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']

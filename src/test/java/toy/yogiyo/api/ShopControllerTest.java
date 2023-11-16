@@ -589,7 +589,7 @@ class ShopControllerTest {
                         .andDo(document("shop/list",
                                 requestFields(
                                         fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리"),
-                                        fieldWithPath("sortOption").type(JsonFieldType.STRING).description("정렬 기준"),
+                                        fieldWithPath("sortOption").type(JsonFieldType.STRING).description("정렬 기준(CLOSEST, ORDER,  REVIEW, SCORE)"),
                                         fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달요금")
                                                 .attributes(key("constraints").value("Null or 양수")),
                                         fieldWithPath("leastOrderPrice").type(JsonFieldType.NUMBER).description("최소 주문 금액")

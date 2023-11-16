@@ -55,7 +55,8 @@ public class NaverProvider implements OAuthProvider{
 
         NaverUser naverUser = exchange.getBody();
         NaverUser.Response response = naverUser.getResponse();
-
+        log.info("네이버 닉네임: " + response.getName());
+        log.info("네이버 이메일: " + response.getName());
         return OAuthIdTokenResponse.builder()
                 .nickname(response.getName())
                 .email(response.getEmail())

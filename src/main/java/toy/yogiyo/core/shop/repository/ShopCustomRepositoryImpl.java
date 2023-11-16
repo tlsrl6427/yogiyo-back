@@ -3,6 +3,7 @@ package toy.yogiyo.core.shop.repository;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -78,12 +79,15 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     }
 
     public List<ShopScrollResponse> newShopList(NewShopListRequest request){
+        NumberExpression<Double> distance = getShopDistance(request.getLatitude(), request.getLongitude()).as("distance");
+
         return jpaQueryFactory
                 .select(Projections.fields(ShopScrollResponse.class,
                         shop.id.as("shopId"),
                         shop.name.as("shopName"),
                         shop.totalScore,
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+                        distance,
                         shop.deliveryTime,
                         shop.minDeliveryPrice,
                         shop.maxDeliveryPrice,
@@ -91,8 +95,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                 ))
                 .from(shop)
                 .where(
-                        shop.latitude.between(request.getLatitude()-0.001,request.getLatitude()+0.001),
-                        shop.longitude.between(request.getLongitude()-0.1,request.getLongitude()+0.1)
+                        getShopDistance(request.getLatitude(), request.getLongitude()).loe(10000)
                         )
                 .orderBy(shop.id.desc())
                 .limit(20)

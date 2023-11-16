@@ -114,4 +114,9 @@ public class ShopController {
     public ShopScrollListResponse getList(@Valid @RequestBody ShopScrollListRequest request){
         return shopService.getList(request);
     }
+
+    @GetMapping("/newShops")
+    public NewShopListResponse getNewShopList(@Valid @RequestBody NewShopListRequest request){
+        return shopService.getNewShopList(request);
+    }
 }

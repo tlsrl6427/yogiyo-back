@@ -100,7 +100,7 @@ class MemberControllerTest {
                                             .attributes(key("constraints").value("이메일 형식")),
                                     fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
                                             .attributes(key("constraints").value("8자 이상")),
-                                    fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입")
+                                    fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO, NAVER)")
                             ),
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("멤버 ID")

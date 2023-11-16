@@ -134,7 +134,7 @@ class LoginControllerTest {
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),
                                         fieldWithPath("authCode").type(JsonFieldType.STRING).description("auth_code"),
-                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO)")
+                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO, NAVER)")
                                 ),
                                 responseFields(
                                         fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),
@@ -223,7 +223,7 @@ class LoginControllerTest {
                                         fieldWithPath("email").ignored(),
                                         fieldWithPath("password").ignored(),
                                         fieldWithPath("authCode").type(JsonFieldType.STRING).description("auth_code"),
-                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO)")
+                                        fieldWithPath("providerType").type(JsonFieldType.STRING).description("공급자 타입(GOOGLE, KAKAO, NAVER)")
                                 ),
                                 responseFields(
                                         fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 아이디"),

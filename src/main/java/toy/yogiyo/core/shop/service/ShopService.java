@@ -201,4 +201,11 @@ public class ShopService {
                 .hasNext(hasNext)
                 .build();
     }
+
+    public NewShopListResponse getNewShopList(NewShopListRequest request) {
+        List<ShopScrollResponse> shopScrollResponses = shopRepository.newShopList(request);
+        return NewShopListResponse.builder()
+                .newShops(shopScrollResponses)
+                .build();
+    }
 }

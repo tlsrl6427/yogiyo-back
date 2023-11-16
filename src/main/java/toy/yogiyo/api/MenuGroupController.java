@@ -107,10 +107,18 @@ public class MenuGroupController {
         menuService.delete(menuParam);
     }
 
-    @PatchMapping("/{menuGroupId}/change-menu-order")
+    @PutMapping("/shop/{shopId}/change-position")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
+    public void updatePosition(@PathVariable Long shopId, @Validated @RequestBody MenuGroupUpdatePositionRequest request) {
+        List<MenuGroup> menuGroups = request.toMenuGroups();
+        menuGroupService.updatePosition(shopId, menuGroups);
+    }
+
+    @PutMapping("/{menuGroupId}/change-menu-position")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
-    public void updatePosition(@PathVariable Long menuGroupId, @Validated @RequestBody MenuGroupUpdateMenuPositionRequest request) {
+    public void updateMenuPosition(@PathVariable Long menuGroupId, @Validated @RequestBody MenuGroupUpdateMenuPositionRequest request) {
         List<Menu> menus = request.toMenus();
         menuGroupService.updateMenuPosition(menuGroupId, menus);
     }

@@ -142,6 +142,39 @@ class MenuGroupServiceTest {
             then(menuGroupRepository).should().delete(menuGroup);
         }
 
+        @Test
+        @DisplayName("메뉴 그룹 순서 변경")
+        void updatePosition() throws Exception {
+            // given
+            List<MenuGroup> menuGroups = Arrays.asList(
+                    MenuGroup.builder().id(1L).build(),
+                    MenuGroup.builder().id(2L).build(),
+                    MenuGroup.builder().id(3L).build(),
+                    MenuGroup.builder().id(4L).build(),
+                    MenuGroup.builder().id(5L).build()
+            );
+
+            given(menuGroupRepository.findAllByShopId(anyLong())).willReturn(menuGroups);
+
+            List<MenuGroup> params = Arrays.asList(
+                    MenuGroup.builder().id(5L).build(),
+                    MenuGroup.builder().id(4L).build(),
+                    MenuGroup.builder().id(3L).build(),
+                    MenuGroup.builder().id(2L).build(),
+                    MenuGroup.builder().id(1L).build()
+            );
+
+            // when
+            menuGroupService.updatePosition(1L, params);
+
+            // then
+            assertThat(menuGroups.get(0).getPosition()).isEqualTo(5);
+            assertThat(menuGroups.get(1).getPosition()).isEqualTo(4);
+            assertThat(menuGroups.get(2).getPosition()).isEqualTo(3);
+            assertThat(menuGroups.get(3).getPosition()).isEqualTo(2);
+            assertThat(menuGroups.get(4).getPosition()).isEqualTo(1);
+        }
+
     }
     @Nested
     @DisplayName("메뉴 그룹 메뉴")

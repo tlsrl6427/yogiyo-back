@@ -61,6 +61,17 @@ public class MenuGroupService {
     }
 
     @Transactional
+    public void updatePosition(Long shopId, List<MenuGroup> params) {
+        List<MenuGroup> menuGroups = menuGroupRepository.findAllByShopId(shopId);
+
+        IntStream.range(0, params.size())
+                .forEach(i -> menuGroups.stream()
+                        .filter(menuGroup -> Objects.equals(menuGroup.getId(), params.get(i).getId()))
+                        .findFirst()
+                        .ifPresent(menuGroup -> menuGroup.updatePosition(i + 1)));
+    }
+
+    @Transactional
     public void updateMenuPosition(Long menuGroupId, List<Menu> params) {
         List<Menu> menus = menuService.getMenus(menuGroupId);
 

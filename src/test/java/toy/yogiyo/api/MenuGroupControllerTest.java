@@ -237,6 +237,40 @@ class MenuGroupControllerTest {
                     ));
         }
 
+
+
+        @Test
+        @DisplayName("메뉴 그룹 순서 변경")
+        void updatePosition() throws Exception {
+            // given
+            MenuGroupUpdatePositionRequest request = MenuGroupUpdatePositionRequest.builder()
+                    .menuGroupIds(Arrays.asList(3L, 2L, 5L, 1L, 4L))
+                    .build();
+            doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/shop/{shopId}/change-position", 1)
+                    .header(HttpHeaders.AUTHORIZATION, jwt)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/change-position",
+                            requestHeaders(
+                                    headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
+                            ),
+                            pathParameters(
+                                    parameterWithName("shopId").description("가게 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("menuGroupIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                            )
+                    ));
+        }
+
         @Test
         @DisplayName("메뉴 그룹 삭제")
         void delete() throws Exception {
@@ -427,7 +461,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}/change-menu-order", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/{menuGroupId}/change-menu-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -436,7 +470,7 @@ class MenuGroupControllerTest {
             ConstrainedFields fields = new ConstrainedFields(MenuGroupUpdateMenuPositionRequest.class);
             result.andExpect(status().isNoContent())
                     .andDo(print())
-                    .andDo(document("menu-group/change-menu-order",
+                    .andDo(document("menu-group/change-menu-position",
                             requestHeaders(
                                     headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
                             ),
@@ -444,7 +478,7 @@ class MenuGroupControllerTest {
                                     parameterWithName("menuGroupId").description("메뉴 그룹 ID")
                             ),
                             requestFields(
-                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 그룹 ID Array, 순서대로 메뉴가 정렬됨")
+                                    fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 메뉴가 정렬됨")
                             )
                     ));
         }

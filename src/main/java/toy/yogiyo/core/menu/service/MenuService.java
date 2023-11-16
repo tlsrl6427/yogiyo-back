@@ -49,7 +49,7 @@ public class MenuService {
     @Transactional
     public void update(Menu updateParam, MultipartFile picture) {
         Menu menu = get(updateParam.getId());
-        if(null != menu.getPicture() && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
+        if(hasPicture(menu.getPicture()) && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
 
@@ -68,4 +68,7 @@ public class MenuService {
         menuRepository.delete(menu);
     }
 
+    private boolean hasPicture(String picture) {
+        return null != picture && !picture.equals("/images/default.jpg");
+    }
 }

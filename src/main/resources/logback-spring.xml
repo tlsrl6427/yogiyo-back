@@ -3,6 +3,8 @@
     <property name="LOG_FILE_NAME" value="log"/>
     <property name="LOG_FILE_NAME_ERROR" value="log_error"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId}] [%thread] [%logger{40}] - %msg%n"/>
+    <property name="MAX_HISTORY" value="30" />
+    <property name="TOTAL_SIZE" value="7GB" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -20,8 +22,8 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>7GB</totalSizeCap>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
 
     </appender>
@@ -42,7 +44,8 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/${LOG_FILE_NAME_ERROR}.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <totalSizeCap>7GB</totalSizeCap>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${TOTAL_SIZE}</totalSizeCap>
         </rollingPolicy>
 
     </appender>

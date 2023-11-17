@@ -7,6 +7,9 @@ services:
     ports:
       - "8080:8080"
     restart: always
+    volumes:
+      - /home/ec2-user/image-store:/image-store
+      - /home/ec2-user/log:/log
 
   prometheus:
     image: prom/prometheus

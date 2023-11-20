@@ -13,6 +13,6 @@ public class NaverUser {
     public class Response{
         private String id;
         private String email;
-        private String name;
+        private String nickname;
     }
 }

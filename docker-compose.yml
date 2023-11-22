@@ -30,4 +30,3 @@ services:
     restart: always
     depends_on:
       - prometheus
-    privileged: true

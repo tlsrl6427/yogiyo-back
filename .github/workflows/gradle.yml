@@ -83,4 +83,4 @@ jobs:
             sudo wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml
             docker rm -f ec2-user-spring-1
             docker-compose pull && docker-compose up -d
-          
+            docker image prune -a -f

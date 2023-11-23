@@ -10,5 +10,4 @@ import java.util.List;
 public interface ShopCustomRepository {
     List<Shop> scrollLikes(Long memberId, Long lastId);
     List<ShopScrollResponse> scrollShopList(ShopScrollListRequest request);
-    List<ShopScrollResponse> newShopList(NewShopListRequest request);
 }

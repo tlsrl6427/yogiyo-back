@@ -1,23 +1,21 @@
 package toy.yogiyo.core.shop.repository;
 
 import com.querydsl.core.types.*;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.core.types.dsl.*;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import toy.yogiyo.core.shop.dto.NewShopListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
+
+import static java.time.LocalTime.now;
 import static toy.yogiyo.core.category.domain.QCategory.category;
 import static toy.yogiyo.core.category.domain.QCategoryShop.categoryShop;
-import static toy.yogiyo.core.shop.domain.QDeliveryPriceInfo.deliveryPriceInfo;
 import static toy.yogiyo.core.like.domain.QLike.like;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
@@ -46,60 +44,81 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
         OrderSpecifier<?> orderSpecifier;
         if(request.getSortOption() == null || request.getSortOption().isEmpty()){
-            orderSpecifier = new OrderSpecifier<>(Order.DESC, shop.reviewNum);
+            orderSpecifier = new OrderSpecifier<>(Order.DESC, shop.totalScore);
         }else if(request.getSortOption().equals("CLOSEST")){
             orderSpecifier = sortByClosest(request.getLatitude(), request.getLongitude());
         }else{
             orderSpecifier = sortByOption(request.getSortOption());
         }
 
-        return jpaQueryFactory
-                .select(Projections.fields(ShopScrollResponse.class,
-                            shop.id.as("shopId"),
-                            shop.name.as("shopName"),
-                            shop.totalScore,
-                            getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
-                            shop.deliveryTime,
-                            shop.minDeliveryPrice,
-                            shop.maxDeliveryPrice,
-                            shop.icon
-                        ))
-                .from(shop)
-                .join(categoryShop).on(shop.id.eq(categoryShop.shop.id))
-                .join(category).on(categoryShop.category.id.eq(category.id))
-                .where(
-                        categoryNameEq(request.getCategory()),
-                        deliveryPriceLt(request.getDeliveryPrice()),
-                        leastOrderPriceLt(request.getLeastOrderPrice())
-                )
-                .orderBy(orderSpecifier)
-                .limit(6)
-                .offset(request.getOffset()==null ? 0L : request.getOffset())
-                .fetch();
-    }
-
-    public List<ShopScrollResponse> newShopList(NewShopListRequest request){
-        NumberExpression<Double> distance = getShopDistance(request.getLatitude(), request.getLongitude()).as("distance");
-
-        return jpaQueryFactory
+        JPAQuery<ShopScrollResponse> query = jpaQueryFactory
                 .select(Projections.fields(ShopScrollResponse.class,
                         shop.id.as("shopId"),
                         shop.name.as("shopName"),
                         shop.totalScore,
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
-                        distance,
                         shop.deliveryTime,
                         shop.minDeliveryPrice,
                         shop.maxDeliveryPrice,
                         shop.icon
                 ))
-                .from(shop)
-                .where(
-                        getShopDistance(request.getLatitude(), request.getLongitude()).loe(10000)
-                        )
-                .orderBy(shop.id.desc())
-                .limit(20)
+                .from(shop);
+
+        if(request.getCategory()!=null && !request.getCategory().equals("신규맛집")){
+            query.join(categoryShop).on(shop.id.eq(categoryShop.shop.id))
+                    .join(category).on(categoryShop.category.id.eq(category.id));
+        }
+
+        return query.where(
+                        categoryNameEq(request.getCategory()),
+                        deliveryPriceLt(request.getDeliveryPrice()),
+                        leastOrderPriceLt(request.getLeastOrderPrice()),
+                        getShopDistance(request.getLatitude(), request.getLongitude()).loe(10000),
+                        isNewShop(request.getCategory())
+                )
+                .orderBy(orderSpecifier)
+                .limit(request.getLimit()==null ? 6L : request.getLimit()+1)
+                .offset(request.getOffset()==null ? 0L : request.getOffset())
                 .fetch();
+
+//        return jpaQueryFactory
+//                .select(Projections.fields(ShopScrollResponse.class,
+//                            shop.id.as("shopId"),
+//                            shop.name.as("shopName"),
+//                            shop.totalScore,
+//                            getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+//                            shop.deliveryTime,
+//                            shop.minDeliveryPrice,
+//                            shop.maxDeliveryPrice,
+//                            shop.icon
+//                        ))
+//                .from(shop)
+//                .join(categoryShop).on(shop.id.eq(categoryShop.shop.id))
+//                .join(category).on(categoryShop.category.id.eq(category.id))
+//                .where(
+//                        categoryNameEq(request.getCategory()),
+//                        deliveryPriceLt(request.getDeliveryPrice()),
+//                        leastOrderPriceLt(request.getLeastOrderPrice()),
+//                        getShopDistance(request.getLatitude(), request.getLongitude()).loe(10000),
+//                        isNewShop(request.getCategory())
+//                )
+//                .orderBy(orderSpecifier)
+//                .limit(request.getSize()==null ? 5L : request.getSize()+1)
+//                .offset(request.getOffset()==null ? 0L : request.getOffset())
+//                .fetch();
+    }
+
+    private BooleanExpression isNewShop(String category) {
+        if(category == null) return null;
+        return category.equals("신규맛집") ? getNewShop().loe(30) : null;
+    }
+
+    private NumberTemplate<Integer> getNewShop() {
+        return Expressions.numberTemplate(
+                Integer.class,
+                "datediff({0}, {1})",
+                Expressions.currentTimestamp(), shop.createdAt
+        );
     }
 
     private BooleanExpression leastOrderPriceLt(Integer leastOrderPrice) {
@@ -144,16 +163,9 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
         );
     }
 
-    private static BooleanExpression orderPriceMinLoe(Integer orderPrice) {
-        return orderPrice == null ? null : deliveryPriceInfo.orderPrice.min().loe(orderPrice);
-    }
-
-    private static BooleanExpression deliveryPriceMinLoe(Integer deliveryPrice) {
-        return deliveryPrice == null ? null :deliveryPriceInfo.deliveryPrice.min().loe(deliveryPrice);
-    }
-
     private BooleanExpression categoryNameEq(String categoryName){
-        return categoryName == null ? null : category.name.eq(categoryName);
+        if(categoryName == null) return null;
+        return categoryName.isEmpty() | categoryName.equals("신규맛집")  ? null : category.name.eq(categoryName);
     }
 
     private static BooleanExpression lastIdLt(Long lastId) {

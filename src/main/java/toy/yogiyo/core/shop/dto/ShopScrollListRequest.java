@@ -21,7 +21,6 @@ public class ShopScrollListRequest {
     private Double longitude;
     @NotNull
     private Double latitude;
-    @NotNull
-    @PositiveOrZero
     private Long offset;
+    private Long limit;
 }

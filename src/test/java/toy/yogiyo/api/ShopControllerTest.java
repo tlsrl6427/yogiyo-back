@@ -1,7 +1,6 @@
 package toy.yogiyo.api;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,16 +20,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.service.ShopService;
-import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +43,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -548,6 +549,7 @@ class ShopControllerTest {
                 .longitude(127.0215778)
                 .latitude(37.5600233)
                 .offset(0L)
+                .limit(5L)
                 .build();
 
         ShopScrollListResponse response = ShopScrollListResponse.builder()
@@ -576,30 +578,39 @@ class ShopControllerTest {
                         )
                 )
                 .hasNext(true)
-                .nextOffset(5L)
+                .nextOffset(6L)
                 .build();
 
         given(shopService.getList(any())).willReturn(response);
 
         mockMvc.perform(get("/shop/list")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+//                        .characterEncoding(StandardCharsets.UTF_8)
+                        .param("category", "치킨")
+                        .param("sortOption","CLOSEST")
+                        .param("deliveryPrice","3000")
+                        .param("leastOrderPrice","10000")
+                        .param("longitude","127.0215778")
+                        .param("latitude","37.5600233")
+                        .param("offset","0")
+                        .param("limit","5")
+                        )
                         .andExpect(status().isOk())
                         .andDo(print())
                         .andDo(document("shop/list",
-                                requestFields(
-                                        fieldWithPath("category").type(JsonFieldType.STRING).description("카테고리"),
-                                        fieldWithPath("sortOption").type(JsonFieldType.STRING).description("정렬 기준(CLOSEST, ORDER,  REVIEW, SCORE)"),
-                                        fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달요금")
-                                                .attributes(key("constraints").value("Null or 양수")),
-                                        fieldWithPath("leastOrderPrice").type(JsonFieldType.NUMBER).description("최소 주문 금액")
-                                                .attributes(key("constraints").value("Null or 양수")),
-                                        fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도")
+                                requestParameters(
+                                        parameterWithName("category").description("카테고리"),
+                                        parameterWithName("sortOption").description("정렬 기준(CLOSEST, ORDER,  REVIEW, SCORE)"),
+                                        parameterWithName("deliveryPrice").description("배달요금")
+                                                .attributes(key("constraints").value("0 or 양수")),
+                                        parameterWithName("leastOrderPrice").description("최소 주문 금액")
+                                                .attributes(key("constraints").value("0 or 양수")),
+                                        parameterWithName("longitude").description("경도")
                                                 .attributes(key("constraints").value("Not Null")),
-                                        fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도")
+                                        parameterWithName("latitude").description("위도")
                                                 .attributes(key("constraints").value("Not Null")),
-                                        fieldWithPath("offset").type(JsonFieldType.NUMBER).description("오프셋")
-                                                .attributes(key("constraints").value("Not Null and 양수"))
+                                        parameterWithName("offset").description("오프셋(시작 번호)"),
+                                        parameterWithName("limit").description("개수")
                                 ),
                                 responseFields(
                                         fieldWithPath("shopScrollResponses[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
@@ -619,70 +630,6 @@ class ShopControllerTest {
         verify(shopService).getList(any());
     }
 
-    @DisplayName("상점 리스트 조회")
-    @Test
-    void getNewShopList() throws Exception {
-        NewShopListRequest request = NewShopListRequest.builder()
-                .longitude(127.0215778)
-                .latitude(37.5600233)
-                .build();
-
-        NewShopListResponse response = NewShopListResponse.builder()
-                .newShops(
-                        List.of(
-                                ShopScrollResponse.builder()
-                                        .shopId(9036L)
-                                        .shopName("음식점 9036")
-                                        .totalScore(1.124858862726861)
-                                        .distance(7364.810136664925)
-                                        .deliveryTime(37)
-                                        .minDeliveryPrice(1500)
-                                        .maxDeliveryPrice(0)
-                                        .icon("/images/yogiyo-logo.jpg")
-                                        .build(),
-                                ShopScrollResponse.builder()
-                                        .shopId(6640L)
-                                        .shopName("음식점 6640")
-                                        .totalScore(3.5151195901468153)
-                                        .distance(7420.250353367057)
-                                        .deliveryTime(51)
-                                        .minDeliveryPrice(3000)
-                                        .maxDeliveryPrice(0)
-                                        .icon("/images/yogiyo-logo.jpg")
-                                        .build()
-                        )
-                )
-                .build();
-
-        given(shopService.getNewShopList(any())).willReturn(response);
-
-        mockMvc.perform(get("/shop/newShops")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(document("shop/newShops",
-                        requestFields(
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도")
-                                        .attributes(key("constraints").value("Not Null")),
-                                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도")
-                                        .attributes(key("constraints").value("Not Null"))
-                        ),
-                        responseFields(
-                                fieldWithPath("newShops[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-                                fieldWithPath("newShops[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
-                                fieldWithPath("newShops[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
-                                fieldWithPath("newShops[].distance").type(JsonFieldType.NUMBER).description("거리"),
-                                fieldWithPath("newShops[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
-                                fieldWithPath("newShops[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
-                                fieldWithPath("newShops[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
-                                fieldWithPath("newShops[].icon").type(JsonFieldType.STRING).description("아이콘 URL")
-                        )
-                ));
-
-
-        verify(shopService).getNewShopList(any());
-    }
     private Shop givenShop() {
         Shop shop = Shop.builder()
                 .id(1L)

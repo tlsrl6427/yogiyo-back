@@ -191,21 +191,15 @@ public class ShopService {
 
     public ShopScrollListResponse getList(ShopScrollListRequest request) {
         List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
-        boolean hasNext = shops.size() >= 6;
+        boolean hasNext = shops.size() >= (request.getLimit()==null ? 6L : request.getLimit()+1);
         if(hasNext) shops.remove(shops.size()-1);
-        Long nextOffset = (long) shops.size();
+        Long nextOffset = (request.getOffset()==null ? 0L : request.getOffset())
+                + (long) shops.size() + 1;
 
         return ShopScrollListResponse.builder()
                 .shopScrollResponses(shops)
                 .nextOffset(nextOffset)
                 .hasNext(hasNext)
-                .build();
-    }
-
-    public NewShopListResponse getNewShopList(NewShopListRequest request) {
-        List<ShopScrollResponse> shopScrollResponses = shopRepository.newShopList(request);
-        return NewShopListResponse.builder()
-                .newShops(shopScrollResponses)
                 .build();
     }
 }

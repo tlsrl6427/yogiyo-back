@@ -111,12 +111,8 @@ public class ShopController {
     }
 
     @GetMapping("/list")
-    public ShopScrollListResponse getList(@Valid @RequestBody ShopScrollListRequest request){
+    public ShopScrollListResponse getList(@Valid @ModelAttribute ShopScrollListRequest request){
         return shopService.getList(request);
     }
 
-    @GetMapping("/newShops")
-    public NewShopListResponse getNewShopList(@Valid @RequestBody NewShopListRequest request){
-        return shopService.getNewShopList(request);
-    }
 }

@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
@@ -552,34 +553,28 @@ class ShopControllerTest {
                 .limit(5L)
                 .build();
 
-        ShopScrollListResponse response = ShopScrollListResponse.builder()
-                .shopScrollResponses(
-                        List.of(
-                            ShopScrollResponse.builder()
-                                    .shopId(9036L)
-                                    .shopName("음식점 9036")
-                                    .totalScore(1.124858862726861)
-                                    .distance(7364.810136664925)
-                                    .deliveryTime(37)
-                                    .minDeliveryPrice(1500)
-                                    .maxDeliveryPrice(0)
-                                    .icon("/images/yogiyo-logo.jpg")
-                                    .build(),
-                            ShopScrollResponse.builder()
-                                    .shopId(6640L)
-                                    .shopName("음식점 6640")
-                                    .totalScore(3.5151195901468153)
-                                    .distance(7420.250353367057)
-                                    .deliveryTime(51)
-                                    .minDeliveryPrice(3000)
-                                    .maxDeliveryPrice(0)
-                                    .icon("/images/yogiyo-logo.jpg")
-                                    .build()
-                        )
-                )
-                .hasNext(true)
-                .nextOffset(6L)
-                .build();
+        Scroll<ShopScrollResponse> response = new Scroll<>(List.of(
+                ShopScrollResponse.builder()
+                        .shopId(9036L)
+                        .shopName("음식점 9036")
+                        .totalScore(1.124858862726861)
+                        .distance(7364.810136664925)
+                        .deliveryTime(37)
+                        .minDeliveryPrice(1500)
+                        .maxDeliveryPrice(0)
+                        .icon("/images/yogiyo-logo.jpg")
+                        .build(),
+                ShopScrollResponse.builder()
+                        .shopId(6640L)
+                        .shopName("음식점 6640")
+                        .totalScore(3.5151195901468153)
+                        .distance(7420.250353367057)
+                        .deliveryTime(51)
+                        .minDeliveryPrice(3000)
+                        .maxDeliveryPrice(0)
+                        .icon("/images/yogiyo-logo.jpg")
+                        .build()
+        ), 6L, true);
 
         given(shopService.getList(any())).willReturn(response);
 
@@ -613,14 +608,14 @@ class ShopControllerTest {
                                         parameterWithName("limit").description("개수")
                                 ),
                                 responseFields(
-                                        fieldWithPath("shopScrollResponses[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-                                        fieldWithPath("shopScrollResponses[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
-                                        fieldWithPath("shopScrollResponses[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
-                                        fieldWithPath("shopScrollResponses[].distance").type(JsonFieldType.NUMBER).description("거리"),
-                                        fieldWithPath("shopScrollResponses[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
-                                        fieldWithPath("shopScrollResponses[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
-                                        fieldWithPath("shopScrollResponses[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
-                                        fieldWithPath("shopScrollResponses[].icon").type(JsonFieldType.STRING).description("아이콘 URL"),
+                                        fieldWithPath("content[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                        fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
+                                        fieldWithPath("content[].distance").type(JsonFieldType.NUMBER).description("거리"),
+                                        fieldWithPath("content[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
+                                        fieldWithPath("content[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
+                                        fieldWithPath("content[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
+                                        fieldWithPath("content[].icon").type(JsonFieldType.STRING).description("아이콘 URL"),
                                         fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("다음 시작 오프셋"),
                                         fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
                                 )

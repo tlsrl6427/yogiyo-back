@@ -77,8 +77,8 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                         isNewShop(request.getCategory())
                 )
                 .orderBy(orderSpecifier)
-                .limit(request.getLimit()==null ? 6L : request.getLimit()+1)
-                .offset(request.getOffset()==null ? 0L : request.getOffset())
+                .limit(request.getLimit()+1)
+                .offset(request.getOffset())
                 .fetch();
 
 //        return jpaQueryFactory

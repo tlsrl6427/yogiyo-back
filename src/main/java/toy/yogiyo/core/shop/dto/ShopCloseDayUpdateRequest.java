@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import toy.yogiyo.core.shop.domain.CloseDay;
 import toy.yogiyo.core.shop.domain.Days;
 
@@ -36,6 +37,7 @@ public class ShopCloseDayUpdateRequest {
     @NoArgsConstructor
     public static class CloseDayDto {
 
+        @Range(min = 1, max = 4, message = "1~4 사이의 숫자만 가능합니다.")
         private int weekNumOfMonth;
         private Days dayOfWeek;
 

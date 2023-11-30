@@ -37,12 +37,7 @@ public class MenuGroupService {
 
     @Transactional(readOnly = true)
     public List<MenuGroup> getMenuGroups(Long shopId) {
-        List<MenuGroup> menuGroups = menuGroupRepository.findAllByShopId(shopId);
-
-        menuGroups.forEach(menuGroup ->
-                menuGroup.getMenus().sort(Comparator.comparingInt(Menu::getPosition))
-        );
-        return menuGroups;
+        return menuGroupRepository.findAllWithMenuByShopId(shopId);
     }
 
     @Transactional

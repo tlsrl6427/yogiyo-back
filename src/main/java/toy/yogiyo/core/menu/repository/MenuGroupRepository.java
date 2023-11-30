@@ -13,6 +13,12 @@ public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
     @Query("select mg from MenuGroup mg where mg.shop.id = :shopId order by mg.position")
     List<MenuGroup> findAllByShopId(@Param("shopId") Long shopId);
 
+    @Query("select distinct mg from MenuGroup mg" +
+            " join fetch mg.menus m" +
+            " where mg.shop.id = :shopId" +
+            " order by mg.position, m.position")
+    List<MenuGroup> findAllWithMenuByShopId(@Param("shopId") Long shopId);
+
     @Query("select max(mg.position) from MenuGroup mg where mg.shop.id = :shopId")
     Integer findMaxOrder(@Param("shopId") Long shopId);
 

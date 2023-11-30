@@ -44,13 +44,7 @@ public class MenuOptionGroupService {
 
     @Transactional(readOnly = true)
     public List<MenuOptionGroup> getAll(Long shopId) {
-        List<MenuOptionGroup> optionGroups = menuOptionGroupRepository.findAllByShopId(shopId);
-
-        optionGroups.forEach(optionGroup ->
-                optionGroup.getMenuOptions().sort(Comparator.comparingInt(MenuOption::getPosition))
-        );
-
-        return optionGroups;
+        return menuOptionGroupRepository.findAllWithOptionByShopId(shopId);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollListResponse;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
@@ -189,17 +190,12 @@ public class ShopService {
         }
     }
 
-    public ShopScrollListResponse getList(ShopScrollListRequest request) {
+    public Scroll<ShopScrollResponse> getList(ShopScrollListRequest request) {
         List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
-        boolean hasNext = shops.size() >= (request.getLimit()==null ? 6L : request.getLimit()+1);
+        boolean hasNext = shops.size() >= request.getLimit()+1;
         if(hasNext) shops.remove(shops.size()-1);
-        Long nextOffset = (request.getOffset()==null ? 0L : request.getOffset())
-                + (long) shops.size() + 1;
+        long nextOffset = request.getOffset() + shops.size();
 
-        return ShopScrollListResponse.builder()
-                .shopScrollResponses(shops)
-                .nextOffset(nextOffset)
-                .hasNext(hasNext)
-                .build();
+        return new Scroll<>(shops, nextOffset, hasNext);
     }
 }

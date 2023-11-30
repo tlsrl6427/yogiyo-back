@@ -14,4 +14,10 @@ public interface MenuOptionGroupRepository extends JpaRepository<MenuOptionGroup
 
     @Query("select mog from MenuOptionGroup mog where mog.shop.id = :shopId order by mog.position asc")
     List<MenuOptionGroup> findAllByShopId(@Param("shopId") Long shopId);
+
+    @Query("select distinct mog from MenuOptionGroup mog" +
+            " join fetch mog.menuOptions mo" +
+            " where mog.shop.id = :shopId" +
+            " order by mog.position, mo.position")
+    List<MenuOptionGroup> findAllWithOptionByShopId(@Param("shopId") Long shopId);
 }

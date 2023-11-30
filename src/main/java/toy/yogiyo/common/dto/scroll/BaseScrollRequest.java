@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public abstract class BaseScrollRequest {
 
+    private long offset;
     @Builder.Default
-    private int size = 10;
-    private int number;
+    private long limit = 10;
 
 }

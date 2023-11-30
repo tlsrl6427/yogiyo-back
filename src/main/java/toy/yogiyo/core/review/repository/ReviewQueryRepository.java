@@ -23,25 +23,23 @@ public class ReviewQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public Scroll<Review> shopReviewScroll(Long shopId, ReviewQueryCondition condition) {
-        long offset = (long) condition.getNumber() * condition.getSize();
-
         List<Review> reviews = queryFactory.selectFrom(review)
                 .leftJoin(review.member, member).fetchJoin()
                 .where(review.shopId.eq(shopId),
                         dateBetween(condition.getStartDate(), condition.getEndDate()),
                         status(condition.getStatus()))
                 .orderBy(sortBy(condition.getSort()))
-                .offset(offset)
-                .limit(condition.getSize() + 1)
+                .offset(condition.getOffset())
+                .limit(condition.getLimit() + 1)
                 .fetch();
 
         boolean hasNext = false;
-        if (reviews.size() > condition.getSize()) {
+        if (reviews.size() > condition.getLimit()) {
             hasNext = true;
             reviews.remove(reviews.size()-1);
         }
 
-        return new Scroll<>(reviews, condition.getNumber(), condition.getSize(), hasNext);
+        return new Scroll<>(reviews, condition.getOffset() + reviews.size(), hasNext);
     }
 
     private BooleanExpression dateBetween(LocalDate startDate, LocalDate endDate) {

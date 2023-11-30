@@ -95,14 +95,14 @@ class ReviewManagementControllerTest {
             reviews.add(review);
         }
         given(reviewQueryRepository.shopReviewScroll(anyLong(), any()))
-                .willReturn(new Scroll<>(reviews, 0, 10, true));
+                .willReturn(new Scroll<>(reviews, 10, true));
 
         ReviewQueryCondition condition = ReviewQueryCondition.builder()
                 .sort(ReviewQueryCondition.Sort.LATEST)
                 .startDate(LocalDate.of(2023, 10, 20))
                 .endDate(LocalDate.of(2023, 10, 23))
-                .size(10)
-                .number(0)
+                .limit(10)
+                .offset(0)
                 .status(ReviewQueryCondition.Status.ALL)
                 .build();
 
@@ -111,8 +111,8 @@ class ReviewManagementControllerTest {
                 .param("sort", condition.getSort().name())
                 .param("startDate", condition.getStartDate().toString())
                 .param("endDate", condition.getEndDate().toString())
-                .param("size", String.valueOf(condition.getSize()))
-                .param("number", String.valueOf(condition.getNumber()))
+                .param("offset", String.valueOf(condition.getOffset()))
+                .param("limit", String.valueOf(condition.getLimit()))
                 .param("status", condition.getStatus().name()));
 //        );
 
@@ -129,13 +129,12 @@ class ReviewManagementControllerTest {
                                 parameterWithName("sort").description("정렬 기준"),
                                 parameterWithName("startDate").description("조회 시작 날짜"),
                                 parameterWithName("endDate").description("조회 끝 날짜"),
-                                parameterWithName("size").description("콘텐츠 개수"),
-                                parameterWithName("number").description("스크롤 번호"),
+                                parameterWithName("offset").description("오프셋(시작 번호)"),
+                                parameterWithName("limit").description("데이터 개수"),
                                 parameterWithName("status").description("답변 상태")
                         ),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("스크롤 번호 (0부터 시작)"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("스크롤 아이템 개수"),
+                                fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("다음 시작 번호"),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 스크롤 유무"),
                                 fieldWithPath("content[].id").type(JsonFieldType.NUMBER).description("리뷰 ID"),
                                 fieldWithPath("content[].tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),

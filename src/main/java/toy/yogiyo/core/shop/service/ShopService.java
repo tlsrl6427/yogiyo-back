@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
-import toy.yogiyo.core.shop.dto.ShopScrollListResponse;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
@@ -34,24 +33,34 @@ public class ShopService {
     private final ImageFileHandler imageFileHandler;
     private final CategoryService categoryService;
 
-    @Transactional
     public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) throws IOException {
         validateDuplicateName(request.getName());
 
-        String iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(icon));
-        String bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
+        String iconStoredName = "";
+        String bannerStoredName = "";
+        Shop shop;
 
-        Shop shop = request.toShop(iconStoredName, bannerStoredName, owner);
+        try {
+            iconStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(icon));
+            bannerStoredName = ImageFileUtil.getFilePath(imageFileHandler.store(banner));
 
-        request.getCategories().forEach(categoryName -> {
-            Category category = categoryService.getCategory(categoryName);
-            shop.getCategoryShop().add(CategoryShop.builder()
-                    .category(category)
-                    .shop(shop)
-                    .build());
-        });
+            shop = request.toShop(iconStoredName, bannerStoredName, owner);
 
-        shopRepository.save(shop);
+            request.getCategories().forEach(categoryName -> {
+                Category category = categoryService.getCategory(categoryName);
+                shop.getCategoryShop().add(CategoryShop.builder()
+                        .category(category)
+                        .shop(shop)
+                        .build());
+            });
+
+            shopRepository.save(shop);
+        } catch (Exception e) {
+            // 저장 도중 문제가 발생 하면 저장 했던 이미지 삭제
+            imageFileHandler.remove(ImageFileUtil.extractFilename(iconStoredName));
+            imageFileHandler.remove(ImageFileUtil.extractFilename(bannerStoredName));
+            throw e;
+        }
 
         return shop.getId();
     }

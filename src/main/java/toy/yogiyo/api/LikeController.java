@@ -23,7 +23,7 @@ public class LikeController {
 
     @GetMapping("/scroll")
     @ResponseStatus(HttpStatus.OK)
-    public LikeScrollResponse getLikes(@LoginUser Member member, @RequestParam(defaultValue = "-1") Long lastId){
+    public LikeScrollResponse getLikes(@LoginUser Member member, @RequestParam Long lastId){
         return likeService.getLikes(member, lastId);
     }
 }

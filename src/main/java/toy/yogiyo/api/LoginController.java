@@ -3,6 +3,7 @@ package toy.yogiyo.api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.UserType;
@@ -28,9 +29,16 @@ public class LoginController {
 
         //Authorization Header
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", BEARER + accessToken);
-
+        headers.add(HttpHeaders.SET_COOKIE, createCookie(accessToken).toString());
         return new ResponseEntity<>(loginResponse, headers, HttpStatus.OK);
+    }
+    
+    private static ResponseCookie createCookie(String accessToken) {
+        return ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .build();
     }
 
     @PostMapping("/ownerLogin")

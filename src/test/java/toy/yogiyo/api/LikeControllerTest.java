@@ -14,9 +14,11 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.like.dto.LikeResponse;
-import toy.yogiyo.core.like.dto.LikeScrollResponse;
+import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.like.service.LikeService;
+import toy.yogiyo.core.shop.domain.Shop;
 
 import java.util.List;
 
@@ -88,33 +90,32 @@ class LikeControllerTest {
     @DisplayName("찜 목록 조회-scroll")
     @Test
     void getLikes() throws Exception {
-        LikeScrollResponse likeScrollResponse = LikeScrollResponse.builder()
-                .likeResponses(
-                        List.of(
-                                LikeResponse.builder()
-                                        .shopId(6L)
-                                        .shopName("BHC 행당점")
-                                        .shopImg("image1.jpg")
-                                        .score("4.7")
-                                        .build(),
-                                LikeResponse.builder()
-                                        .shopId(3L)
-                                        .shopName("맥도날드")
-                                        .shopImg("image2.jpg")
-                                        .score("3.6")
-                                        .build()
+        LikeScrollRequest request = new LikeScrollRequest(0L, 5L);
 
-                        )
-                )
-                .lastId(2L)
-                .hasNext(false)
-                .build();
+        List<LikeResponse> likeResponseList = List.of(
+                LikeResponse.builder()
+                        .shopId(6L)
+                        .shopName("BHC 행당점")
+                        .shopImg("image1.jpg")
+                        .score("4.7")
+                        .build(),
+                LikeResponse.builder()
+                        .shopId(3L)
+                        .shopName("맥도날드")
+                        .shopImg("image2.jpg")
+                        .score("3.6")
+                        .build()
 
-        given(likeService.getLikes(any(), any())).willReturn(likeScrollResponse);
+        );
+        Scroll<LikeResponse> likeResponses = new Scroll<>(likeResponseList, 3L, false);
+
+
+        given(likeService.getLikes(any(), any())).willReturn(likeResponses);
 
         mockMvc.perform(get("/like/scroll")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("lastId", "7")
+                        .param("offset", "0")
+                        .param("limit", "5")
                         .header("Authorization", jwt)
                 )
                 .andExpect(status().isOk())
@@ -125,18 +126,20 @@ class LikeControllerTest {
                                         headerWithName("Authorization").description("Access Token")
                                 ),
                                 requestParameters(
-                                        parameterWithName("lastId").description("마지막 주문 ID")
+                                        parameterWithName("offset").description("스크롤 시작 ID"),
+                                        parameterWithName("limit").description("스크롤 개수")
                                 ),
                                 responseFields(
-                                        fieldWithPath("likeResponses[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-                                        fieldWithPath("likeResponses[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
-                                        fieldWithPath("likeResponses[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 이미지 URL"),
-                                        fieldWithPath("likeResponses[].score").type(JsonFieldType.STRING).description("총 별점"),
-                                        fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("마지막 주문 ID"),
+                                        fieldWithPath("content[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                        fieldWithPath("content[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 이미지 URL"),
+                                        fieldWithPath("content[].score").type(JsonFieldType.STRING).description("총 별점"),
+                                        fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("마지막 스크롤 ID"),
                                         fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
                                 )
                         )
                 );
+
         verify(likeService).getLikes(any(), any());
     }
 }

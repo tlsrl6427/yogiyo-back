@@ -19,6 +19,12 @@ operation::owner/default/login[snippets='http-request,http-response,request-fiel
 
 operation::owner/social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
+[[Owner-logout]]
+=== 점주 로그아웃
+`POST /ownerLogout/{ownerId}`
+
+operation::owner/default/logout[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
+
 [[Owner-mypage]]
 === 점주 마이페이지 조회
 `GET /owner/mypage`

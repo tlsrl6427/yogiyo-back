@@ -7,6 +7,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.like.dto.LikeResponse;
+import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -27,15 +29,21 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Shop> scrollLikes(Long memberId, Long lastId) {
+    public List<LikeResponse> scrollLikes(Long memberId, LikeScrollRequest request) {
         return jpaQueryFactory
-                .select(shop)
+                .select(Projections.fields(LikeResponse.class,
+                        shop.id.as("shopId"),
+                        shop.name.as("shopName"),
+                        shop.icon.as("shopImg"),
+                        shop.totalScore.as("score")
+                ))
                 .from(shop)
                 .join(like).on(shop.id.eq(like.shop.id))
                 .where(like.member.id.eq(memberId),
-                        lastIdLt(lastId))
-                .orderBy(shop.id.desc())
-                .limit(6)
+                        lastIdLt(request.getLastId()))
+                .orderBy(like.id.desc())
+                .limit(request.getLimit()+1)
+                .offset(request.getOffset())
                 .fetch();
     }
 

@@ -58,7 +58,7 @@ class OrderServiceTest {
                 .totalPrice(20000)
                 .deliveryPrice(1000)
                 .totalPaymentPrice(21000)
-                .address(new Address("14582", "다산로 4길 57", "장미아파트 8동"))
+                .address(new Address("다산로 4길 57", "장미아파트 8동"))
                 .orderType(OrderType.DELIVERY)
                 .paymentType(PaymentType.CARD)
                 .requestMsg("요청사항 없음")
@@ -137,7 +137,7 @@ class OrderServiceTest {
         Long orderId = 1L;
         OrderDetailResponse orderDetailResponse = OrderDetailResponse.builder()
                 .orderNumber("ON123")
-                .address(new Address("14582", "다산로 4길 57", "장미아파트 8동"))
+                .address(new Address( "다산로 4길 57", "장미아파트 8동"))
                 .shopId(1L)
                 .shopName("BHC 행당점")
                 .orderTime(LocalDateTime.now())

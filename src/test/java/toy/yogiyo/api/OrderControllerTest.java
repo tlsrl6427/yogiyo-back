@@ -69,7 +69,7 @@ class OrderControllerTest {
     void createOrder() throws Exception {
         OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
                 .shopId(1L)
-                .address(new Address("14582", "다산로 4길 57", "장미아파트 8동"))
+                .address(new Address("다산로 4길 57", "장미아파트 8동"))
                 .orderItems(
                         List.of(
                             OrderItem.builder()
@@ -119,7 +119,6 @@ class OrderControllerTest {
                                 requestFields(
                                         fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
                                                 .attributes(key("constraints").value("Not Null")),
-                                        fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                         fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                         fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),
 
@@ -230,7 +229,7 @@ class OrderControllerTest {
                 .orderType(OrderType.DELIVERY)
                 .shopName("BHC 행당점")
                 .shopId(1L)
-                .address(new Address("14582", "다산로 4길 57", "장미아파트 8동"))
+                .address(new Address("다산로 4길 57", "장미아파트 8동"))
                 .orderTime(LocalDateTime.now())
                 .orderItems(
                         List.of(
@@ -302,7 +301,6 @@ class OrderControllerTest {
                                     fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액"),
                                     fieldWithPath("paymentPrice").type(JsonFieldType.NUMBER).description("결제금액"),
                                     fieldWithPath("paymentType").type(JsonFieldType.STRING).description("결제방식"),
-                                    fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                     fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                     fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                     fieldWithPath("requestMsg").type(JsonFieldType.STRING).description("요청사항"),

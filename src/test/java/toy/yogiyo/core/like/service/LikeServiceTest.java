@@ -7,8 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.like.domain.Like;
-import toy.yogiyo.core.like.dto.LikeScrollResponse;
+import toy.yogiyo.core.like.dto.LikeResponse;
+import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.like.repository.LikeRepository;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -85,22 +87,24 @@ class LikeServiceTest {
 
     @Test
     void getLikes() {
-        List<Shop> shops = new ArrayList<>();
-        for(int i=5; i>0; i--){
-            Shop shop1 = Shop.builder()
-                    .id((long) i)
+        LikeScrollRequest request = new LikeScrollRequest(0L, 5L);
+
+        List<LikeResponse> shops = new ArrayList<>();
+        for(int i=5; i>=0; i--){
+            LikeResponse lr = LikeResponse.builder()
+                    .shopId((long) i)
                     .build();
-            shops.add(shop1);
+            shops.add(lr);
         }
 
         given(shopRepository.scrollLikes(any(), any())).willReturn(shops);
-        LikeScrollResponse likes = likeService.getLikes(member, shop.getId());
+        Scroll<LikeResponse> likes = likeService.getLikes(member, request);
 
         assertAll(
                 () -> verify(shopRepository).scrollLikes(any(), any()),
-                () -> assertThat(likes.isHasNext()).isFalse(),
-                () -> assertThat(likes.getLastId()).isEqualTo(1L),
-                () -> assertThat(likes.getLikeResponses().size()).isEqualTo(5)
+                () -> assertThat(likes.isHasNext()).isTrue(),
+                () -> assertThat(likes.getNextOffset()).isEqualTo(5L),
+                () -> assertThat(likes.getContent().size()).isEqualTo(5)
         );
     }
 }

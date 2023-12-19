@@ -310,7 +310,7 @@ class LoginControllerTest {
                                         headerWithName("Authorization").description("Access Token")
                                 ),
                                 pathParameters(
-                                        parameterWithName("ownerId").description("멤버 ID")
+                                        parameterWithName("ownerId").description("점주 ID")
                                 ),
                                 responseHeaders(
                                         headerWithName("Set-Cookie").description("쿠키 삭제")

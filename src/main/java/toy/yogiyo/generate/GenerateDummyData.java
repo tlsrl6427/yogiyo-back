@@ -172,7 +172,6 @@ public class GenerateDummyData {
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
                             ps.setString(1, memberAddresses.get(i).getAddress().getDetail());
                             ps.setString(2, memberAddresses.get(i).getAddress().getStreet());
-                            ps.setString(3, memberAddresses.get(i).getAddress().getZipcode());
                             ps.setString(4, memberAddresses.get(i).getAddressType().name());
                             ps.setDouble(5, memberAddresses.get(i).getLatitude());
                             ps.setDouble(6, memberAddresses.get(i).getLongitude());
@@ -421,7 +420,6 @@ public class GenerateDummyData {
                             ps.setTimestamp(2, Timestamp.valueOf(now));
                             ps.setString(3, orders.get(i).getAddress().getDetail());
                             ps.setString(4, orders.get(i).getAddress().getStreet());
-                            ps.setString(5, orders.get(i).getAddress().getZipcode());
                             ps.setInt(6, orders.get(i).getDeliveryPrice());
                             ps.setLong(7, orders.get(i).getMember().getId());
                             ps.setString(8, orders.get(i).getOrderNumber());
@@ -556,7 +554,7 @@ public class GenerateDummyData {
                 member.addMemberAddresses(
                         MemberAddress.builder()
                                 .member(member)
-                                .address(new Address("05551", "서울 송파구 올림픽로 300", null))
+                                .address(new Address("서울 송파구 올림픽로 300", null))
                                 .addressType(AddressType.ELSE)
                                 // 롯데월드타워 기준으로 분포  (37.512460, 127.102546) | 5km 떨어진 지점 (37.530078, 127.155148) | 차이 (0.017618, 0.052602)
                                 .latitude(37.512460 + random.nextDouble() * 0.1)

@@ -27,7 +27,7 @@ public class OrderController {
 
     @GetMapping("/scroll")
     @ResponseStatus(HttpStatus.OK)
-    public OrderHistoryResponse scrollOrderHistories(@LoginUser Member member, @RequestParam(defaultValue = "-1") Long lastId){
+    public OrderHistoryResponse scrollOrderHistories(@LoginUser Member member, @RequestParam Long lastId){
         return orderService.getOrderHistory(member, lastId);
     }
 

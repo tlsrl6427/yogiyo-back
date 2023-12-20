@@ -4,11 +4,12 @@ package toy.yogiyo.core.like.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.like.dto.LikeResponse;
-import toy.yogiyo.core.like.dto.LikeScrollResponse;
+import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.like.repository.LikeRepository;
 import toy.yogiyo.core.like.domain.Like;
 import toy.yogiyo.core.member.domain.Member;
@@ -42,18 +43,14 @@ public class LikeService {
         likeRepository.save(Like.toLike(member, findShop));
     }
 
-    public LikeScrollResponse getLikes(Member member, Long lastId) {
+    public Scroll<LikeResponse> getLikes(Member member, LikeScrollRequest request) {
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
-        List<Shop> likeShops = shopRepository.scrollLikes(member.getId(), lastId);
-        boolean hasNext = likeShops.size() >= 6;
+        List<LikeResponse> likeShops = shopRepository.scrollLikes(member.getId(), request);
+        boolean hasNext = likeShops.size() >= request.getLimit()+1;
         if (hasNext) likeShops.remove(likeShops.size()-1);
-        Long nextLastId = likeShops.get(likeShops.size() - 1).getId();
+        Long nextOffset = request.getOffset() + likeShops.size();
 
-        return LikeScrollResponse.builder()
-                .likeResponses(getLikeResponses(likeShops))
-                .hasNext(hasNext)
-                .lastId(nextLastId)
-                .build();
+        return new Scroll<>(likeShops, nextOffset, hasNext);
     }
 
     private static List<LikeResponse> getLikeResponses(List<Shop> likeShops) {

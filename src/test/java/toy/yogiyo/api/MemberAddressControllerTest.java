@@ -75,7 +75,7 @@ class MemberAddressControllerTest {
         AddressRegisterRequest request = AddressRegisterRequest.builder()
                 .nickname("내 집")
                 .addressType(AddressType.HOME)
-                .address(new Address("02833", "공릉로 232", "대성빌라 504호"))
+                .address(new Address("공릉로 232", "대성빌라 504호"))
                 .latitude(34.2323494)
                 .longitude(43.5549921)
                 .build();
@@ -97,7 +97,6 @@ class MemberAddressControllerTest {
                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("주소 별칭")
                                         .attributes(key("constraints").value("Not Blank")),
                                 fieldWithPath("addressType").type(JsonFieldType.STRING).description("주소 타입(HOME, COMPANY, ELSE)"),
-                                fieldWithPath("address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                 fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                 fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
@@ -119,7 +118,7 @@ class MemberAddressControllerTest {
                                         .id(1L)
                                         .nickname("우리집")
                                         .addressType(AddressType.HOME)
-                                        .address(new Address("02833", "공릉로 232", "대성빌라 504호"))
+                                        .address(new Address("공릉로 232", "대성빌라 504호"))
                                         .latitude(34.2323494)
                                         .longitude(43.5549921)
                                         .here(true)
@@ -128,7 +127,7 @@ class MemberAddressControllerTest {
                                         .id(2L)
                                         .nickname("회사")
                                         .addressType(AddressType.COMPANY)
-                                        .address(new Address("23452", "양재대로 9길", "롯데빌딩 603호"))
+                                        .address(new Address("양재대로 9길", "롯데빌딩 603호"))
                                         .latitude(24.11121)
                                         .longitude(84.123882)
                                         .here(false)
@@ -153,7 +152,6 @@ class MemberAddressControllerTest {
                                 fieldWithPath("memberAddresses[].id").type(JsonFieldType.NUMBER).description("주소 ID"),
                                 fieldWithPath("memberAddresses[].nickname").type(JsonFieldType.STRING).description("주소 별칭"),
                                 fieldWithPath("memberAddresses[].addressType").type(JsonFieldType.STRING).description("주소 타입(HOME, COMPANY, ELSE)"),
-                                fieldWithPath("memberAddresses[].address.zipcode").type(JsonFieldType.STRING).description("우편번호"),
                                 fieldWithPath("memberAddresses[].address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                 fieldWithPath("memberAddresses[].address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                 fieldWithPath("memberAddresses[].latitude").type(JsonFieldType.NUMBER).description("위도"),

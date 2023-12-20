@@ -30,6 +30,6 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository{
     }
 
     private static BooleanExpression lastIdLt(Long lastId) {
-        return lastId == -1 ? null : order.id.lt(lastId);
+        return lastId == null ? null : order.id.lt(lastId);
     }
 }

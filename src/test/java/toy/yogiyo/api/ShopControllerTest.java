@@ -579,7 +579,7 @@ class ShopControllerTest {
         given(shopService.getList(any())).willReturn(response);
 
         mockMvc.perform(get("/shop/list")
-                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .contentType(MediaType.APPLICATION_JSON)
 //                        .characterEncoding(StandardCharsets.UTF_8)
                         .param("category", "치킨")
                         .param("sortOption","CLOSEST")

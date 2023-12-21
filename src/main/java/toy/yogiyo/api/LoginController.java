@@ -85,6 +85,7 @@ public class LoginController {
                 .secure(true)
                 .sameSite("None")
                 .path("/")
+                .maxAge(1000 * 60 * 60)//1시간
                 .build();
     }
 }

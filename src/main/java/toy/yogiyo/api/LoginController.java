@@ -84,6 +84,7 @@ public class LoginController {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
+                .path("/")
                 .build();
     }
 }

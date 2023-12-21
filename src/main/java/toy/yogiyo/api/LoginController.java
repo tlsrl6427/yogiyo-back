@@ -22,7 +22,7 @@ import toy.yogiyo.core.owner.domain.Owner;
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final String BEARER = "Bearer ";
+//    private final String BEARER = "Bearer ";
     private final LoginService loginService;
     private final JwtProvider jwtProvider;
 
@@ -72,14 +72,14 @@ public class LoginController {
         return new ResponseEntity<>("점주 로그아웃 완료", headers, HttpStatus.OK);
     }
 
-    private static ResponseCookie deleteCookie() {
+    private ResponseCookie deleteCookie() {
         return ResponseCookie.from("accessToken", null)
                 .maxAge(0)
                 .path("/")
                 .build();
     }
 
-    private static ResponseCookie createCookie(String accessToken) {
+    private ResponseCookie createCookie(String accessToken) {
         return ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
                 .secure(true)

@@ -84,8 +84,9 @@ public class LoginController {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
-                .path("/")
-                .maxAge(1000 * 60 * 60)//1시간
+//                .path("/")
+//                .maxAge(1000 * 60 * 60)//1시간
+                .domain("yogiyo-clone.shop")
                 .build();
     }
 }

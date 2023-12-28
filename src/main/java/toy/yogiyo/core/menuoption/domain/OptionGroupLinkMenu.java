@@ -10,6 +10,10 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = {
+        @Index(name = "idx_menu_Id", columnList = "menu_Id"),
+        @Index(name = "idx_menu_option_group_Id", columnList = "menu_option_group_Id")
+})
 public class OptionGroupLinkMenu {
 
     @Id
@@ -18,11 +22,11 @@ public class OptionGroupLinkMenu {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_Id")
+    @JoinColumn(name = "menu_Id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_option_group_Id")
+    @JoinColumn(name = "menu_option_group_Id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private MenuOptionGroup menuOptionGroup;
 
 }

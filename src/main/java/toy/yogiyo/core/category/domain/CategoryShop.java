@@ -10,6 +10,9 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(indexes = {@Index(name = "idx_shop_id", columnList = "shop_id"),
+        @Index(name = "idx_category_id", columnList = "category_id")
+})
 public class CategoryShop {
 
     @Id
@@ -18,10 +21,10 @@ public class CategoryShop {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
+    @JoinColumn(name = "shop_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Shop shop;
 }

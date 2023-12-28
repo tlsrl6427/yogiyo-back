@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(indexes = @Index(name = "idx_shop_id", columnList = "shop_id"))
 public class MenuGroup {
 
     @Id
@@ -25,11 +26,11 @@ public class MenuGroup {
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
+    @JoinColumn(name = "shop_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Shop shop;
 
     @Builder.Default
-    @OneToMany(mappedBy = "menuGroup")
+    @OneToMany(mappedBy = "menuGroup", cascade = CascadeType.ALL)
     private List<Menu> menus = new ArrayList<>();
 
     public void updateInfo(MenuGroup param) {

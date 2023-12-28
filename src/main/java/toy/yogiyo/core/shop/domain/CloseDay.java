@@ -19,7 +19,7 @@ public class CloseDay {
     private Days dayOfWeek;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id")
+    @JoinColumn(name = "shop_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Shop shop;
 
     public void setShop(Shop shop) {

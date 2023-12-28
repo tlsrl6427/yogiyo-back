@@ -1,9 +1,6 @@
 package toy.yogiyo.core.member.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import toy.yogiyo.common.domain.BaseTimeEntity;
 import toy.yogiyo.core.like.domain.Like;
 import toy.yogiyo.core.address.domain.MemberAddress;
@@ -15,7 +12,8 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "Members")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor
 public class Member extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

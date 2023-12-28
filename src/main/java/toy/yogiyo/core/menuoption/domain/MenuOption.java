@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "idx_menu_option_group_id", columnList = "menu_option_group_id"))
 public class MenuOption {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +21,7 @@ public class MenuOption {
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_option_group_id")
+    @JoinColumn(name = "menu_option_group_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private MenuOptionGroup menuOptionGroup;
 
     public void updatePosition(int position) {

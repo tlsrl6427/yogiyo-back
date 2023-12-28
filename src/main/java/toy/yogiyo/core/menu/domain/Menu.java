@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(indexes = @Index(name = "idx_menu_group_id", columnList = "menu_group_id"))
 public class Menu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class Menu {
     private Integer position;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
+    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private MenuGroup menuGroup;
 
     @Builder.Default

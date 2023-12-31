@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
+import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
 import toy.yogiyo.core.menuoption.repository.MenuOptionRepository;
 
 import java.util.List;
@@ -17,9 +18,14 @@ import java.util.stream.IntStream;
 public class MenuOptionService {
 
     private final MenuOptionRepository menuOptionRepository;
+    private final MenuOptionGroupRepository menuOptionGroupRepository;
 
     @Transactional
     public Long create(MenuOption menuOption) {
+        if (menuOptionGroupRepository.findById(menuOption.getMenuOptionGroup().getId()).isEmpty()) {
+            throw new EntityNotFoundException(ErrorCode.MENUOPTIONGROUP_NOT_FOUND);
+        }
+
         Integer maxOrder = menuOptionRepository.findMaxOrder(menuOption.getMenuOptionGroup().getId());
         menuOption.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 

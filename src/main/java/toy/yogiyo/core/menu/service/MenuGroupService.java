@@ -8,8 +8,8 @@ import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
+import toy.yogiyo.core.shop.repository.ShopRepository;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -20,11 +20,16 @@ import java.util.stream.IntStream;
 public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
+    private final ShopRepository shopRepository;
     private final MenuService menuService;
 
     // =================== 점주 기능 ======================
     @Transactional
     public Long create(MenuGroup menuGroup) {
+        if (shopRepository.findById(menuGroup.getShop().getId()).isEmpty()) {
+            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
         menuGroupRepository.save(menuGroup);
         return menuGroup.getId();
     }

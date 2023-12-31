@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.dto.scroll.Scroll;
+import toy.yogiyo.core.menu.service.MenuGroupService;
+import toy.yogiyo.core.menu.service.SignatureMenuService;
+import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollResponse;
 import toy.yogiyo.common.exception.*;
@@ -19,7 +22,6 @@ import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,8 +34,12 @@ public class ShopService {
     private final ShopRepository shopRepository;
     private final ImageFileHandler imageFileHandler;
     private final CategoryService categoryService;
+    private final MenuGroupService menuGroupService;
+    private final SignatureMenuService signatureMenuService;
+    private final MenuOptionGroupService menuOptionGroupService;
 
-    public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) throws IOException {
+
+    public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) {
         validateDuplicateName(request.getName());
 
         String iconStoredName = "";
@@ -116,7 +122,7 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateNotice(Long shopId, Owner owner, ShopNoticeUpdateRequest request, List<MultipartFile> imageFiles) throws IOException {
+    public void updateNotice(Long shopId, Owner owner, ShopNoticeUpdateRequest request, List<MultipartFile> imageFiles) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
@@ -182,6 +188,12 @@ public class ShopService {
         if (!imageFileHandler.remove(ImageFileUtil.extractFilename(shop.getBanner()))) {
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
+
+        signatureMenuService.deleteAll(shopId);
+        menuOptionGroupService.getAll(shopId)
+                .forEach(menuOptionGroup -> menuOptionGroupService.delete(menuOptionGroup.getId()));
+        menuGroupService.getMenuGroups(shopId)
+                .forEach(menuGroupService::delete);
 
         shopRepository.delete(shop);
     }

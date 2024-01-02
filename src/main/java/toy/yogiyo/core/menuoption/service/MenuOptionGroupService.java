@@ -6,11 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.repository.MenuRepository;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
+import toy.yogiyo.core.shop.repository.ShopRepository;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -20,9 +21,15 @@ import java.util.stream.IntStream;
 public class MenuOptionGroupService {
 
     private final MenuOptionGroupRepository menuOptionGroupRepository;
+    private final MenuRepository menuRepository;
+    private final ShopRepository shopRepository;
 
     @Transactional
     public Long create(MenuOptionGroup menuOptionGroup) {
+        if (shopRepository.findById(menuOptionGroup.getShop().getId()).isEmpty()) {
+            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
+        }
+
         Integer maxOrder = menuOptionGroupRepository.findMaxOrder(menuOptionGroup.getShop().getId());
         menuOptionGroup.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
@@ -61,6 +68,11 @@ public class MenuOptionGroupService {
 
     @Transactional
     public void linkMenu(Long menuOptionGroupId, List<Menu> menus) {
+        menus.forEach(menu -> {
+            if (menuRepository.findById(menu.getId()).isEmpty()) {
+                throw new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND);
+            }});
+
         MenuOptionGroup menuOptionGroup = get(menuOptionGroupId);
         menuOptionGroup.updateLinkMenus(menus);
     }

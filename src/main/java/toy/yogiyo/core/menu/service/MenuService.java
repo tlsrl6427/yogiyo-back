@@ -10,9 +10,9 @@ import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 import toy.yogiyo.core.menu.repository.MenuRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -20,10 +20,15 @@ import java.util.List;
 public class MenuService {
 
     private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
     private final ImageFileHandler imageFileHandler;
 
     @Transactional
     public Long create(Menu menu, MultipartFile picture) {
+        if(menuGroupRepository.findById(menu.getMenuGroup().getId()).isEmpty()) {
+            throw new EntityNotFoundException(ErrorCode.MENUGROUP_NOT_FOUND);
+        }
+
         Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
         menu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 

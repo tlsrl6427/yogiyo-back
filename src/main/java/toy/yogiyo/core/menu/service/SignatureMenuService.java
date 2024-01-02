@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
+import toy.yogiyo.core.menu.repository.MenuRepository;
 import toy.yogiyo.core.menu.repository.SignatureMenuRepository;
+import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,9 +19,18 @@ import java.util.stream.IntStream;
 public class SignatureMenuService {
 
     private final SignatureMenuRepository signatureMenuRepository;
+    private final MenuRepository menuRepository;
+    private final ShopRepository shopRepository;
 
     @Transactional
     public Long create(SignatureMenu signatureMenu) {
+        if (shopRepository.findById(signatureMenu.getShop().getId()).isEmpty()){
+            throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
+        }
+        if (menuRepository.findById(signatureMenu.getMenu().getId()).isEmpty()) {
+            throw new EntityNotFoundException(ErrorCode.MENU_NOT_FOUND);
+        }
+
         Integer maxOrder = signatureMenuRepository.findMaxOrder(signatureMenu.getShop().getId());
         signatureMenu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 

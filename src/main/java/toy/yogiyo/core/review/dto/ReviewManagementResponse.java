@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.domain.ReviewImage;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,10 @@ public class ReviewManagementResponse {
 
     private Long id;
 
-    private double tasteScore;
-    private double quantityScore;
-    private double deliveryScore;
-    private double totalScore;
+    private BigDecimal tasteScore;
+    private BigDecimal quantityScore;
+    private BigDecimal deliveryScore;
+    private BigDecimal totalScore;
     private String content;
     private String ownerReply;
     private String memberName;

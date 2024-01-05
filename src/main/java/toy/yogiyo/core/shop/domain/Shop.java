@@ -8,6 +8,7 @@ import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +33,14 @@ public class Shop extends BaseTimeEntity {
     // 리뷰
     private long reviewNum;
 
-    private double tasteScore;
-    private double quantityScore;
-    private double deliveryScore;
-    private double totalScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal tasteScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal quantityScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal deliveryScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal totalScore;
 
     private String icon;
     private String banner;
@@ -133,10 +138,10 @@ public class Shop extends BaseTimeEntity {
 
     public void addReview(Review review) {
         this.reviewNum++;
-        this.tasteScore = (this.tasteScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
-        this.quantityScore = (this.quantityScore*(this.reviewNum-1)+review.getQuantityScore())/reviewNum;
-        this.deliveryScore = (this.deliveryScore*(this.reviewNum-1)+review.getTasteScore())/reviewNum;
-        this.totalScore = (this.totalScore*(this.reviewNum-1)+review.getTotalScore())/reviewNum;
+        this.tasteScore = (this.tasteScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTasteScore())).divide(BigDecimal.valueOf(reviewNum));
+        this.quantityScore = (this.quantityScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getQuantityScore())).divide(BigDecimal.valueOf(reviewNum));
+        this.deliveryScore = (this.deliveryScore .multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getDeliveryScore())).divide(BigDecimal.valueOf(reviewNum));
+        this.totalScore = (this.totalScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTotalScore())).divide(BigDecimal.valueOf(reviewNum));
     }
 
     public void decreaseLikeNum() {

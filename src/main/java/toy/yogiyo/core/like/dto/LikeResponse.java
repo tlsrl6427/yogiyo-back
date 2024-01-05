@@ -22,9 +22,7 @@ public class LikeResponse {
                 .shopId(shop.getId())
                 .shopName(shop.getName())
                 .shopImg(shop.getIcon())
-                .score(String.format("%.1f", shop.getTasteScore()
-                        +shop.getDeliveryScore()
-                        +shop.getQuantityScore()))
+                .score(shop.getTotalScore().toString())
                 .build();
     }
 }

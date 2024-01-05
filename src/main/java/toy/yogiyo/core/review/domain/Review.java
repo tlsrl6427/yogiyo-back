@@ -9,6 +9,7 @@ import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.order.domain.Order;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,14 @@ public class Review extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private double tasteScore;
-    private double quantityScore;
-    private double deliveryScore;
-    private double totalScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal tasteScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal quantityScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal deliveryScore;
+    @Column(precision = 3, scale = 2)
+    private BigDecimal totalScore;
 
     private String content;
     private String ownerReply;
@@ -49,7 +54,7 @@ public class Review extends BaseTimeEntity {
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
     @Builder
-    public Review(Long id, double tasteScore, double quantityScore, double deliveryScore, double totalScore, String content, String ownerReply, LocalDateTime ownerReplyCreatedAt, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
+    public Review(Long id, BigDecimal tasteScore, BigDecimal quantityScore, BigDecimal deliveryScore, BigDecimal totalScore, String content, String ownerReply, LocalDateTime ownerReplyCreatedAt, Long shopId, String shopName, Member member, Order order, List<ReviewImage> reviewImages) {
         this.id = id;
         this.tasteScore = tasteScore;
         this.quantityScore = quantityScore;

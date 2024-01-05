@@ -8,6 +8,7 @@ import toy.yogiyo.core.review.domain.Review;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Getter
 @Builder
@@ -17,9 +18,9 @@ public class ReviewCreateRequest {
 
     @NotNull(message = "주문 ID가 반드시 들어가야 합니다")
     private Long orderId;
-    private float tasteScore;
-    private float quantityScore;
-    private float deliveryScore;
+    private BigDecimal tasteScore;
+    private BigDecimal quantityScore;
+    private BigDecimal deliveryScore;
     @NotEmpty
     private String content;
 
@@ -32,7 +33,7 @@ public class ReviewCreateRequest {
                 .tasteScore(tasteScore)
                 .quantityScore(quantityScore)
                 .deliveryScore(deliveryScore)
-                .totalScore((tasteScore+quantityScore+deliveryScore)/3)
+                .totalScore(tasteScore.add(quantityScore).add(deliveryScore).divide(BigDecimal.valueOf(3)))
                 .content(content)
                 .shopId(shopId)
                 .shopName(shopName)

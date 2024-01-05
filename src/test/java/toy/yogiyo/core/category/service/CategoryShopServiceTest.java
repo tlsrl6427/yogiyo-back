@@ -17,6 +17,7 @@ import toy.yogiyo.core.category.repository.CategoryShopQueryRepository;
 import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +64,7 @@ class CategoryShopServiceTest {
         assertThat(categoryShopResponse.getIcon()).isEqualTo(shop.getIcon());
         assertThat(categoryShopResponse.getDeliveryTime()).isEqualTo(shop.getDeliveryTime());
         assertThat(categoryShopResponse.getDistance()).isBetween(165, 170);
-        assertThat(categoryShopResponse.getStars()).isEqualTo((shop.getDeliveryScore() + shop.getQuantityScore() + shop.getTasteScore()) / 3);
+        assertThat(categoryShopResponse.getStars()).isEqualTo((shop.getDeliveryScore().add(shop.getQuantityScore()).add(shop.getTasteScore())).divide(BigDecimal.valueOf(3)));
         assertThat(categoryShopResponse.getReviewNum()).isEqualTo(shop.getReviewNum());
         assertThat(categoryShopResponse.getDeliveryPriceInfos()).containsAll(shop.getDeliveryPriceInfos().stream()
                 .map(DeliveryPriceInfo::getDeliveryPrice)

@@ -20,6 +20,7 @@ import toy.yogiyo.core.review.dto.MemberReviewScrollResponse;
 import toy.yogiyo.core.review.dto.ReviewCreateRequest;
 import toy.yogiyo.core.review.service.ReviewService;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,9 +71,9 @@ class ReviewControllerTest {
     void write() throws Exception {
         ReviewCreateRequest reviewCreateRequest = ReviewCreateRequest.builder()
                 .orderId(1L)
-                .tasteScore(3.5f)
-                .quantityScore(3.0f)
-                .deliveryScore(5.0f)
+                .tasteScore(BigDecimal.valueOf(3.5))
+                .quantityScore(BigDecimal.valueOf(3.0))
+                .deliveryScore(BigDecimal.valueOf(5.0))
                 .content("맛있어요~")
                 .shopId(1L)
                 .shopName("BHC 행당점")
@@ -120,10 +121,10 @@ class ReviewControllerTest {
                         List.of(
                             Review.builder()
                                     .id(1L)
-                                    .tasteScore(3.5f)
-                                    .quantityScore(3.0f)
-                                    .deliveryScore(5.0f)
-                                    .totalScore(3.83333f)
+                                    .tasteScore(BigDecimal.valueOf(3.5))
+                                    .quantityScore(BigDecimal.valueOf(3.0))
+                                    .deliveryScore(BigDecimal.valueOf(5.0))
+                                    .totalScore(BigDecimal.valueOf(3.8))
                                     .ownerReply("사장님 댓글입니다")
                                     .ownerReplyCreatedAt(LocalDateTime.of(2023, 10, 23, 0, 0, 0))
                                     .content("맛있어요~")

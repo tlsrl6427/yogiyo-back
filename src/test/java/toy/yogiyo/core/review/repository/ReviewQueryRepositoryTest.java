@@ -13,6 +13,7 @@ import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,7 +34,7 @@ class ReviewQueryRepositoryTest {
             Review review = Review.builder()
                     .content("리뷰 " + i)
                     .shopId(1L)
-                    .tasteScore(i * 0.1f)
+                    .tasteScore(BigDecimal.valueOf(i * 0.1))
                     .build();
             em.persist(review);
         }

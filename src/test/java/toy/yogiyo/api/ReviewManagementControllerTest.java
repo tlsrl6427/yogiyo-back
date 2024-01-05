@@ -27,6 +27,7 @@ import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
 import toy.yogiyo.core.review.service.ReviewManagementService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,10 +80,10 @@ class ReviewManagementControllerTest {
         for (int i = 1; i <= 10; i++) {
             Review review = Review.builder()
                     .id((long) i)
-                    .tasteScore(5.0f)
-                    .deliveryScore(5.0f)
-                    .quantityScore(5.0f)
-                    .totalScore(5.0f)
+                    .tasteScore(BigDecimal.valueOf(5.0))
+                    .deliveryScore(BigDecimal.valueOf(5.0))
+                    .quantityScore(BigDecimal.valueOf(5.0))
+                    .totalScore(BigDecimal.valueOf(5.0))
                     .content("양도 많고 감자도 잘 튀겨졌어요~~")
                     .member(Member.builder().nickname("abcde").build())
                     .reviewImages(List.of(

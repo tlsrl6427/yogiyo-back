@@ -1,6 +1,7 @@
 package toy.yogiyo.api;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -20,6 +21,7 @@ import toy.yogiyo.core.owner.domain.Owner;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class LoginController {
 
 //    private final String BEARER = "Bearer ";
@@ -42,6 +44,8 @@ public class LoginController {
     @PostMapping("/memberLogout/{memberId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> memberLogout(@LoginUser Member member, @PathVariable Long memberId){
+        log.info("member.getId()={}", member.getId());
+        log.info("memberId={}", memberId);
         if(member.getId()!=memberId) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
 
         HttpHeaders headers = new HttpHeaders();
@@ -86,7 +90,7 @@ public class LoginController {
                 .sameSite("None")
 //                .path("/")
 //                .maxAge(1000 * 60 * 60)//1시간
-                .domain("yogiyo-clone.shop")
+//                .domain("yogiyo-clone.shop")
                 .build();
     }
 }

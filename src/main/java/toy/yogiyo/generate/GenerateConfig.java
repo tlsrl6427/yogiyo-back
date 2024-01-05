@@ -1,3 +1,4 @@
+/*
 package toy.yogiyo.generate;
 
 import org.springframework.context.annotation.Bean;
@@ -6,12 +7,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.EntityManager;
 
+*/
 /**
  * Generate 관련 클래스들을 Bean으로 등록하면 애플리케이션 로딩 시점에 자동으로 데이터 생성
  * <p>
  *     ! Commit, Push할 때 주석 처리 해야됨 !
  * </p>
- */
+ *//*
+
 
 //@Configuration
 public class GenerateConfig {
@@ -27,3 +30,4 @@ public class GenerateConfig {
         return new GenerateDummyData.Generator(em, jdbcTemplate);
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package toy.yogiyo.generate;
 
 import lombok.RequiredArgsConstructor;
@@ -905,3 +906,4 @@ public class GenerateDummyData {
         }
     }
 }
+*/

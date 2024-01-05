@@ -44,9 +44,7 @@ public class LoginController {
     @PostMapping("/memberLogout/{memberId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> memberLogout(@LoginUser Member member, @PathVariable Long memberId){
-        log.info("member.getId()={}", member.getId());
-        log.info("memberId={}", memberId);
-        if(member.getId()!=memberId) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        if(!member.getId().equals(memberId)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, deleteCookie().toString());
@@ -69,7 +67,7 @@ public class LoginController {
     @PostMapping("/ownerLogout/{ownerId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> ownerLogout(@LoginOwner Owner owner, @PathVariable Long ownerId){
-        if(owner.getId()!=ownerId) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        if(!owner.getId().equals(ownerId)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, deleteCookie().toString());

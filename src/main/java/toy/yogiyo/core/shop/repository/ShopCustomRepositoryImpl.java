@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.address.domain.AddressType;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
@@ -49,7 +50,6 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
     @Override
     public List<ShopScrollResponse> scrollShopList(ShopScrollListRequest request) {
-
         OrderSpecifier<?> orderSpecifier;
         if(request.getSortOption() == null || request.getSortOption().isEmpty()){
             orderSpecifier = new OrderSpecifier<>(Order.DESC, shop.totalScore);
@@ -72,7 +72,9 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                 ))
                 .from(shop);
 
-        if(request.getCategory()!=null && !request.getCategory().equals("신규맛집")){
+        if(request.getCategory()!=null
+                && !request.getCategory().isEmpty()
+                && !request.getCategory().equals("신규맛집")){
             query.join(categoryShop).on(shop.id.eq(categoryShop.shop.id))
                     .join(category).on(categoryShop.category.id.eq(category.id));
         }
@@ -118,7 +120,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
     private BooleanExpression isNewShop(String category) {
         if(category == null) return null;
-        return category.equals("신규맛집") ? getNewShop().loe(30) : null;
+        return category.equals("신규맛집") ? getNewShop().loe(999) : null;
     }
 
     private NumberTemplate<Integer> getNewShop() {

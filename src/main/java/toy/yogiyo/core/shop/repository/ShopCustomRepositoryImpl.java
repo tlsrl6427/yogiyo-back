@@ -65,7 +65,8 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                         shop.name.as("shopName"),
                         shop.totalScore,
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
-                        shop.deliveryTime,
+                        shop.minDeliveryTime,
+                        shop.maxDeliveryTime,
                         shop.minDeliveryPrice,
                         shop.maxDeliveryPrice,
                         shop.icon

@@ -27,6 +27,7 @@ public class MemberAddress {
 
     private Double longitude;
     private Double latitude;
+    private String code;
 
     private boolean here;
 
@@ -36,13 +37,14 @@ public class MemberAddress {
     private Member member;
 
     @Builder
-    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, boolean here, Member member) {
+    public MemberAddress(Long id, Address address, AddressType addressType, String nickname, Double longitude, Double latitude, String code, boolean here, Member member) {
         this.id = id;
         this.address = address;
         this.addressType = addressType;
         this.nickname = nickname;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.code = code;
         this.here = here;
         this.member = member;
     }

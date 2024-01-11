@@ -31,6 +31,7 @@ import toy.yogiyo.core.shop.service.ShopService;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -491,7 +492,7 @@ class ShopControllerTest {
                 ShopScrollResponse.builder()
                         .shopId(9036L)
                         .shopName("음식점 9036")
-                        .totalScore(1.124858862726861)
+                        .totalScore(BigDecimal.valueOf(1.124858862726861))
                         .distance(7364.810136664925)
                         .minDeliveryTime(37)
                         .maxDeliveryTime(45)
@@ -502,7 +503,7 @@ class ShopControllerTest {
                 ShopScrollResponse.builder()
                         .shopId(6640L)
                         .shopName("음식점 6640")
-                        .totalScore(3.5151195901468153)
+                        .totalScore(BigDecimal.valueOf(3.5151195901468153))
                         .distance(7420.250353367057)
                         .minDeliveryTime(51)
                         .maxDeliveryTime(60)

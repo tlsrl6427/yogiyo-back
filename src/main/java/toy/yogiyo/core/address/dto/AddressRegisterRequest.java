@@ -1,6 +1,5 @@
 package toy.yogiyo.core.address.dto;
 
-import com.sun.istack.NotNull;
 import lombok.*;
 import toy.yogiyo.core.address.domain.Address;
 import toy.yogiyo.core.address.domain.AddressType;
@@ -20,6 +19,7 @@ public class AddressRegisterRequest {
     private AddressType addressType;
     private Double longitude;
     private Double latitude;
+    private String code;
 
     public MemberAddress toMemberAddress(){
         return MemberAddress.builder()
@@ -28,6 +28,7 @@ public class AddressRegisterRequest {
                 .nickname(nickname)
                 .longitude(longitude)
                 .latitude(latitude)
+                .code(code)
                 .here(true)
                 .build();
     }

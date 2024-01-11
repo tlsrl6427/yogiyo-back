@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.common.dto.scroll.Scroll;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
+import toy.yogiyo.core.deliveryplace.service.DeliveryPlaceService;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
@@ -37,7 +39,7 @@ public class ShopService {
     private final MenuGroupService menuGroupService;
     private final SignatureMenuService signatureMenuService;
     private final MenuOptionGroupService menuOptionGroupService;
-
+    private final DeliveryPlaceService deliveryPlaceService;
 
     public Long register(ShopRegisterRequest request, MultipartFile icon, MultipartFile banner, Owner owner) {
         validateDuplicateName(request.getName());
@@ -96,14 +98,6 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public ShopDeliveryPriceResponse getDeliveryPrice(Long shopId) {
-        Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
-
-        return ShopDeliveryPriceResponse.from(shop);
-    }
-
-    @Transactional(readOnly = true)
     public ShopCloseDayResponse getCloseDays(Long shopId) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
@@ -156,16 +150,6 @@ public class ShopService {
     }
 
     @Transactional
-    public void updateDeliveryPrice(Long shopId, Owner owner, DeliveryPriceUpdateRequest request) {
-        Shop shop = shopRepository.findById(shopId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
-
-        validatePermission(owner, shop);
-
-        shop.changeDeliveryPrices(request.toDeliveryPriceInfos());
-    }
-
-    @Transactional
     public void updateCloseDays(Long shopId, Owner owner, ShopCloseDayUpdateRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
@@ -194,6 +178,7 @@ public class ShopService {
                 .forEach(menuOptionGroup -> menuOptionGroupService.delete(menuOptionGroup.getId()));
         menuGroupService.getMenuGroups(shopId)
                 .forEach(menuGroupService::delete);
+        deliveryPlaceService.deleteAll(shopId);
 
         shopRepository.delete(shop);
     }

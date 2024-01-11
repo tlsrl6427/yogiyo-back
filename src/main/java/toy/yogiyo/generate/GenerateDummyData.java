@@ -27,7 +27,7 @@ import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.BusinessHours;
 import toy.yogiyo.core.shop.domain.Days;
-import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
+import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.annotation.PostConstruct;

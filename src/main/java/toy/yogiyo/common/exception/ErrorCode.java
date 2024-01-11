@@ -51,7 +51,11 @@ public enum ErrorCode {
     FILE_NOT_ALLOWED(400, "F_004", "지원하지 않는 파일 형식입니다."),
 
     REVIEW_NOT_FOUNT(400, "R_001", "리뷰를 찾을 수 없습니다."),
-    REVIEW_EXPIRED(400, "R_002", "리뷰 수정 기간이 지났습니다.");
+    REVIEW_EXPIRED(400, "R_002", "리뷰 수정 기간이 지났습니다."),
+
+    DELIVERYPLACE_NOT_FOUND(404, "DP_001", "배달 가능 지역을 찾을 수 없습니다."),
+
+    ;
 
     private final int status;
     private final String code;

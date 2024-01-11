@@ -14,6 +14,10 @@ import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
+import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceDto;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceUpdateRequest;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
@@ -194,27 +198,6 @@ class ShopServiceTest {
             }
 
             @Test
-            @DisplayName("배달 요금 조회")
-            void getDeliveryPrice() throws Exception {
-                // given
-                Shop shop = getShop();
-
-                when(shopRepository.findById(shop.getId()))
-                        .thenReturn(Optional.of(shop));
-
-                // when
-                ShopDeliveryPriceResponse response = shopService.getDeliveryPrice(shop.getId());
-
-                // then
-                for (int i = 0; i < response.getDeliveryPrices().size(); i++) {
-                    DeliveryPriceDto deliveryPriceDto = response.getDeliveryPrices().get(i);
-                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
-                    assertThat(deliveryPriceDto.getDeliveryPrice()).isEqualTo(deliveryPriceInfo.getDeliveryPrice());
-                    assertThat(deliveryPriceDto.getOrderPrice()).isEqualTo(deliveryPriceInfo.getOrderPrice());
-                }
-            }
-
-            @Test
             @DisplayName("휴뮤일 조회")
             void getCloseDays() throws Exception {
                 // given
@@ -309,26 +292,6 @@ class ShopServiceTest {
                 assertThat(shop.getBusinessHours().get(0).getDayOfWeek()).isEqualTo(Days.MONDAY);
                 assertThat(shop.getBusinessHours().get(1).getDayOfWeek()).isEqualTo(Days.THURSDAY);
                 assertThat(shop.getBusinessHours().get(2).getDayOfWeek()).isEqualTo(Days.FRIDAY);
-            }
-            
-            @Test
-            @DisplayName("배달 요금 수정")
-            void updateDeliveryPrice() throws Exception {
-                // given
-                Shop shop = getShopWithOwner(1L);
-                when(shopRepository.findById(shop.getId())).thenReturn(Optional.of(shop));
-                DeliveryPriceUpdateRequest request = getDeliveryPriceUpdateRequest();
-
-                // when
-                shopService.updateDeliveryPrice(shop.getId(), shop.getOwner(), request);
-
-                // then
-                for (int i = 0; i < shop.getDeliveryPriceInfos().size(); i++) {
-                    DeliveryPriceInfo deliveryPriceInfo = shop.getDeliveryPriceInfos().get(i);
-                    DeliveryPriceDto deliveryPriceDto = request.getDeliveryPrices().get(i);
-                    assertThat(deliveryPriceInfo.getDeliveryPrice()).isEqualTo(deliveryPriceDto.getDeliveryPrice());
-                    assertThat(deliveryPriceInfo.getOrderPrice()).isEqualTo(deliveryPriceDto.getOrderPrice());
-                }
             }
 
             @Test
@@ -445,7 +408,6 @@ class ShopServiceTest {
                 .ownerNotice("사장님 공지")
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
-                .deliveryTime(30)
                 .categoryShop(Arrays.asList(
                         CategoryShop.builder().category(Category.builder().name("카테고리1").build()).build(),
                         CategoryShop.builder().category(Category.builder().name("카테고리2").build()).build(),
@@ -453,11 +415,6 @@ class ShopServiceTest {
                         CategoryShop.builder().category(Category.builder().name("카테고리4").build()).build()
                 ))
                 .build();
-
-        shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPriceInfo(10000, 5000),
-                new DeliveryPriceInfo(20000, 4000),
-                new DeliveryPriceInfo(30000, 3000)));
 
         return shop;
     }

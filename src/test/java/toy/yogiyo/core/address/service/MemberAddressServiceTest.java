@@ -54,6 +54,7 @@ class MemberAddressServiceTest {
                                         .address(new Address("공릉로 232", "대성빌라 504호"))
                                         .latitude(34.2323494)
                                         .longitude(43.5549921)
+                                        .code("1135010300")
                                         .build()
                                 )
                         )
@@ -104,6 +105,7 @@ class MemberAddressServiceTest {
                         .address(new Address("공릉로 232", "대성빌라 504호"))
                         .latitude(34.2323494)
                         .longitude(43.5549921)
+                        .code("1135010300")
                         .build(),
                 MemberAddress.builder()
                         .id(2L)
@@ -112,6 +114,7 @@ class MemberAddressServiceTest {
                         .address(new Address("공릉로 232", "대성빌라 504호"))
                         .latitude(34.2323494)
                         .longitude(43.5549921)
+                        .code("1135010300")
                         .build()
         );
 
@@ -132,6 +135,7 @@ class MemberAddressServiceTest {
                 .address(new Address("공릉로 232", "대성빌라 504호"))
                 .latitude(34.2323494)
                 .longitude(43.5549921)
+                .code("1135010300")
                 .member(member)
                 .build();
         given(memberAddressRepository.findById(anyLong())).willReturn(Optional.ofNullable(memberAddress));

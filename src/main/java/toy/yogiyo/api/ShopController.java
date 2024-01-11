@@ -49,10 +49,6 @@ public class ShopController {
     public ShopBusinessHourResponse getBusinessHours(@PathVariable("shopId") Long shopId) {
         return shopService.getBusinessHours(shopId);
     }
-    @GetMapping("/{shopId}/delivery-price")
-    public ShopDeliveryPriceResponse getDeliveryPrice(@PathVariable("shopId") Long shopId) {
-        return shopService.getDeliveryPrice(shopId);
-    }
 
     @GetMapping("/{shopId}/close-day")
     public ShopCloseDayResponse getCloseDays(@PathVariable Long shopId) {
@@ -87,14 +83,6 @@ public class ShopController {
         shopService.updateBusinessHours(shopId, owner, request);
     }
 
-    @PatchMapping("/{shopId}/delivery-price/update")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateNotice(@LoginOwner Owner owner,
-                             @PathVariable Long shopId,
-                             @Validated @RequestBody DeliveryPriceUpdateRequest request) {
-
-        shopService.updateDeliveryPrice(shopId, owner, request);
-    }
 
     @PatchMapping("/{shopId}/close-day/update")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -104,6 +92,7 @@ public class ShopController {
 
         shopService.updateCloseDays(shopId, owner, request);
     }
+
 
     @DeleteMapping("/{shopId}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)

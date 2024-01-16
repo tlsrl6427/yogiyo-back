@@ -24,6 +24,7 @@ import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
@@ -249,33 +250,6 @@ class ShopControllerTest {
     }
 
     @Test
-    @DisplayName("배달 요금 조회")
-    void getDeliveryPrice() throws Exception {
-        // given
-        ShopDeliveryPriceResponse response = ShopDeliveryPriceResponse.from(givenShop());
-        when(shopService.getDeliveryPrice(anyLong())).thenReturn(response);
-
-        // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/shop/{shopId}/delivery-price", 1));
-
-        // then
-        result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.deliveryPrices").isArray())
-                .andExpect(jsonPath("$.deliveryPrices.length()").value(response.getDeliveryPrices().size()))
-                .andDo(print())
-                .andDo(document("shop/get-delivery-price",
-                        pathParameters(
-                                parameterWithName("shopId").description("가게 ID")
-                        ),
-                        responseFields(
-                                fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
-                                fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
-                                fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 요금")
-                        )
-                ));
-    }
-
-    @Test
     @DisplayName("휴무일 조회")
     void getCloseDays() throws Exception {
         // given
@@ -442,44 +416,6 @@ class ShopControllerTest {
     }
 
     @Test
-    @DisplayName("배달 요금 수정")
-    @WithLoginOwner
-    void updateDeliveryPrice() throws Exception {
-        // given
-        doNothing().when(shopService).updateDeliveryPrice(anyLong(), any(), any());
-        DeliveryPriceUpdateRequest request = DeliveryPriceUpdateRequest.builder()
-                .deliveryPrices(Arrays.asList(
-                        new DeliveryPriceDto(15000, 4500),
-                        new DeliveryPriceDto(25000, 3500),
-                        new DeliveryPriceDto(35000, 2500)))
-                .build();
-
-        // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/shop/{shopId}/delivery-price/update", 1)
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)));
-
-        // then
-        ConstrainedFields fields = new ConstrainedFields(DeliveryPriceUpdateRequest.class);
-        result.andExpect(status().isNoContent())
-                .andDo(print())
-                .andDo(document("shop/update-delivery-price",
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("Access token")
-                        ),
-                        pathParameters(
-                                parameterWithName("shopId").description("가게 ID")
-                        ),
-                        requestFields(
-                                fields.withPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
-                                fields.withPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
-                                fields.withPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액")
-                        )
-                ));
-    }
-
-    @Test
     @DisplayName("휴무일 수정")
     void updateCloseDays() throws Exception {
         // given
@@ -565,7 +501,8 @@ class ShopControllerTest {
                                 .reviewNum(93L)
                                 .totalScore(BigDecimal.valueOf(1.124858862726861))
                                 .distance(7364.810136664925)
-                                .deliveryTime(37)
+                                .minDeliveryTime(37)
+                                .maxDeliveryTime(45)
                                 .minDeliveryPrice(1500)
                                 .maxDeliveryPrice(0)
                                 .icon("/images/yogiyo-logo.jpg")
@@ -577,7 +514,8 @@ class ShopControllerTest {
                                 .reviewNum(6L)
                                 .totalScore(BigDecimal.valueOf(3.5151195901468153))
                                 .distance(7420.250353367057)
-                                .deliveryTime(51)
+                                .minDeliveryTime(51)
+                                .maxDeliveryTime(60)
                                 .minDeliveryPrice(3000)
                                 .maxDeliveryPrice(0)
                                 .icon("/images/yogiyo-logo.jpg")
@@ -627,7 +565,8 @@ class ShopControllerTest {
                                         fieldWithPath("content[].reviewNum").type(JsonFieldType.NUMBER).description("리뷰수"),
                                         fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
                                         fieldWithPath("content[].distance").type(JsonFieldType.NUMBER).description("거리"),
-                                        fieldWithPath("content[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
+                                        fieldWithPath("content[].minDeliveryTime").type(JsonFieldType.NUMBER).description("최소 배달시간"),
+                                        fieldWithPath("content[].maxDeliveryTime").type(JsonFieldType.NUMBER).description("최대 배달시간"),
                                         fieldWithPath("content[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
                                         fieldWithPath("content[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
                                         fieldWithPath("content[].icon").type(JsonFieldType.STRING).description("아이콘 URL"),
@@ -650,7 +589,6 @@ class ShopControllerTest {
                 .ownerNotice("사장님 공지")
                 .callNumber("010-1234-5678")
                 .address("서울 강남구 영동대로 513")
-                .deliveryTime(30)
                 .categoryShop(Arrays.asList(
                         CategoryShop.builder().category(Category.builder().name("카테고리1").build()).build(),
                         CategoryShop.builder().category(Category.builder().name("카테고리2").build()).build(),
@@ -658,12 +596,6 @@ class ShopControllerTest {
                         CategoryShop.builder().category(Category.builder().name("카테고리4").build()).build()
                 ))
                 .build();
-
-        shop.changeDeliveryPrices(Arrays.asList(
-                new DeliveryPriceInfo(10000, 5000),
-                new DeliveryPriceInfo(20000, 4000),
-                new DeliveryPriceInfo(30000, 3000)));
-
 
         return shop;
     }

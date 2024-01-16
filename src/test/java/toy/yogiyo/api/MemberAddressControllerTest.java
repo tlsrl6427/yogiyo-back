@@ -78,6 +78,7 @@ class MemberAddressControllerTest {
                 .address(new Address("공릉로 232", "대성빌라 504호"))
                 .latitude(34.2323494)
                 .longitude(43.5549921)
+                .code("1135010300")
                 .build();
 
         doNothing().when(memberAddressService).register(any(), any());
@@ -100,7 +101,8 @@ class MemberAddressControllerTest {
                                 fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                 fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                 fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("위도"),
-                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도")
+                                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("code").type(JsonFieldType.STRING).description("법정동 코드")
                         )
                         )
                 );
@@ -121,6 +123,7 @@ class MemberAddressControllerTest {
                                         .address(new Address("공릉로 232", "대성빌라 504호"))
                                         .latitude(34.2323494)
                                         .longitude(43.5549921)
+                                        .code("1135010300")
                                         .here(true)
                                         .build(),
                                 MemberAddress.builder()
@@ -130,6 +133,7 @@ class MemberAddressControllerTest {
                                         .address(new Address("양재대로 9길", "롯데빌딩 603호"))
                                         .latitude(24.11121)
                                         .longitude(84.123882)
+                                        .code("1165010300")
                                         .here(false)
                                         .build()
                         )
@@ -156,6 +160,7 @@ class MemberAddressControllerTest {
                                 fieldWithPath("memberAddresses[].address.detail").type(JsonFieldType.STRING).description("상세주소"),
                                 fieldWithPath("memberAddresses[].latitude").type(JsonFieldType.NUMBER).description("위도"),
                                 fieldWithPath("memberAddresses[].longitude").type(JsonFieldType.NUMBER).description("경도"),
+                                fieldWithPath("memberAddresses[].code").type(JsonFieldType.STRING).description("법정동 코드"),
                                 fieldWithPath("memberAddresses[].here").type(JsonFieldType.BOOLEAN).description("\"요기\"")
                         )
                         ));

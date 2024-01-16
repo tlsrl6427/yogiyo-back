@@ -1,10 +1,10 @@
-package toy.yogiyo.core.shop.dto;
+package toy.yogiyo.core.deliveryplace.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import toy.yogiyo.core.shop.domain.DeliveryPriceInfo;
+import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

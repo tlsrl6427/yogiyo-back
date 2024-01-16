@@ -1,4 +1,4 @@
-package toy.yogiyo.core.shop.domain;
+package toy.yogiyo.core.deliveryplace.domain;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @Builder
-@Table(indexes = @Index(name = "idx_shop_id", columnList = "shop_id"))
+@Table(indexes = @Index(name = "idx_delivery_place_id", columnList = "delivery_place_id"))
 public class DeliveryPriceInfo {
 
     @Id
@@ -21,8 +21,8 @@ public class DeliveryPriceInfo {
     private int deliveryPrice;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Shop shop;
+    @JoinColumn(name = "delivery_place_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private DeliveryPlace deliveryPlace;
 
     public DeliveryPriceInfo() {
     }
@@ -30,10 +30,6 @@ public class DeliveryPriceInfo {
     public DeliveryPriceInfo(int orderPrice, int deliveryPrice) {
         this.orderPrice = orderPrice;
         this.deliveryPrice = deliveryPrice;
-    }
-
-    public void setShop(Shop shop) {
-        this.shop = shop;
     }
 
 }

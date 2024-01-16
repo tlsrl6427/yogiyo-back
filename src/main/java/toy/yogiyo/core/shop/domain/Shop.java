@@ -3,6 +3,7 @@ package toy.yogiyo.core.shop.domain;
 import lombok.*;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
@@ -58,10 +59,12 @@ public class Shop extends BaseTimeEntity {
     private Double longitude;
     private Double latitude;
 
-    private int minDeliveryPrice;
-    private int maxDeliveryPrice;
-    private int minOrderPrice;
-    private int deliveryTime;
+    private Integer minDeliveryPrice;
+    private Integer maxDeliveryPrice;
+    private Integer minOrderPrice;
+
+    private Integer minDeliveryTime;
+    private Integer maxDeliveryTime;
 
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -73,16 +76,11 @@ public class Shop extends BaseTimeEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DeliveryPriceInfo> deliveryPriceInfos = new ArrayList<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BusinessHours> businessHours = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CloseDay> closeDays = new ArrayList<>();
-
 
     public void setOwner(Owner owner) {
         this.owner = owner;
@@ -106,19 +104,6 @@ public class Shop extends BaseTimeEntity {
         }
     }
 
-    public void changeDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {
-        if(deliveryPriceInfos != null && !deliveryPriceInfos.isEmpty()) {
-            this.minDeliveryPrice = deliveryPriceInfos.get(deliveryPriceInfos.size()-1).getDeliveryPrice();
-            this.maxDeliveryPrice = deliveryPriceInfos.get(0).getDeliveryPrice();
-            this.minOrderPrice = deliveryPriceInfos.get(0).getOrderPrice();
-        }
-        this.deliveryPriceInfos.clear();
-        for (DeliveryPriceInfo deliveryPriceInfo : deliveryPriceInfos) {
-            this.deliveryPriceInfos.add(deliveryPriceInfo);
-            deliveryPriceInfo.setShop(this);
-        }
-    }
-
     public void updateLatLng(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -130,6 +115,14 @@ public class Shop extends BaseTimeEntity {
             this.closeDays.add(closeDay);
             closeDay.setShop(this);
         }
+    }
+
+    public void updateDeliveryPriceAndTime(DeliveryPlace deliveryPlace) {
+        if(this.minDeliveryPrice == null || this.minDeliveryPrice > deliveryPlace.getMinDeliveryPrice()) this.minDeliveryPrice = deliveryPlace.getMinDeliveryPrice();
+        if(this.maxDeliveryPrice == null || this.maxDeliveryPrice < deliveryPlace.getMaxDeliveryPrice()) this.maxDeliveryPrice = deliveryPlace.getMaxDeliveryPrice();
+
+        if(this.minDeliveryTime == null || this.minDeliveryTime > deliveryPlace.getDeliveryTime()) this.minDeliveryTime = deliveryPlace.getDeliveryTime();
+        if(this.maxDeliveryTime == null || this.maxDeliveryTime < deliveryPlace.getDeliveryTime()) this.maxDeliveryTime = deliveryPlace.getDeliveryTime();
     }
 
     public void increaseOrderNum(){

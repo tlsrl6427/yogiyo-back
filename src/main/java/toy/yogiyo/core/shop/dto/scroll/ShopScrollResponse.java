@@ -1,7 +1,9 @@
-package toy.yogiyo.core.shop.dto;
+package toy.yogiyo.core.shop.dto.scroll;
 
 import lombok.*;
 import toy.yogiyo.core.shop.domain.Shop;
+
+import java.math.BigDecimal;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -11,7 +13,9 @@ public class ShopScrollResponse {
 
     private Long shopId;
     private String shopName;
-    private Double totalScore;
+    private Long orderNum;
+    private Long reviewNum;
+    private BigDecimal totalScore;
     private Double distance;
     private int deliveryTime;
     private int minDeliveryPrice;

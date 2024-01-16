@@ -2,10 +2,8 @@ package toy.yogiyo.core.shop.repository;
 
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
-import toy.yogiyo.core.shop.dto.NewShopListRequest;
-import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
-import toy.yogiyo.core.shop.dto.ShopScrollResponse;
-import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 
 import java.util.List;
 

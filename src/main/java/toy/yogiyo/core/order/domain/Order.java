@@ -55,7 +55,8 @@ public class Order extends BaseTimeEntity {
     private Shop shop;
 
     @Builder
-    public Order(String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, List<OrderItem> orderItems, Member member, Shop shop) {
+    public Order(Long id, String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, List<OrderItem> orderItems, Member member, Shop shop) {
+        this.id = id;
         this.orderNumber = orderNumber;
         this.totalPrice = totalPrice;
         this.deliveryPrice = deliveryPrice;

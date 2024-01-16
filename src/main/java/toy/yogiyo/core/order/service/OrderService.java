@@ -2,6 +2,7 @@ package toy.yogiyo.core.order.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
@@ -12,11 +13,13 @@ import toy.yogiyo.core.order.repository.OrderRepository;
 import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -26,6 +29,7 @@ public class OrderService {
         Shop findShop = shopRepository.findById(orderCreateRequest.getShopId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
         Order order = Order.createOrder(member, findShop, orderCreateRequest);
+
         findShop.increaseOrderNum();
         orderRepository.save(order);
     }

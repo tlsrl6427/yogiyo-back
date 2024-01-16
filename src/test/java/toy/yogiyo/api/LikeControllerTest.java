@@ -20,6 +20,7 @@ import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.like.service.LikeService;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -97,13 +98,13 @@ class LikeControllerTest {
                         .shopId(6L)
                         .shopName("BHC 행당점")
                         .shopImg("image1.jpg")
-                        .score("4.7")
+                        .score(BigDecimal.valueOf(4.7))
                         .build(),
                 LikeResponse.builder()
                         .shopId(3L)
                         .shopName("맥도날드")
                         .shopImg("image2.jpg")
-                        .score("3.6")
+                        .score(BigDecimal.valueOf(3.6))
                         .build()
 
         );
@@ -133,7 +134,7 @@ class LikeControllerTest {
                                         fieldWithPath("content[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
                                         fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
                                         fieldWithPath("content[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 이미지 URL"),
-                                        fieldWithPath("content[].score").type(JsonFieldType.STRING).description("총 별점"),
+                                        fieldWithPath("content[].score").type(JsonFieldType.NUMBER).description("총 별점"),
                                         fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("마지막 스크롤 ID"),
                                         fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
                                 )

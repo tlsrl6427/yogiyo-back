@@ -20,18 +20,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 import toy.yogiyo.core.shop.service.ShopService;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -543,52 +545,62 @@ class ShopControllerTest {
     @Test
     void getList() throws Exception {
         ShopScrollListRequest request = ShopScrollListRequest.builder()
-                .category("치킨")
-                .sortOption("CLOSEST")
+                .category(ShopScrollListRequest.ShopCategory.Chicken)
+                .sortOption(ShopScrollListRequest.SortOption.ORDER)
                 .deliveryPrice(3000)
                 .leastOrderPrice(10000)
                 .longitude(127.0215778)
                 .latitude(37.5600233)
-                .offset(0L)
-                .limit(5L)
+                .cursor(BigDecimal.valueOf(500))
+                .subCursor(100000L)
+                .size(2L)
                 .build();
 
-        Scroll<ShopScrollResponse> response = new Scroll<>(List.of(
-                ShopScrollResponse.builder()
-                        .shopId(9036L)
-                        .shopName("음식점 9036")
-                        .totalScore(1.124858862726861)
-                        .distance(7364.810136664925)
-                        .deliveryTime(37)
-                        .minDeliveryPrice(1500)
-                        .maxDeliveryPrice(0)
-                        .icon("/images/yogiyo-logo.jpg")
-                        .build(),
-                ShopScrollResponse.builder()
-                        .shopId(6640L)
-                        .shopName("음식점 6640")
-                        .totalScore(3.5151195901468153)
-                        .distance(7420.250353367057)
-                        .deliveryTime(51)
-                        .minDeliveryPrice(3000)
-                        .maxDeliveryPrice(0)
-                        .icon("/images/yogiyo-logo.jpg")
-                        .build()
-        ), 6L, true);
+        ShopScrollListResponse response = ShopScrollListResponse.builder()
+                .content(List.of(
+                        ShopScrollResponse.builder()
+                                .shopId(9036L)
+                                .shopName("음식점 9036")
+                                .orderNum(323L)
+                                .reviewNum(93L)
+                                .totalScore(BigDecimal.valueOf(1.124858862726861))
+                                .distance(7364.810136664925)
+                                .deliveryTime(37)
+                                .minDeliveryPrice(1500)
+                                .maxDeliveryPrice(0)
+                                .icon("/images/yogiyo-logo.jpg")
+                                .build(),
+                        ShopScrollResponse.builder()
+                                .shopId(6640L)
+                                .shopName("음식점 6640")
+                                .orderNum(118L)
+                                .reviewNum(6L)
+                                .totalScore(BigDecimal.valueOf(3.5151195901468153))
+                                .distance(7420.250353367057)
+                                .deliveryTime(51)
+                                .minDeliveryPrice(3000)
+                                .maxDeliveryPrice(0)
+                                .icon("/images/yogiyo-logo.jpg")
+                                .build()
+                ))
+                .nextCursor(BigDecimal.valueOf(323))
+                .nextSubCursor(9036L)
+                .hasNext(false)
+                .build();
 
         given(shopService.getList(any())).willReturn(response);
 
         mockMvc.perform(get("/shop/list")
                         .contentType(MediaType.APPLICATION_JSON)
-//                        .characterEncoding(StandardCharsets.UTF_8)
                         .param("category", "치킨")
-                        .param("sortOption","CLOSEST")
+                        .param("sortOption","ORDER")
                         .param("deliveryPrice","3000")
                         .param("leastOrderPrice","10000")
                         .param("longitude","127.0215778")
                         .param("latitude","37.5600233")
-                        .param("offset","0")
-                        .param("limit","5")
+                        .param("cursor","500")
+                        .param("subCursor","100000")
+                        .param("size","2")
                         )
                         .andExpect(status().isOk())
                         .andDo(print())
@@ -604,19 +616,23 @@ class ShopControllerTest {
                                                 .attributes(key("constraints").value("Not Null")),
                                         parameterWithName("latitude").description("위도")
                                                 .attributes(key("constraints").value("Not Null")),
-                                        parameterWithName("offset").description("오프셋(시작 번호)"),
-                                        parameterWithName("limit").description("개수")
+                                        parameterWithName("cursor").description("메인 커서(정렬 기준 되는 컬럼값)"),
+                                        parameterWithName("subCursor").description("서브 커서(마지막 음식점 ID)"),
+                                        parameterWithName("size").description("리스트 조회할 개수")
                                 ),
                                 responseFields(
                                         fieldWithPath("content[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
                                         fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                        fieldWithPath("content[].orderNum").type(JsonFieldType.NUMBER).description("주문수"),
+                                        fieldWithPath("content[].reviewNum").type(JsonFieldType.NUMBER).description("리뷰수"),
                                         fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
                                         fieldWithPath("content[].distance").type(JsonFieldType.NUMBER).description("거리"),
                                         fieldWithPath("content[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
                                         fieldWithPath("content[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
                                         fieldWithPath("content[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
                                         fieldWithPath("content[].icon").type(JsonFieldType.STRING).description("아이콘 URL"),
-                                        fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("다음 시작 오프셋"),
+                                        fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 시작 커서값"),
+                                        fieldWithPath("nextSubCursor").type(JsonFieldType.NUMBER).description("다음 시작 음식점 ID"),
                                         fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
                                 )
                         ));

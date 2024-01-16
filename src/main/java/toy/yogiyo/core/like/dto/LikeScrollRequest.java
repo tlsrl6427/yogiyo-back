@@ -1,16 +1,18 @@
 package toy.yogiyo.core.like.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import toy.yogiyo.common.dto.scroll.BaseScrollRequest;
 
 @Getter
-@SuperBuilder
-public class LikeScrollRequest extends BaseScrollRequest {
+@Builder
+@AllArgsConstructor
+public class LikeScrollRequest{
 
     private Long lastId;
+    private Long offset;
+    private Long limit;
 
-    public LikeScrollRequest(long offset, long limit) {
-        super(offset, limit);
-    }
 }

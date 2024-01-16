@@ -77,6 +77,7 @@ public class LoginController {
     private ResponseCookie deleteCookie() {
         return ResponseCookie.from("accessToken", null)
                 .maxAge(0)
+                .sameSite("None")
                 .path("/")
                 .build();
     }

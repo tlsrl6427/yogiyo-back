@@ -44,6 +44,8 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
     private ResponseCookie deleteCookie() {
         return ResponseCookie.from("accessToken", null)
                 .maxAge(0)
+                .httpOnly(true)
+                .secure(true)
                 .sameSite("None")
                 .path("/")
                 .build();

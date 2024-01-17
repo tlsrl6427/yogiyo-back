@@ -33,6 +33,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     public List<LikeResponse> scrollLikes(Long memberId, LikeScrollRequest request) {
         return jpaQueryFactory
                 .select(Projections.fields(LikeResponse.class,
+                        like.id.as("likeId"),
                         shop.id.as("shopId"),
                         shop.name.as("shopName"),
                         shop.icon.as("shopImg"),
@@ -41,10 +42,9 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                 .from(shop)
                 .join(like).on(shop.id.eq(like.shop.id))
                 .where(like.member.id.eq(memberId),
-                        lastIdLt(request.getLastId()))
+                        lastIdLt(request.getOffset()))
                 .orderBy(like.id.desc())
                 .limit(request.getLimit()==null ? 6L: request.getLimit()+1)
-                .offset(request.getOffset()==null ? 0L : request.getOffset())
                 .fetch();
     }
 
@@ -180,6 +180,6 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     }
 
     private static BooleanExpression lastIdLt(Long lastId) {
-        return lastId == null ? null : shop.id.lt(lastId);
+        return lastId == null ? null : like.id.lt(lastId);
     }
 }

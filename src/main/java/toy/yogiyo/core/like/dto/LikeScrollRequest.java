@@ -11,7 +11,6 @@ import toy.yogiyo.common.dto.scroll.BaseScrollRequest;
 @AllArgsConstructor
 public class LikeScrollRequest{
 
-    private Long lastId;
     private Long offset;
     private Long limit;
 

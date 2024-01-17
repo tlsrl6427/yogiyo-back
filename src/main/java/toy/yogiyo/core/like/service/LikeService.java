@@ -46,16 +46,10 @@ public class LikeService {
     public Scroll<LikeResponse> getLikes(Member member, LikeScrollRequest request) {
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         List<LikeResponse> likeShops = shopRepository.scrollLikes(member.getId(), request);
-        boolean hasNext = likeShops.size() >= request.getLimit()+1;
+        boolean hasNext = request.getLimit()==null ? likeShops.size()>=6L : likeShops.size() >= request.getLimit()+1;
         if (hasNext) likeShops.remove(likeShops.size()-1);
-        Long nextOffset = request.getOffset() + likeShops.size();
+        Long nextOffset = request.getOffset()==null ? likeShops.size() : request.getOffset() + likeShops.size();
 
         return new Scroll<>(likeShops, nextOffset, hasNext);
-    }
-
-    private static List<LikeResponse> getLikeResponses(List<Shop> likeShops) {
-        return likeShops.stream()
-                .map(LikeResponse::from)
-                .collect(Collectors.toList());
     }
 }

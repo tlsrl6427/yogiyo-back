@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -15,14 +17,5 @@ public class LikeResponse {
     private Long shopId;
     private String shopName;
     private String shopImg;
-    private String score;
-
-    public static LikeResponse from(Shop shop){
-        return LikeResponse.builder()
-                .shopId(shop.getId())
-                .shopName(shop.getName())
-                .shopImg(shop.getIcon())
-                .score(shop.getTotalScore().toString())
-                .build();
-    }
+    private BigDecimal score;
 }

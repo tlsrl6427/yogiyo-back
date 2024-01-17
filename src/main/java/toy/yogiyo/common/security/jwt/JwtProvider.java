@@ -39,7 +39,7 @@ public class JwtProvider{
         try {
             Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
-            throw new AuthenticationException(ErrorCode.JWT_EXPIRED);
+            throw new toy.yogiyo.common.exception.ExpiredJwtException(ErrorCode.JWT_EXPIRED);
         } catch (UnsupportedJwtException e) {
             throw new AuthenticationException(ErrorCode.JWT_UNSUPPORTED);
         } catch (MalformedJwtException e) {

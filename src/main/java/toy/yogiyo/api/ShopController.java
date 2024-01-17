@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.login.LoginOwner;
 import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.dto.*;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import javax.validation.Valid;
@@ -101,7 +102,7 @@ public class ShopController {
     }
 
     @GetMapping("/list")
-    public Scroll<ShopScrollResponse> getList(@Valid @ModelAttribute ShopScrollListRequest request){
+    public ShopScrollListResponse getList(@Valid @ModelAttribute ShopScrollListRequest request){
         return shopService.getList(request);
     }
 

@@ -5,14 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
 import toy.yogiyo.core.deliveryplace.service.DeliveryPlaceService;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
-import toy.yogiyo.core.shop.dto.ShopScrollListRequest;
-import toy.yogiyo.core.shop.dto.ShopScrollResponse;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 import toy.yogiyo.common.exception.*;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
@@ -24,9 +23,12 @@ import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static toy.yogiyo.core.shop.domain.QShop.shop;
 
 @Service
 @RequiredArgsConstructor
@@ -196,12 +198,30 @@ public class ShopService {
         }
     }
 
-    public Scroll<ShopScrollResponse> getList(ShopScrollListRequest request) {
+    public ShopScrollListResponse getList(ShopScrollListRequest request) {
         List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
-        boolean hasNext = shops.size() >= request.getLimit()+1;
+        boolean hasNext = request.getSize()==null ? shops.size() >= 11L : shops.size() >= request.getSize()+1;
         if(hasNext) shops.remove(shops.size()-1);
-        long nextOffset = request.getOffset() + shops.size();
+        BigDecimal nextCursor = getCursor(request.getSortOption().name(), shops.get(shops.size()-1));
+        long nextSubCursor = shops.get(shops.size()-1).getShopId();
 
-        return new Scroll<>(shops, nextOffset, hasNext);
+        return ShopScrollListResponse.builder()
+                .content(shops)
+                .nextCursor(nextCursor)
+                .nextSubCursor(nextSubCursor)
+                .hasNext(hasNext)
+                .build();
+    }
+
+    private BigDecimal getCursor(String sortOption, ShopScrollResponse shop) {
+        if(sortOption==null || sortOption.isEmpty())
+            return BigDecimal.valueOf(shop.getOrderNum());
+        if(sortOption.equals("REVIEW")){
+            return BigDecimal.valueOf(shop.getReviewNum());
+        }
+        else if(sortOption.equals("SCORE")){
+            return shop.getTotalScore();
+        }
+        return BigDecimal.valueOf(shop.getOrderNum());
     }
 }

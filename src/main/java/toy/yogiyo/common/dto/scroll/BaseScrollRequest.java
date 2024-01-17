@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @AllArgsConstructor
-public abstract class BaseScrollRequest {
+public class BaseScrollRequest {
 
     private long offset;
     @Builder.Default

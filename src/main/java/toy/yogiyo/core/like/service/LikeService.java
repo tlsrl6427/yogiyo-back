@@ -48,7 +48,7 @@ public class LikeService {
         List<LikeResponse> likeShops = shopRepository.scrollLikes(member.getId(), request);
         boolean hasNext = request.getLimit()==null ? likeShops.size()>=6L : likeShops.size() >= request.getLimit()+1;
         if (hasNext) likeShops.remove(likeShops.size()-1);
-        Long nextOffset = request.getOffset()==null ? likeShops.size() : request.getOffset() + likeShops.size();
+        Long nextOffset = likeShops.get(likeShops.size()-1).getLikeId();
 
         return new Scroll<>(likeShops, nextOffset, hasNext);
     }

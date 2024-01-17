@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class LikeResponse {
 
+    private Long likeId;
     private Long shopId;
     private String shopName;
     private String shopImg;

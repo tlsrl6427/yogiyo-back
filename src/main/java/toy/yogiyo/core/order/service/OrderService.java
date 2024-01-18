@@ -41,7 +41,7 @@ public class OrderService {
         List<OrderHistory> orderHistoryList = orders.stream()
                 .map(OrderHistory::from)
                 .collect(Collectors.toList());
-        Long nextLastId = orders.get(orders.size() - 1).getId();
+        Long nextLastId = orders.size()==0 ? null : orders.get(orders.size() - 1).getId();
 
         return OrderHistoryResponse.builder()
                 .orderHistories(orderHistoryList)

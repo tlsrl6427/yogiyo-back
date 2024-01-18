@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.AuthenticationException;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
+import toy.yogiyo.common.login.dto.EmptyMember;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.order.domain.Order;
 import toy.yogiyo.core.order.dto.*;
@@ -26,7 +27,7 @@ public class OrderService {
     private final ShopRepository shopRepository;
 
     public void createOrder(Member member, OrderCreateRequest orderCreateRequest){
-        if (member==null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        if (member.getClass().equals(EmptyMember.class)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         Shop findShop = shopRepository.findById(orderCreateRequest.getShopId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
         Order order = Order.createOrder(member, findShop, orderCreateRequest);
@@ -36,7 +37,7 @@ public class OrderService {
     }
 
     public OrderHistoryResponse getOrderHistory(Member member, Long lastId){
-        if (member==null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        if (member.getClass().equals(EmptyMember.class)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         List<Order> orders = orderRepository.scrollOrders(member.getId(), lastId);
         boolean hasNext = orders.size() >= 6;
         if(hasNext) orders.remove(orders.size()-1);

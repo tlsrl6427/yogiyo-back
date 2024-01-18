@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
@@ -19,6 +20,7 @@ import java.util.List;
 import static java.time.LocalTime.now;
 import static toy.yogiyo.core.category.domain.QCategory.category;
 import static toy.yogiyo.core.category.domain.QCategoryShop.categoryShop;
+import static toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace.deliveryPlace;
 import static toy.yogiyo.core.like.domain.QLike.like;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
@@ -55,7 +57,8 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
         //subquery로 필터링된 shop_id 먼저 받기
         JPAQuery<Long> subQuery = jpaQueryFactory.select(shop.id)
-                .from(shop);
+                .from(shop)
+                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id));
 
         if(request.getCategory()!=null
             /*&& !request.getCategory().isEmpty()*/
@@ -65,6 +68,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
         }
 
         List<Long> filteredShopId = subQuery.where(
+                        codeEq(request.getCode()),
                         categoryNameEq(request.getCategory().getCategoryKoreanName()),
                         deliveryPriceLt(request.getDeliveryPrice()),
                         leastOrderPriceLt(request.getLeastOrderPrice()),
@@ -176,5 +180,10 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
     private static BooleanExpression lastIdLt(Long lastId) {
         return lastId == null ? null : like.id.lt(lastId);
+    }
+
+    private BooleanExpression codeEq(String code) {
+        if(code == null) return null;
+        return deliveryPlace.code.eq(code);
     }
 }

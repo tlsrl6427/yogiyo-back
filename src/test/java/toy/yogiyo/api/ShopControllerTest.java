@@ -487,6 +487,7 @@ class ShopControllerTest {
                 .leastOrderPrice(10000)
                 .longitude(127.0215778)
                 .latitude(37.5600233)
+                .code("1111011500")
                 .cursor(BigDecimal.valueOf(500))
                 .subCursor(100000L)
                 .size(2L)
@@ -536,6 +537,7 @@ class ShopControllerTest {
                         .param("leastOrderPrice","10000")
                         .param("longitude","127.0215778")
                         .param("latitude","37.5600233")
+                        .param("code", "1111011500")
                         .param("cursor","500")
                         .param("subCursor","100000")
                         .param("size","2")
@@ -553,6 +555,8 @@ class ShopControllerTest {
                                         parameterWithName("longitude").description("경도")
                                                 .attributes(key("constraints").value("Not Null")),
                                         parameterWithName("latitude").description("위도")
+                                                .attributes(key("constraints").value("Not Null")),
+                                        parameterWithName("code").description("법정동코드")
                                                 .attributes(key("constraints").value("Not Null")),
                                         parameterWithName("cursor").description("메인 커서(정렬 기준 되는 컬럼값)"),
                                         parameterWithName("subCursor").description("서브 커서(마지막 음식점 ID)"),

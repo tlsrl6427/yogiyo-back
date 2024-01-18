@@ -200,6 +200,14 @@ public class ShopService {
 
     public ShopScrollListResponse getList(ShopScrollListRequest request) {
         List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
+
+        if(shops.isEmpty()) {
+            return ShopScrollListResponse.builder()
+                    .content(shops)
+                    .hasNext(false)
+                    .build();
+        }
+
         boolean hasNext = request.getSize()==null ? shops.size() >= 11L : shops.size() >= request.getSize()+1;
         if(hasNext) shops.remove(shops.size()-1);
         BigDecimal nextCursor = getCursor(request.getSortOption().name(), shops.get(shops.size()-1));

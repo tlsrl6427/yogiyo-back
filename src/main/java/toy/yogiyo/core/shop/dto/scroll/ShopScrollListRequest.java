@@ -28,6 +28,8 @@ public class ShopScrollListRequest {
     private Double longitude;
     @NotNull
     private Double latitude;
+    @NotNull
+    private String code;
 
     private BigDecimal cursor;
     private Long subCursor;

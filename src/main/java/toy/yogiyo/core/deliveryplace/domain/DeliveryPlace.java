@@ -14,10 +14,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(indexes = @Index(name = "idx_shop_id", columnList = "shop_id"))
+@Table(indexes = { @Index(name = "idx_shop_id", columnList = "shop_id"), @Index(name = "idx_code", columnList = "code") })
 public class DeliveryPlace {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "delivery_place_id")
     private Long id;
 
@@ -38,9 +39,9 @@ public class DeliveryPlace {
     private List<DeliveryPriceInfo> deliveryPriceInfos = new ArrayList<>();
 
     public void updateDeliveryPrices(List<DeliveryPriceInfo> deliveryPriceInfos) {
-        if(deliveryPriceInfos == null) return;
+        if (deliveryPriceInfos == null) return;
 
-        if(!deliveryPriceInfos.isEmpty()) {
+        if (!deliveryPriceInfos.isEmpty()) {
             this.minDeliveryPrice = deliveryPriceInfos.stream()
                     .min(Comparator.comparingInt(DeliveryPriceInfo::getDeliveryPrice)).get()
                     .getDeliveryPrice();

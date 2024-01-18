@@ -75,11 +75,6 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
                 .limit(request.getSize() == null ? 11L : request.getSize() + 1)
                 .fetch();
 
-        for (Long aLong : filteredShopId) {
-            log.info(aLong+" ");
-        }
-        System.out.println();
-
         return jpaQueryFactory
                 .select(Projections.fields(ShopScrollResponse.class,
                         shop.id.as("shopId"),

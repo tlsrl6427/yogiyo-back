@@ -52,82 +52,84 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
 
     @Override
     public List<ShopScrollResponse> scrollShopList(ShopScrollListRequest request) {
-        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(request.getSortOption().name());
+        OrderSpecifier<?> orderSpecifier = getOrderSpecifier(request);
         BooleanExpression cursorLt = getCursorLt(request);
 
-        //subquery로 필터링된 shop_id 먼저 받기
-        JPAQuery<Long> subQuery = jpaQueryFactory.select(shop.id)
-                .from(shop)
-                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id));
-
-        if(request.getCategory()!=null
-            /*&& !request.getCategory().isEmpty()*/
-            /*&& !request.getCategory().equals("신규맛집")*/) {
-            subQuery.join(categoryShop).on(categoryShop.shop.id.eq(shop.id))
-                    .join(category).on(categoryShop.category.id.eq(category.id));
-        }
-
-        List<Long> filteredShopId = subQuery.where(
-                        codeEq(request.getCode()),
-                        categoryNameEq(request.getCategory().getCategoryKoreanName()),
-                        deliveryPriceLt(request.getDeliveryPrice()),
-                        leastOrderPriceLt(request.getLeastOrderPrice()),
-                        isNewShop(request.getCategory().getCategoryKoreanName()),
-                        cursorLt
-                )
-                .orderBy(orderSpecifier)
-                .limit(request.getSize() == null ? 11L : request.getSize() + 1)
-                .fetch();
-
-        return jpaQueryFactory
-                .select(Projections.fields(ShopScrollResponse.class,
+        return jpaQueryFactory.select(Projections.fields(ShopScrollResponse.class,
                         shop.id.as("shopId"),
                         shop.name.as("shopName"),
                         shop.totalScore,
                         shop.orderNum,
                         shop.reviewNum,
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
-                        shop.minDeliveryTime,
-                        shop.maxDeliveryTime,
-                        shop.minDeliveryPrice,
-                        shop.maxDeliveryPrice,
+                        deliveryPlace.deliveryTime,
+                        deliveryPlace.minDeliveryPrice,
+                        deliveryPlace.maxDeliveryPrice,
                         shop.icon
                 ))
                 .from(shop)
-                .where(shop.id.in(
-                            filteredShopId
-                        )
+                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id))
+                .join(categoryShop).on(categoryShop.shop.id.eq(shop.id))
+                .join(category).on(categoryShop.category.id.eq(category.id))
+                .where(
+                    codeEq(request.getCode()),
+                    categoryNameEq(request.getCategory().getCategoryKoreanName()),
+                    deliveryPriceLt(request.getDeliveryPrice()),
+                    leastOrderPriceLt(request.getLeastOrderPrice()),
+                    isNewShop(request.getCategory().getCategoryKoreanName()),
+                    cursorLt
                 )
-                .orderBy(orderSpecifier, shop.id.desc())
+                .orderBy(orderSpecifier)
+                .limit(request.getSize() == null ? 11L : request.getSize() + 1)
                 .fetch();
     }
 
     private BooleanExpression getCursorLt(ShopScrollListRequest request) {
-        if(request.getSortOption().name().equals("REVIEW")){
-            return request.getCursor()==null ?
+        switch (request.getSortOption()){
+            case REVIEW : return request.getCursor()==null ?
                     shop.reviewNum.lt(Long.MAX_VALUE)
                     : shop.reviewNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.reviewNum.lt(request.getCursor().longValue()));
-        }
-        else if(request.getSortOption().name().equals("SCORE")){
-            return request.getCursor()==null ?
+            case SCORE : return request.getCursor()==null ?
                     shop.totalScore.lt(5.1)
                     : shop.totalScore.eq(request.getCursor()).and(shop.id.lt(request.getSubCursor())).or(shop.totalScore.lt(request.getCursor()));
-        }else
-        //"CLOSEST" 추가해야함
-        return request.getCursor()==null ?
-                shop.orderNum.lt(Long.MAX_VALUE)
-                : shop.orderNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.orderNum.lt(request.getCursor().longValue()));
+            case CLOSEST: return request.getCursor()==null ?
+                    getShopDistance(request.getLatitude(), request.getLongitude()).gt(0)
+                    : getShopDistance(request.getLatitude(), request.getLongitude()).gt(request.getCursor());
+            default: return request.getCursor()==null ?
+                    shop.orderNum.lt(Long.MAX_VALUE)
+                    : shop.orderNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.orderNum.lt(request.getCursor().longValue()));
+        }
+//        if(request.getSortOption().name().equals("REVIEW")){
+//            return request.getCursor()==null ?
+//                    shop.reviewNum.lt(Long.MAX_VALUE)
+//                    : shop.reviewNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.reviewNum.lt(request.getCursor().longValue()));
+//        }
+//        else if(request.getSortOption().name().equals("SCORE")){
+//            return request.getCursor()==null ?
+//                    shop.totalScore.lt(5.1)
+//                    : shop.totalScore.eq(request.getCursor()).and(shop.id.lt(request.getSubCursor())).or(shop.totalScore.lt(request.getCursor()));
+//        }else
+//        //"CLOSEST" 추가해야함
+//        return request.getCursor()==null ?
+//                shop.orderNum.lt(Long.MAX_VALUE)
+//                : shop.orderNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.orderNum.lt(request.getCursor().longValue()));
     }
 
-    private OrderSpecifier<?> getOrderSpecifier(String sortOption) {
-        if(sortOption.equals("REVIEW")){
-            return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
+    private OrderSpecifier<?> getOrderSpecifier(ShopScrollListRequest request) {
+        switch (request.getSortOption()){
+            case REVIEW: return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
+            case SCORE: return new OrderSpecifier<>(Order.DESC, shop.totalScore);
+            case CLOSEST: return new OrderSpecifier<>(Order.ASC, getShopDistance(request.getLatitude(), request.getLongitude()));
+            default: return new OrderSpecifier<>(Order.DESC, shop.orderNum);
         }
-        else if(sortOption.equals("SCORE")){
-            return new OrderSpecifier<>(Order.DESC, shop.totalScore);
-        }
-        //"CLOSEST" 추가해야함
-        return new OrderSpecifier<>(Order.DESC, shop.orderNum);
+//        if(sortOption.equals("REVIEW")){
+//            return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
+//        }
+//        else if(sortOption.equals("SCORE")){
+//            return new OrderSpecifier<>(Order.DESC, shop.totalScore);
+//        }
+//        //"CLOSEST" 추가해야함
+//        return new OrderSpecifier<>(Order.DESC, shop.orderNum);
     }
 
     private BooleanExpression isNewShop(String category) {
@@ -144,11 +146,11 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository{
     }
 
     private BooleanExpression leastOrderPriceLt(Integer leastOrderPrice) {
-        return leastOrderPrice == null ? null : shop.minOrderPrice.loe(leastOrderPrice);
+        return leastOrderPrice == null ? null : deliveryPlace.minOrderPrice.loe(leastOrderPrice);
     }
 
     private BooleanExpression deliveryPriceLt(Integer deliveryPrice) {
-        return deliveryPrice == null ? null : shop.minDeliveryPrice.loe(deliveryPrice);
+        return deliveryPrice == null ? null : deliveryPlace.minDeliveryPrice.loe(deliveryPrice);
     }
 
 

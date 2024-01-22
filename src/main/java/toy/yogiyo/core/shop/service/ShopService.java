@@ -210,7 +210,7 @@ public class ShopService {
 
         boolean hasNext = request.getSize()==null ? shops.size() >= 11L : shops.size() >= request.getSize()+1;
         if(hasNext) shops.remove(shops.size()-1);
-        BigDecimal nextCursor = getCursor(request.getSortOption().name(), shops.get(shops.size()-1));
+        BigDecimal nextCursor = getCursor(request.getSortOption(), shops.get(shops.size()-1));
         long nextSubCursor = shops.get(shops.size()-1).getShopId();
 
         return ShopScrollListResponse.builder()
@@ -221,15 +221,12 @@ public class ShopService {
                 .build();
     }
 
-    private BigDecimal getCursor(String sortOption, ShopScrollResponse shop) {
-        if(sortOption==null || sortOption.isEmpty())
-            return BigDecimal.valueOf(shop.getOrderNum());
-        if(sortOption.equals("REVIEW")){
-            return BigDecimal.valueOf(shop.getReviewNum());
+    private BigDecimal getCursor(ShopScrollListRequest.SortOption sortOption, ShopScrollResponse shop) {
+        switch (sortOption){
+            case REVIEW: return BigDecimal.valueOf(shop.getReviewNum());
+            case SCORE: return shop.getTotalScore();
+            case CLOSEST: return BigDecimal.valueOf(shop.getDistance());
+            default: return BigDecimal.valueOf(shop.getOrderNum());
         }
-        else if(sortOption.equals("SCORE")){
-            return shop.getTotalScore();
-        }
-        return BigDecimal.valueOf(shop.getOrderNum());
     }
 }

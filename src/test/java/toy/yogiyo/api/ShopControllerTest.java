@@ -500,12 +500,11 @@ class ShopControllerTest {
                                 .shopName("음식점 9036")
                                 .orderNum(323L)
                                 .reviewNum(93L)
+                                .deliveryTime(30)
+                                .minDeliveryPrice(3000)
+                                .maxDeliveryPrice(10000)
                                 .totalScore(BigDecimal.valueOf(1.124858862726861))
                                 .distance(7364.810136664925)
-                                .minDeliveryTime(37)
-                                .maxDeliveryTime(45)
-                                .minDeliveryPrice(1500)
-                                .maxDeliveryPrice(0)
                                 .icon("/images/yogiyo-logo.jpg")
                                 .build(),
                         ShopScrollResponse.builder()
@@ -513,12 +512,11 @@ class ShopControllerTest {
                                 .shopName("음식점 6640")
                                 .orderNum(118L)
                                 .reviewNum(6L)
+                                .deliveryTime(40)
+                                .minDeliveryPrice(2000)
+                                .maxDeliveryPrice(15000)
                                 .totalScore(BigDecimal.valueOf(3.5151195901468153))
                                 .distance(7420.250353367057)
-                                .minDeliveryTime(51)
-                                .maxDeliveryTime(60)
-                                .minDeliveryPrice(3000)
-                                .maxDeliveryPrice(0)
                                 .icon("/images/yogiyo-logo.jpg")
                                 .build()
                 ))
@@ -567,12 +565,11 @@ class ShopControllerTest {
                                         fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
                                         fieldWithPath("content[].orderNum").type(JsonFieldType.NUMBER).description("주문수"),
                                         fieldWithPath("content[].reviewNum").type(JsonFieldType.NUMBER).description("리뷰수"),
-                                        fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
-                                        fieldWithPath("content[].distance").type(JsonFieldType.NUMBER).description("거리"),
-                                        fieldWithPath("content[].minDeliveryTime").type(JsonFieldType.NUMBER).description("최소 배달시간"),
-                                        fieldWithPath("content[].maxDeliveryTime").type(JsonFieldType.NUMBER).description("최대 배달시간"),
+                                        fieldWithPath("content[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간"),
                                         fieldWithPath("content[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액"),
                                         fieldWithPath("content[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액"),
+                                        fieldWithPath("content[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
+                                        fieldWithPath("content[].distance").type(JsonFieldType.NUMBER).description("거리"),
                                         fieldWithPath("content[].icon").type(JsonFieldType.STRING).description("아이콘 URL"),
                                         fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 시작 커서값"),
                                         fieldWithPath("nextSubCursor").type(JsonFieldType.NUMBER).description("다음 시작 음식점 ID"),

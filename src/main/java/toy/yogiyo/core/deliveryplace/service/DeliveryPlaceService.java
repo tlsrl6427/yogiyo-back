@@ -50,7 +50,6 @@ public class DeliveryPlaceService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.DELIVERYPLACE_NOT_FOUND));
 
         deliveryPlace.updateDeliveryPrices(request.toDeliveryPriceInfos());
-        deliveryPlace.getShop().updateDeliveryPriceAndTime(deliveryPlace);
     }
 
     @Transactional
@@ -59,7 +58,6 @@ public class DeliveryPlaceService {
 
         for (DeliveryPlace deliveryPlace : deliveryPlaces) {
             deliveryPlace.updateDeliveryPrices(request.toDeliveryPriceInfos());
-            deliveryPlace.getShop().updateDeliveryPriceAndTime(deliveryPlace);
         }
     }
 

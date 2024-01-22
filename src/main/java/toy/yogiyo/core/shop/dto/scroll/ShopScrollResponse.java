@@ -17,8 +17,7 @@ public class ShopScrollResponse {
     private Long reviewNum;
     private BigDecimal totalScore;
     private Double distance;
-    private Integer minDeliveryTime;
-    private Integer maxDeliveryTime;
+    private Integer deliveryTime;
     private Integer minDeliveryPrice;
     private Integer maxDeliveryPrice;
     private String icon;

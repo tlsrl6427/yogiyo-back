@@ -59,13 +59,6 @@ public class Shop extends BaseTimeEntity {
     private Double longitude;
     private Double latitude;
 
-    private Integer minDeliveryPrice;
-    private Integer maxDeliveryPrice;
-    private Integer minOrderPrice;
-
-    private Integer minDeliveryTime;
-    private Integer maxDeliveryTime;
-
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryShop> categoryShop = new ArrayList<>();
@@ -115,14 +108,6 @@ public class Shop extends BaseTimeEntity {
             this.closeDays.add(closeDay);
             closeDay.setShop(this);
         }
-    }
-
-    public void updateDeliveryPriceAndTime(DeliveryPlace deliveryPlace) {
-        if(this.minDeliveryPrice == null || this.minDeliveryPrice > deliveryPlace.getMinDeliveryPrice()) this.minDeliveryPrice = deliveryPlace.getMinDeliveryPrice();
-        if(this.maxDeliveryPrice == null || this.maxDeliveryPrice < deliveryPlace.getMaxDeliveryPrice()) this.maxDeliveryPrice = deliveryPlace.getMaxDeliveryPrice();
-
-        if(this.minDeliveryTime == null || this.minDeliveryTime > deliveryPlace.getDeliveryTime()) this.minDeliveryTime = deliveryPlace.getDeliveryTime();
-        if(this.maxDeliveryTime == null || this.maxDeliveryTime < deliveryPlace.getDeliveryTime()) this.maxDeliveryTime = deliveryPlace.getDeliveryTime();
     }
 
     public void increaseOrderNum(){

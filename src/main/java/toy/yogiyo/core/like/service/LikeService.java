@@ -43,6 +43,7 @@ public class LikeService {
         likeRepository.save(Like.toLike(member, findShop));
     }
 
+    //List Scroll 현재 사용안함
     public Scroll<LikeResponse> getLikes(Member member, LikeScrollRequest request) {
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         List<LikeResponse> likeShops = shopRepository.scrollLikes(member.getId(), request);
@@ -51,5 +52,10 @@ public class LikeService {
         Long nextOffset = likeShops.get(likeShops.size()-1).getLikeId();
 
         return new Scroll<>(likeShops, nextOffset, hasNext);
+    }
+
+    public List<LikeResponse> getLikes(Member member){
+        if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        return likeRepository.findLikesByMember(member.getId());
     }
 }

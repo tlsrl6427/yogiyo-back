@@ -88,9 +88,9 @@ class LikeControllerTest {
         verify(likeService).toggleLike(any(), any());
     }
 
-    @DisplayName("찜 목록 조회-scroll")
+    /*@DisplayName("찜 목록 조회-scroll")
     @Test
-    void getLikes() throws Exception {
+    void getLikesScroll() throws Exception {
         LikeScrollRequest request = new LikeScrollRequest(null, 2L);
 
         List<LikeResponse> likeResponseList = List.of(
@@ -145,5 +145,53 @@ class LikeControllerTest {
                 );
 
         verify(likeService).getLikes(any(), any());
+    }*/
+
+    @DisplayName("찜 목록 조회-전체 리스트 조회")
+    @Test
+    void getLikes() throws Exception {
+        List<LikeResponse> likeResponse = List.of(
+                LikeResponse.builder()
+                        .likeId(29L)
+                        .shopId(6L)
+                        .shopName("BHC 행당점")
+                        .shopImg("image1.jpg")
+                        .score(BigDecimal.valueOf(4.7))
+                        .build(),
+                LikeResponse.builder()
+                        .likeId(4L)
+                        .shopId(3L)
+                        .shopName("맥도날드")
+                        .shopImg("image2.jpg")
+                        .score(BigDecimal.valueOf(3.6))
+                        .build()
+
+        );
+
+
+        given(likeService.getLikes(any())).willReturn(likeResponse);
+
+        mockMvc.perform(get("/like/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", jwt)
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("like/list",
+                                requestHeaders(
+                                        headerWithName("Authorization").description("Access Token")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[].likeId").type(JsonFieldType.NUMBER).description("찜 ID"),
+                                        fieldWithPath("[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                        fieldWithPath("[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 이미지 URL"),
+                                        fieldWithPath("[].score").type(JsonFieldType.NUMBER).description("총 별점")
+                                )
+                        )
+                );
+
+        verify(likeService).getLikes(any());
     }
 }

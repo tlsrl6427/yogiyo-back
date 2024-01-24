@@ -11,6 +11,8 @@ import toy.yogiyo.core.like.service.LikeService;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.shop.domain.Shop;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/like")
@@ -24,9 +26,16 @@ public class LikeController {
         likeService.toggleLike(member, shopId);
     }
 
+    //List Scroll 현재 사용안함
     @GetMapping("/scroll")
     @ResponseStatus(HttpStatus.OK)
     public Scroll<LikeResponse> getLikes(@LoginUser Member member, @ModelAttribute LikeScrollRequest request){
         return likeService.getLikes(member, request);
+    }
+
+    @GetMapping("/list")
+    @ResponseStatus(HttpStatus.OK)
+    public List<LikeResponse> getLikes(@LoginUser Member member){
+        return likeService.getLikes(member);
     }
 }

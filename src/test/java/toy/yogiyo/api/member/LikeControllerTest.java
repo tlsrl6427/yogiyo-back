@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +14,9 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.common.dto.scroll.Scroll;
+import toy.yogiyo.api.member.LikeController;
 import toy.yogiyo.core.like.dto.LikeResponse;
-import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.like.service.LikeService;
-import toy.yogiyo.core.shop.domain.Shop;
 
 import java.math.BigDecimal;
 import java.util.List;

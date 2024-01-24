@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

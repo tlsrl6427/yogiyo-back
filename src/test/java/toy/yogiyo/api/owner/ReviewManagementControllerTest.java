@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.owner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.api.owner.ReviewManagementController;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.review.domain.Review;

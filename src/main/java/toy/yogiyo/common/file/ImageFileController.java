@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.common.file;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;

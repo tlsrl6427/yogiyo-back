@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,20 +17,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.api.member.DeliveryPlaceController;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
 import toy.yogiyo.core.deliveryplace.service.DeliveryPlaceService;
 import toy.yogiyo.core.deliveryplace.dto.DeliveryPlaceAddRequest;
 import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceDto;
 import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceUpdateRequest;
-import toy.yogiyo.core.shop.domain.Shop;
 import toy.yogiyo.util.ConstrainedFields;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

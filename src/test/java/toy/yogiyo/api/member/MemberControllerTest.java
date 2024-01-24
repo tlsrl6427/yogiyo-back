@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.api.member.MemberController;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.member.dto.MemberJoinRequest;

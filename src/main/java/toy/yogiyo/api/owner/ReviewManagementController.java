@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.owner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

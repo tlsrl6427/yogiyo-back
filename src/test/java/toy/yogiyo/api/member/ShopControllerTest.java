@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,11 +20,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.common.dto.scroll.Scroll;
+import toy.yogiyo.api.member.ShopController;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.category.domain.Category;
 import toy.yogiyo.core.category.domain.CategoryShop;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceResponse;
 import toy.yogiyo.core.shop.domain.*;
 import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;

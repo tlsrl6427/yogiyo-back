@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.common.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,13 +15,12 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.login.LoginController;
 import toy.yogiyo.common.login.dto.LoginRequest;
 import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.common.login.service.LoginService;
@@ -30,8 +29,6 @@ import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.owner.domain.Owner;
 
-
-import javax.servlet.http.Cookie;
 
 import java.util.List;
 

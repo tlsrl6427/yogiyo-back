@@ -1,4 +1,4 @@
-package toy.yogiyo.api;
+package toy.yogiyo.api.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.api.member.MenuOptionGroupController;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
@@ -27,7 +28,6 @@ import toy.yogiyo.core.menuoption.domain.OptionType;
 import toy.yogiyo.core.menuoption.dto.*;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
 import toy.yogiyo.core.menuoption.service.MenuOptionService;
-import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,14 +15,13 @@ import toy.yogiyo.core.menu.service.MenuService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/menu-group")
+@RequestMapping("/owner/menu-group")
 @RequiredArgsConstructor
 public class MenuGroupController {
 
     private final MenuGroupService menuGroupService;
     private final MenuService menuService;
 
-    // =================== 점주 기능 ======================
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #request.shopId)")
@@ -122,7 +121,5 @@ public class MenuGroupController {
         List<Menu> menus = request.toMenus();
         menuGroupService.updateMenuPosition(menuGroupId, menus);
     }
-
-    // =================== 고객 기능 ======================
 
 }

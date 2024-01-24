@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/menu-option-group")
+@RequestMapping("/owner/menu-option-group")
 public class MenuOptionGroupController {
 
     private final MenuOptionGroupService menuOptionGroupService;

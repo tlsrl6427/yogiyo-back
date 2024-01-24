@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import toy.yogiyo.core.menu.service.SignatureMenuService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/signature-menu")
+@RequestMapping("/owner/signature-menu")
 @RequiredArgsConstructor
 public class SignatureMenuController {
 

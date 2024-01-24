@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.member.SignatureMenuController;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
 import toy.yogiyo.core.menu.dto.SignatureMenuUpdatePositionRequest;
@@ -81,7 +80,7 @@ class SignatureMenuControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(put("/signature-menu/set")
+        ResultActions result = mockMvc.perform(put("/owner/signature-menu/set")
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -114,7 +113,7 @@ class SignatureMenuControllerTest {
         given(signatureMenuService.getAll(anyLong())).willReturn(signatureMenus);
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/signature-menu/shop/{shopId}", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/signature-menu/shop/{shopId}", 1));
 
         // then
         result.andExpect(status().isOk())
@@ -148,7 +147,7 @@ class SignatureMenuControllerTest {
         doNothing().when(signatureMenuService).delete(anyLong());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/signature-menu/delete/{menuId}", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/signature-menu/delete/{menuId}", 1));
 
         // then
         result.andExpect(status().isNoContent())
@@ -170,7 +169,7 @@ class SignatureMenuControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/signature-menu/{shopId}/change-position", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/owner/signature-menu/{shopId}/change-position", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));

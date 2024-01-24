@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/address")
+@RequestMapping("/member/address")
 public class MemberAddressController {
 
     private final MemberAddressService memberAddressService;

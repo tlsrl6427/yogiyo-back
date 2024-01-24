@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.member.MenuGroupController;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
@@ -96,7 +95,7 @@ class MenuGroupControllerTest {
             given(menuGroupService.create(any())).willReturn(1L);
 
             // when
-            ResultActions result = mockMvc.perform(post("/menu-group/add")
+            ResultActions result = mockMvc.perform(post("/owner/menu-group/add")
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -143,7 +142,7 @@ class MenuGroupControllerTest {
             given(menuGroupService.getMenuGroups(anyLong())).willReturn(menuGroups);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/shop/{shopId}", 1));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/menu-group/shop/{shopId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -183,7 +182,7 @@ class MenuGroupControllerTest {
             given(menuGroupService.get(anyLong())).willReturn(menuGroup);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}", 1));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/menu-group/{menuGroupId}", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -213,7 +212,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).update(any());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/menu-group/{menuGroupId}", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/menu-group/{menuGroupId}", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(updateRequest)));
@@ -248,7 +247,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/shop/{shopId}/change-position", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/owner/menu-group/shop/{shopId}/change-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
@@ -278,7 +277,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).delete(any());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/menu-group/{menuGroupId}", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/menu-group/{menuGroupId}", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
@@ -314,7 +313,7 @@ class MenuGroupControllerTest {
             MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/{menuGroupId}/add-menu", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/owner/menu-group/{menuGroupId}/add-menu", 1)
                             .file(picture)
                             .file(menuData)
                             .header(HttpHeaders.AUTHORIZATION, jwt));
@@ -359,7 +358,7 @@ class MenuGroupControllerTest {
             given(menuService.getMenus(anyLong())).willReturn(menus);
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/menu-group/{menuGroupId}/menu", 1));
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/menu-group/{menuGroupId}/menu", 1));
 
             // then
             result.andExpect(status().isOk())
@@ -399,7 +398,7 @@ class MenuGroupControllerTest {
             MockMultipartFile menuData = new MockMultipartFile("menuData", "menuData.json", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(request));
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/menu-group/update-menu/{menuId}", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.multipart("/owner/menu-group/update-menu/{menuId}", 1)
                     .file(picture)
                     .file(menuData)
                     .header(HttpHeaders.AUTHORIZATION, jwt));
@@ -434,7 +433,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuService).delete(any());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/menu-group/delete-menu/{menuId}", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/menu-group/delete-menu/{menuId}", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt));
 
             // then
@@ -460,7 +459,7 @@ class MenuGroupControllerTest {
             doNothing().when(menuGroupService).updateMenuPosition(anyLong(), anyList());
 
             // when
-            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/menu-group/{menuGroupId}/change-menu-position", 1)
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.put("/owner/menu-group/{menuGroupId}/change-menu-position", 1)
                     .header(HttpHeaders.AUTHORIZATION, jwt)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));

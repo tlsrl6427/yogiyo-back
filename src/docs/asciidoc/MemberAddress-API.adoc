@@ -3,24 +3,24 @@
 
 [[MemberAddress-register]]
 === 멤버 주소 등록
-`POST /address/register`
+`POST /member/address/register`
 
 operation::address/register[snippets='http-request,http-response,request-headers,request-fields']
 
 [[MemberAddress-view]]
 === 멤버 주소 조회
-`GET /address/view`
+`GET /member/address/view`
 
 operation::address/view[snippets='http-request,http-response,request-headers,response-fields']
 
 [[MemberAddress-delete]]
 === 멤버 주소 삭제
-`DELETE /address/{memberAddressId}`
+`DELETE /member/address/{memberAddressId}`
 
 operation::address[snippets='http-request,http-response,request-headers,path-parameters']
 
 [[MemberAddress-setHere]]
 === "요기" 위치 설정
-`PATCH /address/here/{memberAddressId}`
+`PATCH /member/address/here/{memberAddressId}`
 
 operation::address/here[snippets='http-request,http-response,request-headers,path-parameters']

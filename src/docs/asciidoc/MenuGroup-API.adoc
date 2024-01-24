@@ -3,60 +3,56 @@
 
 [[MenuGroup]]
 === 메뉴 그룹 추가
-`POST /menu-group/add`
+`POST /owner/menu-group/add`
 
 operation::menu-group/add[snippets='http-request,http-response,request-headers,request-fields,response-fields']
 
 === 메뉴 그룹 전체 조회
-`GET /menu-group/shop/{shop id}`
+`GET /owner/menu-group/shop/{shop id}`
 
 operation::menu-group/find-all[snippets='http-request,http-response,path-parameters,response-fields']
 
 === 메뉴 그룹 단건 조회
-`GET /menu-group/{menu group id}`
+`GET /owner/menu-group/{menu group id}`
 
 operation::menu-group/find-one[snippets='http-request,http-response,path-parameters,response-fields']
 
 === 메뉴 그룹 정보 수정
-`PATCH /menu-group/{menu gorup id}`
+`PATCH /owner/menu-group/{menu gorup id}`
 
 operation::menu-group/update[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 메뉴 그룹 순서 변경
-`PUT /menu0group/shop/1/chenge-position`
+`PUT /owner/menu-group/shop/1/chenge-position`
 
 operation::menu-group/change-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 메뉴 그룹 메뉴 추가
-`POST /menu-group/{menu group id}/add-menu`
+`POST /owner/menu-group/{menu group id}/add-menu`
 
 operation::menu-group/add-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields,response-fields']
 
 === 메뉴 그룹 메뉴 조회
-`GET /menu-group/{menu group id}/menu`
+`GET /owner/menu-group/{menu group id}/menu`
 
 operation::menu-group/find-menus[snippets='http-request,http-response,path-parameters,response-fields']
 
 === 메뉴 그룹 메뉴 정보 수정
-`POST /menu-group/update-menu/{menu Id}`
+`POST /owner/menu-group/update-menu/{menu Id}`
 
 operation::menu-group/update-menu[snippets='http-request,http-response,request-headers,path-parameters,request-parts,request-part-menuData-fields']
 
 === 메뉴 그룹 삭제
-`DELETE /menu-group/{menu group id}`
+`DELETE /owner/menu-group/{menu group id}`
 
 operation::menu-group/delete[snippets='http-request,http-response,request-headers,path-parameters']
 
 === 메뉴 그룹 메뉴 삭제
-`DELETE /menu-group/delete-menu/{menu id}`
+`DELETE /owner/menu-group/delete-menu/{menu id}`
 
 operation::menu-group/delete-menu[snippets='http-request,http-response,request-headers,path-parameters']
 
 === 메뉴 그룹 메뉴 순서 변경
-`PATCH /menu-group/{menu group id}/change-menu-position`
+`PATCH /owner/menu-group/{menu group id}/change-menu-position`
 
 operation::menu-group/change-menu-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
-
-
-
-[[Menu]]

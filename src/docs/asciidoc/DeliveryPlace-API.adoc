@@ -2,26 +2,26 @@
 == Delivery Place API
 
 === 배달 가능 지역 추가
-`POST /delivery-place/shop/{shopId}/add`
+`POST /owner/delivery-place/shop/{shopId}/add`
 
 operation::delivery-place/add[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 배달 가능 지역 삭제
-`DELETE /delivery-place/{deliveryPlaceId}/delete`
+`DELETE /owner/delivery-place/{deliveryPlaceId}/delete`
 
 operation::delivery-place/delete[snippets='http-request,http-response,request-headers,path-parameters']
 
 === 배달 요금 수정
-`PATCH /delivery-place/{deliveryPlaceId}/delivery-price/update`
+`PATCH /owner/delivery-place/{deliveryPlaceId}/delivery-price/update`
 
 operation::delivery-place/update-delivery-price[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 배달 요금 일괄 수정
-`PATCH /delivery-place/shop/{shopId}/delivery-price/update`
+`PATCH /owner/delivery-place/shop/{shopId}/delivery-price/update`
 
 operation::delivery-place/update-all-delivery-price[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
 
 === 배달 요금 조회
-`GET /delivery-place/{deliveryPlaceId}/delivery-price`
+`GET /owner/delivery-place/{deliveryPlaceId}/delivery-price`
 
 operation::delivery-place/get-delivery-price[snippets='http-request,http-response,path-parameters,response-fields']

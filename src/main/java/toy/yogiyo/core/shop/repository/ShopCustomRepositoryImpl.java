@@ -1,5 +1,6 @@
 package toy.yogiyo.core.shop.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
@@ -12,9 +13,12 @@ import org.springframework.stereotype.Repository;
 import toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
+import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
+import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static java.time.LocalTime.now;
@@ -27,9 +31,34 @@ import static toy.yogiyo.core.shop.domain.QShop.shop;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ShopCustomRepositoryImpl implements ShopCustomRepository{
+public class ShopCustomRepositoryImpl implements ShopCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public ShopDetailsResponse details(Long memberId, ShopDetailsRequest request) {
+        return jpaQueryFactory.select(Projections.fields(ShopDetailsResponse.class,
+                        shop.id,
+                        shop.name,
+                        shop.reviewNum,
+                        shop.likeNum,
+                        shop.totalScore,
+                        shop.banner,
+                        getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+                        deliveryPlace.minOrderPrice,
+                        deliveryPlace.minDeliveryPrice,
+                        ExpressionUtils.as(JPAExpressions
+                                .selectOne()
+                                .from(like)
+                                .where(like.shop.id.eq(request.getShopId())
+                                        .and(like.member.id.eq(memberId)))
+                                .exists(), "isLike")
+                ))
+                .from(shop)
+                .join(deliveryPlace).on(shop.id.eq(deliveryPlace.shop.id).and(deliveryPlace.code.eq(request.getCode())))
+                .where(shop.id.eq(request.getShopId()))
+                .fetchOne();
+    }
 
     @Override
     public List<LikeResponse> scrollLikes(Long memberId, LikeScrollRequest request) {

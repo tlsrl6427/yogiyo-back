@@ -14,11 +14,15 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.security.WithLoginMember;
+import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
+import toy.yogiyo.core.shop.repository.ShopRepository;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import java.math.BigDecimal;
@@ -43,6 +47,9 @@ class ShopControllerTest {
 
     @MockBean
     ShopService shopService;
+
+    @MockBean
+    ShopRepository shopRepository;
 
     @Autowired
     MockMvc mockMvc;
@@ -163,6 +170,63 @@ class ShopControllerTest {
 
 
         verify(shopService).getList(any());
+    }
+
+    @Test
+    @DisplayName("가게 상세 정보 조회")
+    @WithLoginMember
+    void details() throws Exception {
+        // given
+        given(shopRepository.details(anyLong(), any())).willReturn(
+                ShopDetailsResponse.builder()
+                        .id(1L)
+                        .name("음식점 1")
+                        .reviewNum(438L)
+                        .likeNum(314L)
+                        .totalScore(BigDecimal.valueOf(3.34))
+                        .banner("/images/banner.jpg")
+                        .distance(7029.0)
+                        .minOrderPrice(10000)
+                        .minDeliveryPrice(3000)
+                        .isLike(true)
+                        .build()
+        );
+
+        // when
+        ResultActions result = mockMvc.perform(get("/member/shop/details")
+                .param("shopId", "1")
+                .param("code", "4373031030")
+                .param("latitude", "37.512464")
+                .param("longitude", "127.102543"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("shop/details",
+                        requestParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                                        .attributes(key("constraints").value("Not Null")),
+                                parameterWithName("code").description("법정동 코드")
+                                        .attributes(key("constraints").value("Not Null")),
+                                parameterWithName("latitude").description("위도")
+                                        .attributes(key("constraints").value("Not Null")),
+                                parameterWithName("longitude").description("경도")
+                                        .attributes(key("constraints").value("Not Null"))
+
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("reviewNum").type(JsonFieldType.NUMBER).description("리뷰 개수"),
+                                fieldWithPath("likeNum").type(JsonFieldType.NUMBER).description("찜 개수"),
+                                fieldWithPath("totalScore").type(JsonFieldType.NUMBER).description("별점"),
+                                fieldWithPath("banner").type(JsonFieldType.STRING).description("가게 배너 이미지"),
+                                fieldWithPath("distance").type(JsonFieldType.NUMBER).description("거리"),
+                                fieldWithPath("minOrderPrice").type(JsonFieldType.NUMBER).description("최소 주문 금액"),
+                                fieldWithPath("minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달 금액"),
+                                fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("찜 여부")
+                        )
+                ));
     }
 
 }

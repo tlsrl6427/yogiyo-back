@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/delivery-place")
+@RequestMapping("/owner/delivery-place")
 public class DeliveryPlaceController {
 
     private final DeliveryPlaceService deliveryPlaceService;

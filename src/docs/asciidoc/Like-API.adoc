@@ -9,6 +9,6 @@ operation::like[snippets='http-request,http-response,request-headers,path-parame
 
 [[Like-scroll]]
 === 찜 목록 조회
-`GET /like/scroll`
+`GET /like/list`
 
-operation::like/scroll[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
+operation::like/list[snippets='http-request,http-response,request-headers,response-fields']

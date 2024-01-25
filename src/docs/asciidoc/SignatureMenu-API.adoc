@@ -20,3 +20,8 @@ operation::signature-menu/change-position[snippets='http-request,http-response,r
 `DELETE /owner/signature-menu/delete/{menu id}`
 
 operation::signature-menu/delete-one[snippets='http-request,http-response,path-parameters']
+
+=== 대표 메뉴 전체 조회 (가게 상세 페이지)
+`GET /member/signature-menu/shop/{shop id}`
+
+operation::member/signature-menu/find-all[snippets='http-request,http-response,path-parameters,response-fields']

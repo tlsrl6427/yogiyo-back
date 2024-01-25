@@ -3,6 +3,7 @@ package toy.yogiyo.api.owner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.core.menu.domain.SignatureMenu;
@@ -13,6 +14,7 @@ import toy.yogiyo.core.menu.service.SignatureMenuService;
 
 import java.util.List;
 
+@Component("signatureMenuOwnerController")
 @RestController
 @RequestMapping("/owner/signature-menu")
 @RequiredArgsConstructor

@@ -56,3 +56,8 @@ operation::menu-group/delete-menu[snippets='http-request,http-response,request-h
 `PATCH /owner/menu-group/{menu group id}/change-menu-position`
 
 operation::menu-group/change-menu-position[snippets='http-request,http-response,request-headers,path-parameters,request-fields']
+
+=== 메뉴 그룹 전체 조회 (가게 상세 페이지)
+`GET /member/menu-group/shop/{shop id}`
+
+operation::member/menu-group/find-all[snippets='http-request,http-response,path-parameters,response-fields']

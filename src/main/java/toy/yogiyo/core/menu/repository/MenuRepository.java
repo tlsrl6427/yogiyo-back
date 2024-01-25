@@ -15,4 +15,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @Query("select m from Menu m where m.menuGroup.id = :menuGroupId order by m.position asc")
     List<Menu> findMenus(@Param("menuGroupId") Long menuGroupId);
+
+    @Query("select m from Menu m where m.id in :menuIds")
+    List<Menu> findMenus(@Param("menuIds") Long[] menuIds);
 }

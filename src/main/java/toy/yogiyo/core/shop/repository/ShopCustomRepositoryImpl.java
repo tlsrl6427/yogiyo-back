@@ -44,6 +44,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                         shop.likeNum,
                         shop.totalScore,
                         shop.banner,
+                        shop.noticeTitle,
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
                         deliveryPlace.minOrderPrice,
                         deliveryPlace.minDeliveryPrice,

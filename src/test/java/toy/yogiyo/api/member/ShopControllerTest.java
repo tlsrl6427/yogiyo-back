@@ -185,6 +185,7 @@ class ShopControllerTest {
                         .likeNum(314L)
                         .totalScore(BigDecimal.valueOf(3.34))
                         .banner("/images/banner.jpg")
+                        .noticeTitle("공지 사항")
                         .distance(7029.0)
                         .minOrderPrice(10000)
                         .minDeliveryPrice(3000)
@@ -221,6 +222,7 @@ class ShopControllerTest {
                                 fieldWithPath("likeNum").type(JsonFieldType.NUMBER).description("찜 개수"),
                                 fieldWithPath("totalScore").type(JsonFieldType.NUMBER).description("별점"),
                                 fieldWithPath("banner").type(JsonFieldType.STRING).description("가게 배너 이미지"),
+                                fieldWithPath("noticeTitle").type(JsonFieldType.STRING).description("공지 사항 제목"),
                                 fieldWithPath("distance").type(JsonFieldType.NUMBER).description("거리"),
                                 fieldWithPath("minOrderPrice").type(JsonFieldType.NUMBER).description("최소 주문 금액"),
                                 fieldWithPath("minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달 금액"),

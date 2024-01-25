@@ -18,6 +18,7 @@ public class ShopDetailsResponse {
     private Long likeNum;
     private BigDecimal totalScore;
     private String banner;
+    private String noticeTitle;
     private Double distance;
     private Integer minOrderPrice;
     private Integer minDeliveryPrice;

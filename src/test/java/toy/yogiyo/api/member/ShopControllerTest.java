@@ -12,20 +12,25 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginMember;
+import toy.yogiyo.core.shop.domain.Days;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
+import toy.yogiyo.core.shop.dto.member.ShopInfoResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 import toy.yogiyo.core.shop.service.ShopService;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -40,6 +45,8 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ShopController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -228,6 +235,140 @@ class ShopControllerTest {
                                 fieldWithPath("minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달 금액"),
                                 fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("찜 여부")
                         )
+                ));
+    }
+
+    @Test
+    @DisplayName("가게 원산지 정보 조회")
+    void info() throws Exception {
+        // given
+        given(shopRepository.info(anyLong(), anyString())).willReturn(
+                ShopInfoResponse.builder()
+                        .id(1L)
+                        .name("음식점 1")
+                        .noticeTitle("공지사항")
+                        .ownerNotice("공지사항 입니다.")
+                        .noticeImages(List.of("/images/image1.png", "/images/image2.png"))
+                        .callNumber("010-1234-5678")
+                        .address("서울특별시 송파구 올림픽로 300")
+                        .deliveryPriceInfos(List.of(
+                                ShopInfoResponse.DeliveryPriceInfoDto.builder()
+                                        .id(4L)
+                                        .deliveryPrice(5000)
+                                        .orderPrice(26000)
+                                        .build(),
+                                ShopInfoResponse.DeliveryPriceInfoDto.builder()
+                                        .id(5L)
+                                        .deliveryPrice(4000)
+                                        .orderPrice(31000)
+                                        .build(),
+                                ShopInfoResponse.DeliveryPriceInfoDto.builder()
+                                        .id(6L)
+                                        .deliveryPrice(2000)
+                                        .orderPrice(15000)
+                                        .build()
+                        ))
+                        .businessHours(List.of(
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(1L)
+                                        .breakTimeStart(null)
+                                        .breakTimeEnd(null)
+                                        .openTime(LocalTime.of(8, 0))
+                                        .closeTime(LocalTime.of(18, 0))
+                                        .dayOfWeek(Days.SUNDAY)
+                                        .isOpen(true)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(2L)
+                                        .breakTimeStart(LocalTime.of(14, 0))
+                                        .breakTimeEnd(LocalTime.of(16, 0))
+                                        .openTime(LocalTime.of(8, 0))
+                                        .closeTime(LocalTime.of(19, 0))
+                                        .dayOfWeek(Days.MONDAY)
+                                        .isOpen(false)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(3L)
+                                        .breakTimeStart(LocalTime.of(14, 0))
+                                        .breakTimeEnd(LocalTime.of(16, 0))
+                                        .openTime(LocalTime.of(8, 0))
+                                        .closeTime(LocalTime.of(19, 0))
+                                        .dayOfWeek(Days.TUESDAY)
+                                        .isOpen(true)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(4L)
+                                        .breakTimeStart(null)
+                                        .breakTimeEnd(null)
+                                        .openTime(LocalTime.of(7, 0))
+                                        .closeTime(LocalTime.of(19, 0))
+                                        .dayOfWeek(Days.WEDNESDAY)
+                                        .isOpen(true)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(5L)
+                                        .breakTimeStart(LocalTime.of(14, 0))
+                                        .breakTimeEnd(LocalTime.of(16, 0))
+                                        .openTime(LocalTime.of(8, 0))
+                                        .closeTime(LocalTime.of(0, 0))
+                                        .dayOfWeek(Days.THURSDAY)
+                                        .isOpen(false)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(6L)
+                                        .breakTimeStart(null)
+                                        .breakTimeEnd(null)
+                                        .openTime(LocalTime.of(8, 0))
+                                        .closeTime(LocalTime.of(22, 0))
+                                        .dayOfWeek(Days.FRIDAY)
+                                        .isOpen(false)
+                                        .build(),
+                                ShopInfoResponse.BusinessHoursDto.builder()
+                                        .id(7L)
+                                        .breakTimeStart(LocalTime.of(14, 0))
+                                        .breakTimeEnd(LocalTime.of(16, 0))
+                                        .openTime(LocalTime.of(7, 0))
+                                        .closeTime(LocalTime.of(19, 0))
+                                        .dayOfWeek(Days.SATURDAY)
+                                        .isOpen(true)
+                                        .build()
+                        ))
+                        .build()
+        );
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/member/shop/{shopId}/info", 1)
+                .param("code", "4783025326"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("member/shop/info",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestParameters(
+                                parameterWithName("code").description("법정동 코드")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("noticeTitle").type(JsonFieldType.STRING).description("공지 사항 제목"),
+                                fieldWithPath("ownerNotice").type(JsonFieldType.STRING).description("공지 사항 내용"),
+                                fieldWithPath("noticeImages[]").type(JsonFieldType.ARRAY).description("공지 사항 이미지 리스트"),
+                                fieldWithPath("callNumber").type(JsonFieldType.STRING).description("가게 전화 번호"),
+                                fieldWithPath("address").type(JsonFieldType.STRING).description("가게 주소"),
+                                fieldWithPath("deliveryPriceInfos[].id").type(JsonFieldType.NUMBER).description("배달 요금 ID"),
+                                fieldWithPath("deliveryPriceInfos[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 요금"),
+                                fieldWithPath("deliveryPriceInfos[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
+                                fieldWithPath("businessHours[].id").type(JsonFieldType.NUMBER).description("영업 시간 ID"),
+                                fieldWithPath("businessHours[].breakTimeStart").type(JsonFieldType.STRING).description("휴게 시간 시작").optional(),
+                                fieldWithPath("businessHours[].breakTimeEnd").type(JsonFieldType.STRING).description("휴게 시간 끝").optional(),
+                                fieldWithPath("businessHours[].openTime").type(JsonFieldType.STRING).description("영업 시작 시간"),
+                                fieldWithPath("businessHours[].closeTime").type(JsonFieldType.STRING).description("영업 종료 시간"),
+                                fieldWithPath("businessHours[].dayOfWeek").type(JsonFieldType.STRING).description(generateLinkCode(DAYS)),
+                                fieldWithPath("businessHours[].open").type(JsonFieldType.BOOLEAN).description("영업 유무")
+                                )
                 ));
     }
 

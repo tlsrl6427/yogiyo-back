@@ -71,3 +71,8 @@ operation::shop/delete[snippets='http-request,http-response,request-headers,path
 `GET /member/shop/details`
 
 operation::shop/details[snippets='http-request,http-response,request-parameters,response-fields']
+
+=== 가게 원산지 정보 조회
+`GET /member/shop/{shop id}/info`
+
+operation::member/shop/info[snippets='http-request,http-response,path-parameters,request-parameters,response-fields']

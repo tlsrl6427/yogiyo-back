@@ -1,6 +1,7 @@
 package toy.yogiyo.core.shop.repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPAExpressions;
@@ -11,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace;
+import toy.yogiyo.core.deliveryplace.domain.QDeliveryPriceInfo;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
+import toy.yogiyo.core.shop.domain.QBusinessHours;
 import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
+import toy.yogiyo.core.shop.dto.member.ShopInfoResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 
@@ -25,7 +29,9 @@ import static java.time.LocalTime.now;
 import static toy.yogiyo.core.category.domain.QCategory.category;
 import static toy.yogiyo.core.category.domain.QCategoryShop.categoryShop;
 import static toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace.deliveryPlace;
+import static toy.yogiyo.core.deliveryplace.domain.QDeliveryPriceInfo.deliveryPriceInfo;
 import static toy.yogiyo.core.like.domain.QLike.like;
+import static toy.yogiyo.core.shop.domain.QBusinessHours.businessHours;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
 @Repository
@@ -34,6 +40,46 @@ import static toy.yogiyo.core.shop.domain.QShop.shop;
 public class ShopCustomRepositoryImpl implements ShopCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public ShopInfoResponse info(Long shopId, String code) {
+        ShopInfoResponse result = jpaQueryFactory.from(shop)
+                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id))
+                .join(deliveryPriceInfo).on(deliveryPriceInfo.deliveryPlace.id.eq(deliveryPlace.id).and(deliveryPlace.code.eq(code)))
+                .where(shop.id.eq(shopId))
+                .transform(GroupBy.groupBy(shop.id).list(
+                        Projections.fields(ShopInfoResponse.class,
+                                shop.id,
+                                shop.name,
+                                shop.noticeTitle,
+                                shop.ownerNotice,
+                                shop.noticeImages,
+                                shop.callNumber,
+                                shop.address,
+                                GroupBy.list(Projections.fields(ShopInfoResponse.DeliveryPriceInfoDto.class,
+                                        deliveryPriceInfo.id,
+                                        deliveryPriceInfo.deliveryPrice,
+                                        deliveryPriceInfo.orderPrice
+                                )).as("deliveryPriceInfos")
+                        )
+                )).get(0);
+
+        List<ShopInfoResponse.BusinessHoursDto> bh = jpaQueryFactory.select(Projections.fields(ShopInfoResponse.BusinessHoursDto.class,
+                        businessHours.id,
+                        businessHours.breakTimeStart,
+                        businessHours.breakTimeEnd,
+                        businessHours.openTime,
+                        businessHours.closeTime,
+                        businessHours.dayOfWeek,
+                        businessHours.isOpen))
+                .from(businessHours)
+                .where(businessHours.shop.id.eq(shopId))
+                .fetch();
+
+        result.setBusinessHours(bh);
+
+        return result;
+    }
 
     @Override
     public ShopDetailsResponse details(Long memberId, ShopDetailsRequest request) {

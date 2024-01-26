@@ -8,6 +8,7 @@ import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
+import toy.yogiyo.core.shop.dto.member.ShopInfoResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
 import toy.yogiyo.core.shop.repository.ShopRepository;
@@ -35,6 +36,11 @@ public class ShopController {
 
         if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         return shopRepository.details(member.getId(), request);
+    }
+
+    @GetMapping("/{shopId}/info")
+    public ShopInfoResponse getInfo(@PathVariable Long shopId, @RequestParam String code) {
+        return shopRepository.info(shopId, code);
     }
 
 }

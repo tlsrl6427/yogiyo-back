@@ -89,7 +89,7 @@ class LoginControllerTest {
         given(loginService.memberLogin(any())).willReturn(loginResponse);
         given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/memberLogin")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/member/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -135,7 +135,7 @@ class LoginControllerTest {
         given(loginService.memberLogin(any())).willReturn(loginResponse);
         given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/memberLogin")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/member/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -175,7 +175,7 @@ class LoginControllerTest {
         Authentication authentication = new UsernamePasswordAuthenticationToken(member, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/memberLogout/{memberId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/member/logout/{memberId}", 1L)
                         .header("Authorization", "Bearer " + jwt)
                 )
                 .andExpect(status().isOk())
@@ -212,7 +212,7 @@ class LoginControllerTest {
         given(loginService.ownerLogin(any())).willReturn(loginResponse);
         given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/ownerLogin")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/owner/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -256,7 +256,7 @@ class LoginControllerTest {
         given(loginService.ownerLogin(any())).willReturn(loginResponse);
         given(jwtProvider.createToken(any(), any(), any())).willReturn(jwt);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/ownerLogin")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/owner/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(loginRequest))
                 )
@@ -295,7 +295,7 @@ class LoginControllerTest {
         Authentication authentication = new UsernamePasswordAuthenticationToken(owner, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/ownerLogout/{ownerId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/owner/logout/{ownerId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + jwt)
                 )

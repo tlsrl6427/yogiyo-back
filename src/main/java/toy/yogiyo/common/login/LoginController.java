@@ -28,7 +28,7 @@ public class LoginController {
     private final LoginService loginService;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/memberLogin")
+    @PostMapping("/member/login")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LoginResponse> memberLogin(@RequestBody LoginRequest loginRequest){
 
@@ -41,7 +41,7 @@ public class LoginController {
         return new ResponseEntity<>(loginResponse, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/memberLogout/{memberId}")
+    @PostMapping("/member/logout/{memberId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> memberLogout(@LoginUser Member member, @PathVariable Long memberId){
         if(!member.getId().equals(memberId)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
@@ -51,7 +51,7 @@ public class LoginController {
         return new ResponseEntity<>("멤버 로그아웃 완료", headers, HttpStatus.OK);
     }
 
-    @PostMapping("/ownerLogin")
+    @PostMapping("/owner/login")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<LoginResponse> ownerLogin(@RequestBody LoginRequest loginRequest){
 
@@ -64,7 +64,7 @@ public class LoginController {
         return new ResponseEntity<>(loginResponse, headers, HttpStatus.OK);
     }
 
-    @PostMapping("/ownerLogout/{ownerId}")
+    @PostMapping("/owner/logout/{ownerId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> ownerLogout(@LoginOwner Owner owner, @PathVariable Long ownerId){
         if(!owner.getId().equals(ownerId)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);

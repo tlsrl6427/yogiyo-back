@@ -28,6 +28,8 @@ public class Menu {
 
     private Integer position;
 
+    private long reviewNum;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private MenuGroup menuGroup;
@@ -54,4 +56,12 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
+
+    public void decreaseReviewNum() {
+        this.reviewNum--;
+    }
+
+    public void increaseReviewNum() {
+        this.reviewNum++;
+    }
 }

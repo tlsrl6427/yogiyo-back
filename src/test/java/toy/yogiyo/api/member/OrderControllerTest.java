@@ -105,7 +105,7 @@ class OrderControllerTest {
         doNothing().when(orderService).createOrder(any(), any());
 
         mockMvc.perform(
-                    post("/order/create")
+                    post("/member/order/create")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", jwt)
                     .content(objectMapper.writeValueAsString(orderCreateRequest))
@@ -179,7 +179,7 @@ class OrderControllerTest {
         given(orderService.getOrderHistory(any(), any())).willReturn(orderHistoryResponse);
 
         mockMvc.perform(
-                    get("/order/scroll")
+                    get("/member/order/scroll")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", jwt)
                     .param("lastId", "1")
@@ -262,7 +262,7 @@ class OrderControllerTest {
         given(orderService.getOrderDetail(any(), any())).willReturn(orderDetailResponse);
 
         mockMvc.perform(
-                    get("/order/details")
+                    get("/member/order/details")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", jwt)
                     .param("orderId", "1")

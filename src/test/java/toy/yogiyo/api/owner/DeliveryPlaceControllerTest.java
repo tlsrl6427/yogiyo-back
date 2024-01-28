@@ -1,4 +1,4 @@
-package toy.yogiyo.api.member;
+package toy.yogiyo.api.owner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.member.DeliveryPlaceController;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
@@ -29,7 +28,6 @@ import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -83,7 +81,7 @@ class DeliveryPlaceControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/delivery-place/shop/{shopId}/add", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.post("/owner/delivery-place/shop/{shopId}/add", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(request)));
@@ -114,7 +112,7 @@ class DeliveryPlaceControllerTest {
         doNothing().when(deliveryPlaceService).delete(anyLong());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/delivery-place/{deliveryPlaceId}/delete", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/delivery-place/{deliveryPlaceId}/delete", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then
@@ -145,7 +143,7 @@ class DeliveryPlaceControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/delivery-place/{deliveryPlaceId}/delivery-price/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/delivery-place/{deliveryPlaceId}/delivery-price/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -183,7 +181,7 @@ class DeliveryPlaceControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/delivery-place/shop/{shopId}/delivery-price/update", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/delivery-place/shop/{shopId}/delivery-price/update", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -220,7 +218,7 @@ class DeliveryPlaceControllerTest {
                 .build());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/delivery-place/{deliveryPlaceId}/delivery-price", 1));
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/delivery-place/{deliveryPlaceId}/delivery-price", 1));
 
         // then
         result.andExpect(status().isOk())

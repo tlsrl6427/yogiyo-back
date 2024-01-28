@@ -83,7 +83,7 @@ class ReviewControllerTest {
         doNothing().when(reviewService).create(any(), any());
 
         mockMvc.perform(
-                    post("/review/write")
+                    post("/member/review/write")
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", jwt)
                     .content(objectMapper.writeValueAsString(reviewCreateRequest))
@@ -146,7 +146,7 @@ class ReviewControllerTest {
         given(reviewService.getMemberReviews(any(), any())).willReturn(memberReviewScrollResponse);
 
         mockMvc.perform(
-                get("/review/memberReview")
+                get("/member/review/memberReview")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", jwt)
                         .param("lastId", "6")

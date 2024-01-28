@@ -9,19 +9,19 @@ operation::member/join[snippets='http-request,http-response,request-fields,respo
 
 [[Member-default-login]]
 === 멤버 기본 로그인
-`POST /memberLogin`
+`POST /member/login`
 
 operation::default/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-social-login]]
 === 멤버 소셜 로그인
-`POST /memberLogin`
+`POST /member/login`
 
 operation::social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Member-logout]]
 === 멤버 로그아웃
-`POST /memberLogout/{memberId}`
+`POST /member/logout/{memberId}`
 
 operation::default/logout[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
 

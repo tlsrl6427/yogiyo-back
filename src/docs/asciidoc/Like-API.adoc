@@ -3,12 +3,12 @@
 
 [[Like-toggle]]
 === 찜하기(toggle)
-`POST /like/{shopid}`
+`POST /member/like/{shopid}`
 
 operation::like[snippets='http-request,http-response,request-headers,path-parameters']
 
 [[Like-scroll]]
 === 찜 목록 조회
-`GET /like/list`
+`GET /member/like/list`
 
 operation::like/list[snippets='http-request,http-response,request-headers,response-fields']

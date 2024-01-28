@@ -76,6 +76,7 @@ tasks.named('test') {
     filter {
         includeTestsMatching "toy.yogiyo.api.*"
         includeTestsMatching "toy.yogiyo.document.*"
+        includeTestsMatching "toy.yogiyo.common.login.LoginControllerTest"
     }
 }
 

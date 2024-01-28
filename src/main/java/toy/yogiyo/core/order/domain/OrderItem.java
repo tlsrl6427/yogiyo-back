@@ -3,6 +3,7 @@ package toy.yogiyo.core.order.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import toy.yogiyo.common.domain.BaseTimeEntity;
+import toy.yogiyo.core.menu.domain.Menu;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class OrderItem extends BaseTimeEntity {
     private int price;
     private int quantity;
     private String menuName;
+    private Long menuId;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,12 +33,13 @@ public class OrderItem extends BaseTimeEntity {
     private List<OrderItemOption> orderItemOptions = new ArrayList<>();
 
     @Builder
-    public OrderItem(Long id, int price, int quantity, String menuName, List<OrderItemOption> orderItemOptions) {
+    public OrderItem(Long id, int price, int quantity, String menuName, List<OrderItemOption> orderItemOptions, Long menuId) {
         this.id = id;
         this.price = price;
         this.quantity = quantity;
         this.menuName = menuName;
         this.orderItemOptions = orderItemOptions;
+        this.menuId = menuId;
     }
 
 

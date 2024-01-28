@@ -67,7 +67,7 @@ class LikeControllerTest {
     void toggleLike() throws Exception {
         doNothing().when(likeService).toggleLike(any(), any());
 
-        mockMvc.perform(post("/like/{shopId}", 1L)
+        mockMvc.perform(post("/member/like/{shopId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", jwt)
                 )
@@ -113,7 +113,7 @@ class LikeControllerTest {
 
         given(likeService.getLikes(any(), any())).willReturn(likeResponses);
 
-        mockMvc.perform(get("/like/scroll")
+        mockMvc.perform(get("/member/like/scroll")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("offset", "")
                         .param("limit", "2")
@@ -169,7 +169,7 @@ class LikeControllerTest {
 
         given(likeService.getLikes(any())).willReturn(likeResponse);
 
-        mockMvc.perform(get("/like/list")
+        mockMvc.perform(get("/member/like/list")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", jwt)
                 )

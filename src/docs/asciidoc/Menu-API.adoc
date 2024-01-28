@@ -1,0 +1,8 @@
+[[Menu-API]]
+== Menu API
+
+[[Menu]]
+=== 음식 상세 정보 조회
+`GET /member/menu/{menu id}`
+
+operation::member/menu/details[snippets='http-request,http-response,path-parameters,response-fields']

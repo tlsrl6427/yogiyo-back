@@ -3,18 +3,18 @@
 
 [[Order-create]]
 === 주문 생성
-`POST /order/create`
+`POST /member/order/create`
 
 operation::order/create[snippets='http-request,http-response,request-headers,request-fields']
 
 [[Order-scroll]]
 === 주문내역 조회
-`GET /order/scroll`
+`GET /member/order/scroll`
 
 operation::order/scroll[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
 
 [[Order-detail]]
 === 상세 주문내역 조회
-`GET /order/details`
+`GET /member/order/details`
 
 operation::order/details[snippets='http-request,http-response,request-headers,request-parameters,response-fields']

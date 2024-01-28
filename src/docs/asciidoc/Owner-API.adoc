@@ -9,19 +9,19 @@ operation::owner/join[snippets='http-request,http-response,request-fields,respon
 
 [[Owner-default-login]]
 === 점주 기본 로그인
-`POST /ownerLogin`
+`POST /owner/login`
 
 operation::owner/default/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Owner-social-login]]
 === 점주 소셜 로그인
-`POST /ownerLogin`
+`POST /owner/login`
 
 operation::owner/social/login[snippets='http-request,http-response,request-fields,response-fields,response-headers']
 
 [[Owner-logout]]
 === 점주 로그아웃
-`POST /ownerLogout/{ownerId}`
+`POST /owner/logout/{ownerId}`
 
 operation::owner/default/logout[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
 

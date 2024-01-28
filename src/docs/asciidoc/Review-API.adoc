@@ -3,13 +3,13 @@
 
 [[Review-create]]
 === 리뷰 생성
-`POST /review/write`
+`POST /member/review/write`
 
 operation::review/write[snippets='http-request,http-response,request-headers,request-fields']
 
 [[Review-memberReview]]
 === 멤버 리뷰 조회
-`GET /review/memberReview`
+`GET /member/review/memberReview`
 
 operation::review/memberReview[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
 

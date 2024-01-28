@@ -109,7 +109,7 @@ class ReviewManagementControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/management/review/shop/{shopId}", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/review/shop/{shopId}", 1)
                 .param("sort", condition.getSort().name())
                 .param("startDate", condition.getStartDate().toString())
                 .param("endDate", condition.getEndDate().toString())
@@ -162,7 +162,7 @@ class ReviewManagementControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/management/review/{reviewId}/reply", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/review/{reviewId}/reply", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -190,7 +190,7 @@ class ReviewManagementControllerTest {
         doNothing().when(reviewManagementService).deleteReply(anyLong());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/management/review/{reviewId}/reply", 1)
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/review/{reviewId}/reply", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then

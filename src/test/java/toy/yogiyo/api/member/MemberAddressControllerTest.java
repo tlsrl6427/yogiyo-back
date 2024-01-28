@@ -84,7 +84,7 @@ class MemberAddressControllerTest {
 
         doNothing().when(memberAddressService).register(any(), any());
 
-        mockMvc.perform(post("/address/register")
+        mockMvc.perform(post("/member/address/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", jwt)
                 .content(objectMapper.writeValueAsString(request))
@@ -143,7 +143,7 @@ class MemberAddressControllerTest {
 
         given(memberAddressService.getAddresses(any())).willReturn(response);
 
-        mockMvc.perform(get("/address/view")
+        mockMvc.perform(get("/member/address/view")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", jwt)
                 )
@@ -175,7 +175,7 @@ class MemberAddressControllerTest {
 
         doNothing().when(memberAddressService).delete(any(), any());
 
-        mockMvc.perform(delete("/address/{memberAddressId}", 1L)
+        mockMvc.perform(delete("/member/address/{memberAddressId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", jwt))
                 .andExpect(status().isNoContent())
@@ -197,7 +197,7 @@ class MemberAddressControllerTest {
     void setHere() throws Exception {
         doNothing().when(memberAddressService).setHere(any(), any());
 
-        mockMvc.perform(patch("/address/here/{memberAddressId}", 1L)
+        mockMvc.perform(patch("/member/address/here/{memberAddressId}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", jwt))
                 .andExpect(status().isNoContent())

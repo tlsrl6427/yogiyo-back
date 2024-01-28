@@ -7,10 +7,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@WithSecurityContext(factory = WithLoginOwnerSecurityContextFactory.class)
-public @interface WithLoginOwner {
+@WithSecurityContext(factory = WithLoginMemberSecurityContextFactory.class)
+public @interface WithLoginMember {
     long id() default 1L;
-    String nickname() default "owner1";
-    String email() default "owner1@test.com";
+    String nickname() default "member1";
+    String email() default "member1@test.com";
     ProviderType providerType() default ProviderType.DEFAULT;
 }

@@ -14,7 +14,7 @@ import toy.yogiyo.core.review.service.ReviewManagementService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/management/review")
+@RequestMapping("/owner/review")
 public class ReviewManagementController {
 
     private final ReviewQueryRepository reviewQueryRepository;

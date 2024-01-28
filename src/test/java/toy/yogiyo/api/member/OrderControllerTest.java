@@ -76,6 +76,7 @@ class OrderControllerTest {
                             OrderItem.builder()
                                     .price(12000)
                                     .quantity(1)
+                                    .menuId(2L)
                                     .menuName("후라이드치킨")
                                     .orderItemOptions(
                                             List.of(
@@ -127,6 +128,7 @@ class OrderControllerTest {
                                         fieldWithPath("orderItems[].id").ignored(),
                                         fieldWithPath("orderItems[].createdAt").ignored(),
                                         fieldWithPath("orderItems[].updatedAt").ignored(),
+                                        fieldWithPath("orderItems[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
                                         fieldWithPath("orderItems[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
                                         fieldWithPath("orderItems[].price").type(JsonFieldType.NUMBER).description("가격"),
                                         fieldWithPath("orderItems[].quantity").type(JsonFieldType.NUMBER).description("개수"),
@@ -238,6 +240,7 @@ class OrderControllerTest {
                                         .id(1L)
                                         .price(12000)
                                         .quantity(1)
+                                        .menuId(2L)
                                         .menuName("후라이드치킨")
                                         .orderItemOptions(
                                                 List.of(
@@ -290,6 +293,7 @@ class OrderControllerTest {
                                     fieldWithPath("orderItems[].updatedAt").ignored(),
                                     fieldWithPath("orderItems[].price").type(JsonFieldType.NUMBER).description("가격"),
                                     fieldWithPath("orderItems[].quantity").type(JsonFieldType.NUMBER).description("개수"),
+                                    fieldWithPath("orderItems[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
                                     fieldWithPath("orderItems[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     //fieldWithPath("orderItems[].order").ignored(),
 

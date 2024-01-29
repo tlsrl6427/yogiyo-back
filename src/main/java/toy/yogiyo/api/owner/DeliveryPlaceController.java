@@ -20,12 +20,14 @@ public class DeliveryPlaceController {
 
 
     @PostMapping("/shop/{shopId}/add")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
-    public void add(@PathVariable Long shopId,
+    public DeliveryPlaceAddResponse add(@PathVariable Long shopId,
                     @Validated @RequestBody DeliveryPlaceAddRequest request) {
 
-        deliveryPlaceService.add(shopId, request);
+        Long deliveryPlaceId = deliveryPlaceService.add(shopId, request);
+        return DeliveryPlaceAddResponse.builder()
+                .id(deliveryPlaceId)
+                .build();
     }
 
     @GetMapping("/{deliveryPlaceId}")

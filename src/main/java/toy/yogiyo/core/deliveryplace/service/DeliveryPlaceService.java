@@ -23,7 +23,7 @@ public class DeliveryPlaceService {
 
 
     @Transactional
-    public void add(Long shopId, DeliveryPlaceAddRequest request) {
+    public Long add(Long shopId, DeliveryPlaceAddRequest request) {
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
 
@@ -31,6 +31,8 @@ public class DeliveryPlaceService {
         deliveryPlace.setShop(shop);
 
         deliveryPlaceRepository.save(deliveryPlace);
+
+        return deliveryPlace.getId();
     }
 
     @Transactional(readOnly = true)

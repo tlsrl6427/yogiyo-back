@@ -1,14 +1,11 @@
 package toy.yogiyo.common.dto.scroll;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
 @SuperBuilder
+@NoArgsConstructor
 @AllArgsConstructor
 public class BaseScrollRequest {
 

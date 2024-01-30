@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import toy.yogiyo.common.config.TestQuerydslConfiguration;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.review.domain.Review;
+import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 
 import javax.persistence.EntityManager;
@@ -50,10 +51,10 @@ class ReviewQueryRepositoryTest {
                 .build();
 
         // when
-        Scroll<Review> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
+        Scroll<ReviewManagementResponse> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
 
         // then
-        List<Review> content = reviewScroll.getContent();
+        List<ReviewManagementResponse> content = reviewScroll.getContent();
         for (int i = 0; i < content.size()-1; i++) {
             assertThat(content.get(i).getCreatedAt().compareTo(content.get(i+1).getCreatedAt()))
                     .isGreaterThanOrEqualTo(0);
@@ -69,10 +70,10 @@ class ReviewQueryRepositoryTest {
                 .build();
 
         // when
-        Scroll<Review> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
+        Scroll<ReviewManagementResponse> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
 
         // then
-        List<Review> content = reviewScroll.getContent();
+        List<ReviewManagementResponse> content = reviewScroll.getContent();
         for (int i = 0; i < content.size()-1; i++) {
             assertThat(content.get(i).getTasteScore())
                     .isGreaterThanOrEqualTo(content.get(i+1).getTasteScore());
@@ -88,10 +89,10 @@ class ReviewQueryRepositoryTest {
                 .build();
 
         // when
-        Scroll<Review> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
+        Scroll<ReviewManagementResponse> reviewScroll = reviewQueryRepository.shopReviewScroll(1L, condition);
 
         // then
-        List<Review> content = reviewScroll.getContent();
+        List<ReviewManagementResponse> content = reviewScroll.getContent();
         for (int i = 0; i < content.size()-1; i++) {
             assertThat(content.get(i).getTasteScore())
                     .isLessThanOrEqualTo(content.get(i+1).getTasteScore());

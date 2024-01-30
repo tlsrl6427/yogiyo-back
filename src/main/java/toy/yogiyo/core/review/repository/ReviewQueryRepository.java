@@ -114,7 +114,7 @@ public class ReviewQueryRepository {
 
         switch (sort) {
             case LATEST:
-                return new OrderSpecifier<>(Order.DESC, review.createdAt);
+                return new OrderSpecifier<>(Order.DESC, review.id);
             case RATING_HIGH:
                 return new OrderSpecifier<>(Order.DESC, review.totalScore);
             case RATING_LOW:

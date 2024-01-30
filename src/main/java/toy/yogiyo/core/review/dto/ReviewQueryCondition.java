@@ -8,6 +8,7 @@ import toy.yogiyo.common.dto.scroll.BaseScrollRequest;
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

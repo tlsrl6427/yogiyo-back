@@ -87,9 +87,14 @@ class ReviewManagementControllerTest {
                     .quantityScore(BigDecimal.valueOf(5.0))
                     .totalScore(BigDecimal.valueOf(5.0))
                     .content("양도 많고 감자도 잘 튀겨졌어요~~")
-                    .memberName("ab***")
+                    .memberName("사용자 1")
                     .createdAt(LocalDateTime.of(2023, 10, 21, 0, 0, 0))
                     .reviewImages(List.of("images/image1.png","images/image2.png","images/image3.png"))
+                    .menus(List.of(
+                            new ReviewManagementResponse.MenuDto("메뉴 1", 1),
+                            new ReviewManagementResponse.MenuDto("메뉴 2", 1),
+                            new ReviewManagementResponse.MenuDto("메뉴 3", 2)
+                    ))
                     .build();
             response.add(review);
         }
@@ -144,7 +149,9 @@ class ReviewManagementControllerTest {
                                 fieldWithPath("content[].ownerReply").type(JsonFieldType.STRING).description("사장님 답변 내용").optional(),
                                 fieldWithPath("content[].memberName").type(JsonFieldType.STRING).description("리뷰 작성자 명"),
                                 fieldWithPath("content[].createdAt").type(JsonFieldType.STRING).description("리뷰 작성 날짜"),
-                                fieldWithPath("content[].reviewImages").type(JsonFieldType.ARRAY).description("리뷰 사진 Array")
+                                fieldWithPath("content[].reviewImages").type(JsonFieldType.ARRAY).description("리뷰 사진 Array"),
+                                fieldWithPath("content[].menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                fieldWithPath("content[].menus[].quantity").type(JsonFieldType.NUMBER).description("메뉴 개수")
                         )
                 ));
     }

@@ -19,7 +19,10 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = {
         @Index(name = "idx_member_id", columnList = "member_id"),
-        @Index(name = "idx_order_id", columnList = "order_id")
+        @Index(name = "idx_order_id", columnList = "order_id"),
+        @Index(name = "idx_created_at", columnList = "createdAt"),
+        @Index(name = "idx_shop_id", columnList = "shopId"),
+        @Index(name = "idx_total_score", columnList = "totalScore")
 })
 public class Review extends BaseTimeEntity {
 

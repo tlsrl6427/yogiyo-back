@@ -36,7 +36,7 @@ public class ShopScrollListRequest {
     private Long size;
 
     public enum ShopCategory{
-        Chicken("치킨"), Korean("한식"), Chinese("중국집"), Burger("버거"), Pizza("피자/양식"), School("분식"),
+        ALL("전체"), Chicken("치킨"), Korean("한식"), Chinese("중국집"), Burger("버거"), Pizza("피자/양식"), School("분식"),
         Bossam("족발/보쌈"), Cafe("카페/디저트"), Japanese("일식/돈까스"), Soup("찜/탕"), Sushi("회/초밥"),
         Meat("고기/구이"), Midnight("야식"), Asian("아시안"), Sandwich("샌드위치"), Salad("샐러드"),
         Lunch("도시락/죽"), Franchise("프랜차이즈"), Single("1인분주문"), New("신규맛집");

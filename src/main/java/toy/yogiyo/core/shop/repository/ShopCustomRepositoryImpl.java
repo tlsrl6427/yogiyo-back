@@ -131,7 +131,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
         OrderSpecifier<?> orderSpecifier = getOrderSpecifier(request);
         BooleanExpression cursorLt = getCursorLt(request);
 
-        return jpaQueryFactory.select(Projections.fields(ShopScrollResponse.class,
+        JPAQuery<ShopScrollResponse> query = jpaQueryFactory.select(Projections.fields(ShopScrollResponse.class,
                         shop.id.as("shopId"),
                         shop.name.as("shopName"),
                         shop.totalScore,
@@ -144,16 +144,22 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                         shop.icon
                 ))
                 .from(shop)
-                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id))
-                .join(categoryShop).on(categoryShop.shop.id.eq(shop.id))
-                .join(category).on(categoryShop.category.id.eq(category.id))
+                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id));
+
+        if(!request.getCategory().getCategoryKoreanName().equals("전체")
+                && !request.getCategory().getCategoryKoreanName().equals("신규맛집")){
+            query.join(categoryShop).on(categoryShop.shop.id.eq(shop.id))
+                    .join(category).on(categoryShop.category.id.eq(category.id));
+        }
+
+        return query
                 .where(
-                    codeEq(request.getCode()),
-                    categoryNameEq(request.getCategory().getCategoryKoreanName()),
-                    deliveryPriceLt(request.getDeliveryPrice()),
-                    leastOrderPriceLt(request.getLeastOrderPrice()),
-                    isNewShop(request.getCategory().getCategoryKoreanName()),
-                    cursorLt
+                        codeEq(request.getCode()),
+                        categoryNameEq(request.getCategory().getCategoryKoreanName()),
+                        deliveryPriceLt(request.getDeliveryPrice()),
+                        leastOrderPriceLt(request.getLeastOrderPrice()),
+                        isNewShop(request.getCategory().getCategoryKoreanName()),
+                        cursorLt
                 )
                 .orderBy(orderSpecifier)
                 .limit(request.getSize() == null ? 11L : request.getSize() + 1)
@@ -253,7 +259,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
 
     private BooleanExpression categoryNameEq(String categoryName){
         if(categoryName == null) return null;
-        return categoryName.isEmpty() | categoryName.equals("신규맛집")  ? null : category.name.eq(categoryName);
+        return categoryName.equals("전체") | categoryName.equals("신규맛집")  ? null : category.name.eq(categoryName);
     }
 
     private static BooleanExpression lastIdLt(Long lastId) {

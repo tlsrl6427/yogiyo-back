@@ -24,6 +24,7 @@ import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.domain.ReviewImage;
 import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
 import toy.yogiyo.core.review.service.ReviewManagementService;
@@ -77,27 +78,28 @@ class ReviewManagementControllerTest {
     @DisplayName("리뷰 확인")
     void getShopReviews() throws Exception {
         // given
-        List<Review> reviews = new ArrayList<>();
+        List<ReviewManagementResponse> response = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            Review review = Review.builder()
+            ReviewManagementResponse review = ReviewManagementResponse.builder()
                     .id((long) i)
                     .tasteScore(BigDecimal.valueOf(5.0))
                     .deliveryScore(BigDecimal.valueOf(5.0))
                     .quantityScore(BigDecimal.valueOf(5.0))
                     .totalScore(BigDecimal.valueOf(5.0))
                     .content("양도 많고 감자도 잘 튀겨졌어요~~")
-                    .member(Member.builder().nickname("abcde").build())
-                    .reviewImages(List.of(
-                            new ReviewImage(1L, "image.png", null),
-                            new ReviewImage(2L, "image.png", null),
-                            new ReviewImage(3L, "image.png", null)
+                    .memberName("사용자 1")
+                    .createdAt(LocalDateTime.of(2023, 10, 21, 0, 0, 0))
+                    .reviewImages(List.of("images/image1.png","images/image2.png","images/image3.png"))
+                    .menus(List.of(
+                            new ReviewManagementResponse.MenuDto("메뉴 1", 1),
+                            new ReviewManagementResponse.MenuDto("메뉴 2", 1),
+                            new ReviewManagementResponse.MenuDto("메뉴 3", 2)
                     ))
                     .build();
-            review.setCreatedAt(LocalDateTime.of(2023, 10, 21, 0, 0, 0));
-            reviews.add(review);
+            response.add(review);
         }
         given(reviewQueryRepository.shopReviewScroll(anyLong(), any()))
-                .willReturn(new Scroll<>(reviews, 10, true));
+                .willReturn(new Scroll<>(response, 10, true));
 
         ReviewQueryCondition condition = ReviewQueryCondition.builder()
                 .sort(ReviewQueryCondition.Sort.LATEST)
@@ -146,8 +148,10 @@ class ReviewManagementControllerTest {
                                 fieldWithPath("content[].content").type(JsonFieldType.STRING).description("리뷰 내용"),
                                 fieldWithPath("content[].ownerReply").type(JsonFieldType.STRING).description("사장님 답변 내용").optional(),
                                 fieldWithPath("content[].memberName").type(JsonFieldType.STRING).description("리뷰 작성자 명"),
-                                fieldWithPath("content[].date").type(JsonFieldType.STRING).description("리뷰 작성 날짜"),
-                                fieldWithPath("content[].reviewImages").type(JsonFieldType.ARRAY).description("리뷰 사진 Array")
+                                fieldWithPath("content[].createdAt").type(JsonFieldType.STRING).description("리뷰 작성 날짜"),
+                                fieldWithPath("content[].reviewImages").type(JsonFieldType.ARRAY).description("리뷰 사진 Array"),
+                                fieldWithPath("content[].menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                fieldWithPath("content[].menus[].quantity").type(JsonFieldType.NUMBER).description("메뉴 개수")
                         )
                 ));
     }

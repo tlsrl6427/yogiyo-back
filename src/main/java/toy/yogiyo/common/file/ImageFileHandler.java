@@ -42,7 +42,7 @@ public class ImageFileHandler {
     }
 
     private void validationFile(MultipartFile multipartFile) {
-        if (multipartFile.isEmpty()) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
             throw new FileIOException(ErrorCode.FILE_EMPTY);
         }
 

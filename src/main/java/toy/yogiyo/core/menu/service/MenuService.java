@@ -32,7 +32,7 @@ public class MenuService {
         Integer maxOrder = menuRepository.findMaxOrder(menu.getMenuGroup().getId());
         menu.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
-        if (!picture.isEmpty()) {
+        if (picture != null && !picture.isEmpty()) {
             menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
         }
 
@@ -54,11 +54,14 @@ public class MenuService {
     @Transactional
     public void update(Menu updateParam, MultipartFile picture) {
         Menu menu = get(updateParam.getId());
-        if(hasPicture(menu.getPicture()) && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
-            throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
-        }
 
-        menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+        if(picture != null) {
+            if(hasPicture(menu.getPicture()) && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
+                throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
+            }
+
+            menu.updatePicture(ImageFileUtil.getFilePath(imageFileHandler.store(picture)));
+        }
         menu.updateInfo(updateParam);
     }
 
@@ -66,7 +69,7 @@ public class MenuService {
     public void delete(Menu param) {
         Menu menu = get(param.getId());
 
-        if(!imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
+        if(hasPicture(menu.getPicture()) && !imageFileHandler.remove(ImageFileUtil.extractFilename(menu.getPicture()))){
             throw new FileIOException(ErrorCode.FILE_NOT_REMOVED);
         }
 

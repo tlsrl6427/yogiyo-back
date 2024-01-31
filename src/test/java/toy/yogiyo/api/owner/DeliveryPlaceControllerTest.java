@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -73,7 +75,7 @@ class DeliveryPlaceControllerTest {
     @DisplayName("배달 가능 지역 추가")
     void add() throws Exception {
         // given
-        doNothing().when(deliveryPlaceService).add(anyLong(), any());
+        given(deliveryPlaceService.add(anyLong(), any())).willReturn(1L);
         DeliveryPlaceAddRequest request = DeliveryPlaceAddRequest.builder()
                 .code("1171010200")
                 .name("서울특별시 송파구 신천동")
@@ -88,7 +90,7 @@ class DeliveryPlaceControllerTest {
 
         // then
         ConstrainedFields fields = new ConstrainedFields(DeliveryPlaceAddRequest.class);
-        result.andExpect(status().isNoContent())
+        result.andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("delivery-place/add",
                         requestHeaders(
@@ -101,6 +103,9 @@ class DeliveryPlaceControllerTest {
                                 fields.withPath("code").type(JsonFieldType.STRING).description("법정동 코드"),
                                 fields.withPath("name").type(JsonFieldType.STRING).description("법정동명"),
                                 fields.withPath("deliveryTime").type(JsonFieldType.NUMBER).description("예상 배달 시간")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("배달 가능 지역 ID")
                         )
                 ));
     }

@@ -2,6 +2,7 @@ package toy.yogiyo.core.menu.domain;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = @Index(name = "idx_menu_group_id", columnList = "menu_group_id"))
+@DynamicInsert
 public class Menu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

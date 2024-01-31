@@ -24,8 +24,7 @@ public class ReviewManagementController {
     public Scroll<ReviewManagementResponse> getShopReviews(@PathVariable Long shopId,
                                                            @ModelAttribute ReviewQueryCondition condition) {
 
-        Scroll<Review> reviews = reviewQueryRepository.shopReviewScroll(shopId, condition);
-        return reviews.map(ReviewManagementResponse::from);
+        return reviewQueryRepository.shopReviewScroll(shopId, condition);
     }
 
     @PatchMapping("/{reviewId}/reply")

@@ -14,7 +14,7 @@ public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
     List<MenuGroup> findAllByShopId(@Param("shopId") Long shopId);
 
     @Query("select distinct mg from MenuGroup mg" +
-            " join fetch mg.menus m" +
+            " left join fetch mg.menus m" +
             " where mg.shop.id = :shopId" +
             " order by mg.position, m.position")
     List<MenuGroup> findAllWithMenuByShopId(@Param("shopId") Long shopId);

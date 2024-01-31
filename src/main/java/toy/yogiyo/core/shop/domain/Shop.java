@@ -1,6 +1,8 @@
 package toy.yogiyo.core.shop.domain;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
@@ -19,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = @Index(name = "idx_owner_id", columnList = "owner_id"))
+@DynamicInsert
 public class Shop extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

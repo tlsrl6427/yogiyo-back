@@ -3,6 +3,7 @@ package toy.yogiyo.api.owner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.review.domain.Review;
@@ -22,7 +23,7 @@ public class ReviewManagementController {
 
     @GetMapping("/shop/{shopId}")
     public Scroll<ReviewManagementResponse> getShopReviews(@PathVariable Long shopId,
-                                                           @ModelAttribute ReviewQueryCondition condition) {
+                                                           @Validated @ModelAttribute ReviewQueryCondition condition) {
 
         return reviewQueryRepository.shopReviewScroll(shopId, condition);
     }

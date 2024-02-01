@@ -1,10 +1,7 @@
 package toy.yogiyo.core.shop.dto.scroll;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-import toy.yogiyo.common.dto.scroll.BaseScrollRequest;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;

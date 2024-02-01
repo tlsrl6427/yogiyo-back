@@ -1,10 +1,12 @@
 package toy.yogiyo.core.review.repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,7 @@ import toy.yogiyo.common.util.OrderByNull;
 import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,9 +47,9 @@ public class ReviewQueryRepository {
                 .join(review.member, member)
                 .where(review.shopId.eq(shopId),
                         dateBetween(condition.getStartDate(), condition.getEndDate()),
-                        status(condition.getStatus()))
+                        status(condition.getStatus()),
+                        cursor(condition))
                 .orderBy(sortBy(condition.getSort()))
-                .offset(condition.getOffset())
                 .limit(condition.getLimit() + 1)
                 .fetch();
 
@@ -87,7 +90,7 @@ public class ReviewQueryRepository {
 
         }
 
-        return new Scroll<>(response, condition.getOffset() + response.size(), hasNext);
+        return new Scroll<>(response, getCursor(response, condition), getSubCursor(response, condition), hasNext);
     }
 
     private BooleanExpression dateBetween(LocalDate startDate, LocalDate endDate) {
@@ -121,5 +124,52 @@ public class ReviewQueryRepository {
                 return new OrderSpecifier<>(Order.ASC, review.totalScore);
         }
         return OrderByNull.DEFAULT;
+    }
+
+    private BooleanExpression cursor(ReviewQueryCondition condition) {
+        if(condition.getSort() == null || condition.getCursor() == null) return null;
+
+        switch (condition.getSort()) {
+            case LATEST:
+                return review.id.lt(Long.parseLong((String) condition.getCursor()));
+            case RATING_HIGH:
+                return review.totalScore.eq(new BigDecimal((String) condition.getCursor())).and(review.id.lt(Long.parseLong((String) condition.getSubCursor())))
+                        .or(review.totalScore.lt(new BigDecimal((String) condition.getCursor())));
+            case RATING_LOW:
+                return review.totalScore.eq(new BigDecimal((String) condition.getCursor())).and(review.id.gt(Long.parseLong((String) condition.getSubCursor())))
+                        .or(review.totalScore.gt(new BigDecimal((String) condition.getCursor())));
+        }
+
+        return null;
+    }
+
+    private Object getCursor(List<ReviewManagementResponse> response, ReviewQueryCondition condition) {
+        if(response.isEmpty()) return null;
+        ReviewManagementResponse last = response.get(response.size() - 1);
+
+        switch (condition.getSort()) {
+            case LATEST:
+                return last.getId();
+            case RATING_HIGH:
+            case RATING_LOW:
+                return last.getTotalScore();
+        }
+
+        return null;
+    }
+
+    private Object getSubCursor(List<ReviewManagementResponse> response, ReviewQueryCondition condition) {
+        if(response.isEmpty()) return null;
+        ReviewManagementResponse last = response.get(response.size() - 1);
+
+        switch (condition.getSort()) {
+            case LATEST:
+                return null;
+            case RATING_HIGH:
+            case RATING_LOW:
+                return last.getId();
+        }
+
+        return null;
     }
 }

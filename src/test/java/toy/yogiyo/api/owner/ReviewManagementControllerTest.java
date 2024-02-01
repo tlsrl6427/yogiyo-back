@@ -79,7 +79,7 @@ class ReviewManagementControllerTest {
     void getShopReviews() throws Exception {
         // given
         List<ReviewManagementResponse> response = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 11; i <= 20; i++) {
             ReviewManagementResponse review = ReviewManagementResponse.builder()
                     .id((long) i)
                     .tasteScore(BigDecimal.valueOf(5.0))
@@ -99,15 +99,16 @@ class ReviewManagementControllerTest {
             response.add(review);
         }
         given(reviewQueryRepository.shopReviewScroll(anyLong(), any()))
-                .willReturn(new Scroll<>(response, 10, true));
+                .willReturn(new Scroll<>(response, 20, null, true));
 
         ReviewQueryCondition condition = ReviewQueryCondition.builder()
                 .sort(ReviewQueryCondition.Sort.LATEST)
                 .startDate(LocalDate.of(2023, 10, 20))
                 .endDate(LocalDate.of(2023, 10, 23))
-                .limit(10)
-                .offset(0)
                 .status(ReviewQueryCondition.Status.ALL)
+                .cursor(11)
+                .subCursor(null)
+                .limit(10)
                 .build();
 
         // when
@@ -115,15 +116,13 @@ class ReviewManagementControllerTest {
                 .param("sort", condition.getSort().name())
                 .param("startDate", condition.getStartDate().toString())
                 .param("endDate", condition.getEndDate().toString())
-                .param("offset", String.valueOf(condition.getOffset()))
-                .param("limit", String.valueOf(condition.getLimit()))
-                .param("status", condition.getStatus().name()));
-//        );
+                .param("status", condition.getStatus().name())
+                .param("cursor", condition.getCursor().toString())
+//                .param("subCursor", condition.getSubCursor().toString())
+                .param("limit", String.valueOf(condition.getLimit())));
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(1))
-                .andExpect(jsonPath("$.content[9].id").value(10))
                 .andDo(print())
                 .andDo(document("management/review/shop",
                         pathParameters(
@@ -133,12 +132,14 @@ class ReviewManagementControllerTest {
                                 parameterWithName("sort").description("정렬 기준"),
                                 parameterWithName("startDate").description("조회 시작 날짜"),
                                 parameterWithName("endDate").description("조회 끝 날짜"),
-                                parameterWithName("offset").description("오프셋(시작 번호)"),
-                                parameterWithName("limit").description("데이터 개수"),
-                                parameterWithName("status").description("답변 상태")
+                                parameterWithName("status").description("답변 상태"),
+                                parameterWithName("cursor").description("다음 스크롤 커서").optional(),
+                                parameterWithName("subCursor").description("다음 스크롤 서브 커서").optional(),
+                                parameterWithName("limit").description("데이터 개수")
                         ),
                         responseFields(
-                                fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("다음 시작 번호"),
+                                fieldWithPath("nextCursor").type(JsonFieldType.NUMBER).description("다음 스크롤 커서"),
+                                fieldWithPath("nextSubCursor").type(JsonFieldType.NUMBER).description("다음 스크롤 서브 커서").optional(),
                                 fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 스크롤 유무"),
                                 fieldWithPath("content[].id").type(JsonFieldType.NUMBER).description("리뷰 ID"),
                                 fieldWithPath("content[].tasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),

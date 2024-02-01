@@ -3,8 +3,9 @@ package toy.yogiyo.core.review.dto;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
-import toy.yogiyo.common.dto.scroll.BaseScrollRequest;
+import toy.yogiyo.common.dto.scroll.ScrollRequest;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Getter
@@ -12,12 +13,14 @@ import java.time.LocalDate;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewQueryCondition extends BaseScrollRequest {
+public class ReviewQueryCondition extends ScrollRequest {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
+
+    @NotNull
     private Sort sort;
     private Status status;
 

@@ -86,65 +86,6 @@ class LikeControllerTest {
         verify(likeService).toggleLike(any(), any());
     }
 
-    /*@DisplayName("찜 목록 조회-scroll")
-    @Test
-    void getLikesScroll() throws Exception {
-        LikeScrollRequest request = new LikeScrollRequest(null, 2L);
-
-        List<LikeResponse> likeResponseList = List.of(
-                LikeResponse.builder()
-                        .likeId(29L)
-                        .shopId(6L)
-                        .shopName("BHC 행당점")
-                        .shopImg("image1.jpg")
-                        .score(BigDecimal.valueOf(4.7))
-                        .build(),
-                LikeResponse.builder()
-                        .likeId(4L)
-                        .shopId(3L)
-                        .shopName("맥도날드")
-                        .shopImg("image2.jpg")
-                        .score(BigDecimal.valueOf(3.6))
-                        .build()
-
-        );
-        Scroll<LikeResponse> likeResponses = new Scroll<>(likeResponseList, 3L, false);
-
-
-        given(likeService.getLikes(any(), any())).willReturn(likeResponses);
-
-        mockMvc.perform(get("/member/like/scroll")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("offset", "")
-                        .param("limit", "2")
-                        .header("Authorization", jwt)
-                )
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(
-                        document("like/scroll",
-                                requestHeaders(
-                                        headerWithName("Authorization").description("Access Token")
-                                ),
-                                requestParameters(
-                                        parameterWithName("offset").description("스크롤 시작 ID"),
-                                        parameterWithName("limit").description("스크롤 개수")
-                                ),
-                                responseFields(
-                                        fieldWithPath("content[].likeId").type(JsonFieldType.NUMBER).description("찜 ID"),
-                                        fieldWithPath("content[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
-                                        fieldWithPath("content[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
-                                        fieldWithPath("content[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 이미지 URL"),
-                                        fieldWithPath("content[].score").type(JsonFieldType.NUMBER).description("총 별점"),
-                                        fieldWithPath("nextOffset").type(JsonFieldType.NUMBER).description("마지막 스크롤 ID"),
-                                        fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
-                                )
-                        )
-                );
-
-        verify(likeService).getLikes(any(), any());
-    }*/
-
     @DisplayName("찜 목록 조회-전체 리스트 조회")
     @Test
     void getLikes() throws Exception {

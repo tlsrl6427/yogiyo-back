@@ -1,17 +1,16 @@
 package toy.yogiyo.core.review.repository;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.util.OrderByNull;
+import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
 import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 
@@ -30,6 +29,20 @@ import static toy.yogiyo.core.review.domain.QReviewImage.reviewImage;
 public class ReviewQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    public ReviewGetSummaryResponse findReviewSummary(Long shopId) {
+        return queryFactory.select(Projections.constructor(ReviewGetSummaryResponse.class,
+                        review.id.count(),
+                        review.ownerReply.count(),
+                        review.totalScore.avg(),
+                        review.tasteScore.avg(),
+                        review.quantityScore.avg(),
+                        review.deliveryScore.avg()
+                ))
+                .from(review)
+                .where(review.shopId.eq(shopId))
+                .fetchOne();
+    }
 
     public Scroll<ReviewManagementResponse> shopReviewScroll(Long shopId, ReviewQueryCondition condition) {
         // 리뷰 조회

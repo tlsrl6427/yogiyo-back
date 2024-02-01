@@ -6,8 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
 import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
@@ -26,6 +26,11 @@ public class ReviewManagementController {
                                                            @Validated @ModelAttribute ReviewQueryCondition condition) {
 
         return reviewQueryRepository.shopReviewScroll(shopId, condition);
+    }
+
+    @GetMapping("/shop/{shopId}/summary")
+    public ReviewGetSummaryResponse getSummary(@PathVariable Long shopId) {
+        return reviewQueryRepository.findReviewSummary(shopId);
     }
 
     @PatchMapping("/{reviewId}/reply")

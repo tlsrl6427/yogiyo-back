@@ -12,18 +12,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.owner.ReviewManagementController;
 import toy.yogiyo.common.dto.scroll.Scroll;
-import toy.yogiyo.core.member.domain.Member;
-import toy.yogiyo.core.review.domain.Review;
-import toy.yogiyo.core.review.domain.ReviewImage;
 import toy.yogiyo.core.review.dto.ReplyRequest;
+import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
 import toy.yogiyo.core.review.dto.ReviewManagementResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
@@ -39,6 +35,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -112,7 +109,7 @@ class ReviewManagementControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/review/shop/{shopId}", 1)
+        ResultActions result = mockMvc.perform(get("/owner/review/shop/{shopId}", 1)
                 .param("sort", condition.getSort().name())
                 .param("startDate", condition.getStartDate().toString())
                 .param("endDate", condition.getEndDate().toString())
@@ -158,6 +155,42 @@ class ReviewManagementControllerTest {
     }
 
     @Test
+    @DisplayName("리뷰 개수 확인")
+    void getReviewCount() throws Exception {
+        // given
+        given(reviewQueryRepository.findReviewSummary(anyLong())).willReturn(
+                ReviewGetSummaryResponse.builder()
+                        .totalCount(3L)
+                        .totalNoReplyCount(2L)
+                        .avgTotalScore(2.4)
+                        .avgTasteScore(2.1)
+                        .avgQuantityScore(2.3)
+                        .avgDeliveryScore(2.8)
+                        .build()
+        );
+
+        // when
+        ResultActions result = mockMvc.perform(get("/owner/review/shop/{shopId}/summary", 3));
+
+        // then
+        result.andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("management/review/summary",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("totalCount").type(JsonFieldType.NUMBER).description("총 리뷰 수"),
+                                fieldWithPath("totalNoReplyCount").type(JsonFieldType.NUMBER).description("미답변 리뷰 수"),
+                                fieldWithPath("avgTotalScore").type(JsonFieldType.NUMBER).description("총 점수"),
+                                fieldWithPath("avgTasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),
+                                fieldWithPath("avgQuantityScore").type(JsonFieldType.NUMBER).description("양 점수"),
+                                fieldWithPath("avgDeliveryScore").type(JsonFieldType.NUMBER).description("배달 점수")
+                        )
+                ));
+    }
+
+    @Test
     @DisplayName("답변")
     void reply() throws Exception {
         // given
@@ -167,7 +200,7 @@ class ReviewManagementControllerTest {
                 .build();
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/review/{reviewId}/reply", 1)
+        ResultActions result = mockMvc.perform(patch("/owner/review/{reviewId}/reply", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
@@ -195,7 +228,7 @@ class ReviewManagementControllerTest {
         doNothing().when(reviewManagementService).deleteReply(anyLong());
 
         // when
-        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.delete("/owner/review/{reviewId}/reply", 1)
+        ResultActions result = mockMvc.perform(delete("/owner/review/{reviewId}/reply", 1)
                 .header(HttpHeaders.AUTHORIZATION, jwt));
 
         // then

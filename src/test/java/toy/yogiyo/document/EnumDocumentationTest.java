@@ -66,6 +66,10 @@ public class EnumDocumentationTest {
                 customResponseFields("enum-response", beneathPath("optionType").withSubsectionId("optionType"),
                         attributes(key("title").value("옵션 유형")),
                         enumConvertFieldDescriptor(response.getOptionType())
+                ),
+                customResponseFields("enum-response", beneathPath("visible").withSubsectionId("visible"),
+                        attributes(key("title").value("노출 유형")),
+                        enumConvertFieldDescriptor(response.getVisible())
                 )
         ));
     }

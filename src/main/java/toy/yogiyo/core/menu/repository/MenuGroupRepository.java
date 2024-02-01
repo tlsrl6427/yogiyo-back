@@ -16,6 +16,8 @@ public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
     @Query("select distinct mg from MenuGroup mg" +
             " left join fetch mg.menus m" +
             " where mg.shop.id = :shopId" +
+            "   and mg.visible != toy.yogiyo.common.dto.Visible.HIDE" +
+            "   and m.visible != toy.yogiyo.common.dto.Visible.HIDE" +
             " order by mg.position, m.position")
     List<MenuGroup> findAllWithMenuByShopId(@Param("shopId") Long shopId);
 

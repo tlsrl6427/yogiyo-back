@@ -12,7 +12,8 @@ public class DocumentLinkGenerator {
 
     public enum DocUrl {
         DAYS("days", "영업 요일"),
-        OPTION_TYPE("optionType", "옵션 유형")
+        OPTION_TYPE("optionType", "옵션 유형"),
+        VISIBLE("visible", "노출 유형")
         ;
 
         private final String pageId;

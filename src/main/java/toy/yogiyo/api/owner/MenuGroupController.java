@@ -124,4 +124,18 @@ public class MenuGroupController {
         menuGroupService.updateMenuPosition(menuGroupId, menus);
     }
 
+    @PatchMapping("/{menuGroupId}/visible")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuGroupPermissionEvaluator.hasWritePermission(authentication, #menuGroupId)")
+    public void updateVisible(@PathVariable Long menuGroupId, @Validated @RequestBody MenuGroupVisibleUpdateRequest request) {
+        menuGroupService.updateVisible(menuGroupId, request.getVisible());
+    }
+
+    @PatchMapping("/visible-menu/{menuId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
+    public void updateMenuVisible(@PathVariable Long menuId, @Validated @RequestBody MenuVisibleUpdateRequest request) {
+        menuService.updateHide(menuId, request.getVisible());
+    }
+
 }

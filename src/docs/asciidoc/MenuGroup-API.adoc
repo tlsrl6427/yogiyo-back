@@ -61,3 +61,13 @@ operation::menu-group/change-menu-position[snippets='http-request,http-response,
 `GET /member/menu-group/shop/{shop id}`
 
 operation::member/menu-group/find-all[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 메뉴 그룹 노출 설정
+`PATCH /owner/menu-group/{menu group id}/visible`
+
+operation::menu-group/visible[snippets='http-request,http-response,path-parameters,request-fields']
+
+=== 메뉴 노출 설정
+`PATCH /owner/menu-group/visible-menu/{menu id}`
+
+operation::menu-group/menu-visible[snippets='http-request,http-response,path-parameters,request-fields']

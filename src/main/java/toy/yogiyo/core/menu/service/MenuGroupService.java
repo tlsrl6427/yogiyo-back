@@ -3,6 +3,7 @@ package toy.yogiyo.core.menu.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
@@ -23,7 +24,6 @@ public class MenuGroupService {
     private final ShopRepository shopRepository;
     private final MenuService menuService;
 
-    // =================== 점주 기능 ======================
     @Transactional
     public Long create(MenuGroup menuGroup) {
         if (shopRepository.findById(menuGroup.getShop().getId()).isEmpty()) {
@@ -85,6 +85,9 @@ public class MenuGroupService {
                         .ifPresent(menu -> menu.updatePosition(i + 1)));
     }
 
-
-    // =================== 고객 기능 ======================
+    @Transactional
+    public void updateVisible(Long menuGroupId, Visible visible) {
+        MenuGroup menuGroup = get(menuGroupId);
+        menuGroup.updateVisible(visible);
+    }
 }

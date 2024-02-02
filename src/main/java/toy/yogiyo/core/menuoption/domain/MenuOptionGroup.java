@@ -2,6 +2,9 @@ package toy.yogiyo.core.menuoption.domain;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.shop.domain.Shop;
 
@@ -15,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(indexes = @Index(name = "idx_shop_id", columnList = "shop_id"))
+@DynamicInsert
 public class MenuOptionGroup {
 
     @Id
@@ -29,6 +33,10 @@ public class MenuOptionGroup {
 
     @Enumerated(EnumType.STRING)
     private OptionType optionType;
+
+    @ColumnDefault("'SHOW'")
+    @Enumerated(EnumType.STRING)
+    private Visible visible;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -72,5 +80,9 @@ public class MenuOptionGroup {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void updateVisible(Visible visible) {
+        this.visible = visible;
     }
 }

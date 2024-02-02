@@ -3,6 +3,7 @@ package toy.yogiyo.core.menuoption.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
 import toy.yogiyo.core.menuoption.domain.OptionType;
@@ -33,6 +34,7 @@ public class MenuOptionGroupAllGetResponse {
         private Integer count;
         private boolean isPossibleCount;
         private OptionType optionType;
+        private Visible visible;
         private List<MenuOptionDto> menuOptions;
         private List<String> menus;
 
@@ -43,6 +45,7 @@ public class MenuOptionGroupAllGetResponse {
             this.count = menuOptionGroup.getCount();
             this.isPossibleCount = menuOptionGroup.getIsPossibleCount();
             this.optionType = menuOptionGroup.getOptionType();
+            this.visible = menuOptionGroup.getVisible();
             this.menuOptions = menuOptionGroup.getMenuOptions().stream()
                     .map(MenuOptionDto::new)
                     .collect(Collectors.toList());
@@ -64,12 +67,14 @@ public class MenuOptionGroupAllGetResponse {
         private String content;
         private Integer price;
         private Integer position;
+        private Visible visible;
 
         public MenuOptionDto(MenuOption menuOption) {
             this.id = menuOption.getId();
             this.content = menuOption.getContent();
             this.price = menuOption.getPrice();
             this.position = menuOption.getPosition();
+            this.visible = menuOption.getVisible();
         }
 
     }

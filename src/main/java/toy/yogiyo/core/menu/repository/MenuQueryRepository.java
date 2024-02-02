@@ -4,6 +4,7 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menu.dto.MenuSearchRequest;
 import toy.yogiyo.core.menu.dto.MenuSearchResponse;
 import toy.yogiyo.core.menu.dto.member.MenuDetailsGetResponse;
@@ -45,7 +46,9 @@ public class MenuQueryRepository {
                 .from(optionGroupLinkMenu)
                 .join(optionGroupLinkMenu.menuOptionGroup, menuOptionGroup)
                 .join(menuOptionGroup.menuOptions, menuOption)
-                .where(optionGroupLinkMenu.menu.id.eq(menuId))
+                .where(optionGroupLinkMenu.menu.id.eq(menuId)
+                        .and(menuOptionGroup.visible.ne(Visible.HIDE))
+                        .and(menuOption.visible.ne(Visible.HIDE)))
                 .orderBy(menuOptionGroup.position.asc(), menuOption.position.asc())
                 .transform(GroupBy.groupBy(menuOptionGroup.id).list(
                         Projections.fields(MenuDetailsGetResponse.OptionGroupDto.class,

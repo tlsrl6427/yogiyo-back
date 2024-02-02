@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
 import toy.yogiyo.core.menuoption.domain.MenuOptionGroup;
@@ -42,6 +43,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.OPTION_TYPE;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.VISIBLE;
 import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(MenuOptionGroupController.class)
@@ -349,6 +351,34 @@ class MenuOptionGroupControllerTest {
                             )
                     ));
         }
+
+        @Test
+        @DisplayName("옵션 그룹 노출 설정")
+        void updateVisible() throws Exception {
+            // given
+            doNothing().when(menuOptionGroupService).updateVisible(anyLong(), any());
+            MenuOptionGroupUpdateVisibleRequest request = MenuOptionGroupUpdateVisibleRequest.builder()
+                    .visible(Visible.SHOW)
+                    .build();
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/menu-option-group/{menuOptionGroupId}/visible", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionGroupUpdateVisibleRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-option-group/update-visible",
+                            pathParameters(
+                                    parameterWithName("menuOptionGroupId").description("옵션 그룹 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
+                            )
+                    ));
+        }
     }
 
     @Nested
@@ -511,6 +541,34 @@ class MenuOptionGroupControllerTest {
                             ),
                             requestFields(
                                     fields.withPath("menuOptionIds").type(JsonFieldType.ARRAY).description("옵션 ID 리스트, 리스트 순서대로 정렬됨")
+                            )
+                    ));
+        }
+
+        @Test
+        @DisplayName("옵션 노출 상태 설정")
+        void updateVisible() throws Exception {
+            // given
+            doNothing().when(menuOptionService).updateVisible(anyLong(), any());
+            MenuOptionUpdateVisibleRequest request = MenuOptionUpdateVisibleRequest.builder()
+                    .visible(Visible.SHOW)
+                    .build();
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/menu-option-group/option/{menuOptionId}/visible", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuOptionUpdateVisibleRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-option-group/update-option-visible",
+                            pathParameters(
+                                    parameterWithName("menuOptionId").description("옵션 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }

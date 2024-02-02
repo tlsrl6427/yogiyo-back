@@ -3,6 +3,7 @@ package toy.yogiyo.core.menuoption.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menu.domain.Menu;
@@ -86,6 +87,12 @@ public class MenuOptionGroupService {
                         .filter(optionGroup -> Objects.equals(optionGroup.getId(), params.get(i).getId()))
                         .findFirst()
                         .ifPresent(optionGroup -> optionGroup.updatePosition(i + 1)));
+    }
+
+    @Transactional
+    public void updateVisible(Long menuOptionGroupId, Visible visible) {
+        MenuOptionGroup menuOptionGroup = get(menuOptionGroupId);
+        menuOptionGroup.updateVisible(visible);
     }
 
 }

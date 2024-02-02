@@ -72,6 +72,13 @@ public class MenuOptionGroupController {
         menuOptionGroupService.updatePosition(shopId, request.toMenuOptionGroups());
     }
 
+    @PatchMapping("/{menuOptionGroupId}/visible")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
+    public void updateVisible(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionGroupUpdateVisibleRequest request) {
+        menuOptionGroupService.updateVisible(menuOptionGroupId, request.getVisible());
+    }
+
     // ============= 옵션 =============
     @PostMapping("/{menuOptionGroupId}/add-option")
     @ResponseStatus(HttpStatus.CREATED)
@@ -108,5 +115,12 @@ public class MenuOptionGroupController {
     @PreAuthorize("@menuOptionGroupPermissionEvaluator.hasWritePermission(authentication, #menuOptionGroupId)")
     public void updateOptionPosition(@PathVariable Long menuOptionGroupId, @Validated @RequestBody MenuOptionUpdatePositionRequest request) {
         menuOptionService.updatePosition(menuOptionGroupId, request.toMenuOptions());
+    }
+
+    @PatchMapping("/option/{menuOptionId}/visible")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@menuOptionPermissionEvaluator.hasWritePermission(authentication, #menuOptionId)")
+    public void updateOptionVisible(@PathVariable Long menuOptionId, @Validated @RequestBody MenuOptionUpdateVisibleRequest request) {
+        menuOptionService.updateVisible(menuOptionId, request.getVisible());
     }
 }

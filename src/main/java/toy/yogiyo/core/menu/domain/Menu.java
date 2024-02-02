@@ -52,6 +52,7 @@ public class Menu {
         this.name = updateParam.getName();
         this.content = updateParam.getContent();
         this.price = updateParam.getPrice();
+        this.visible = updateParam.getVisible();
     }
 
     public void updatePosition(int position) {

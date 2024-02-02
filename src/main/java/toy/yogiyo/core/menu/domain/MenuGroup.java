@@ -43,6 +43,7 @@ public class MenuGroup {
     public void updateInfo(MenuGroup param) {
         this.name = param.getName();
         this.content = param.getContent();
+        this.visible = param.getVisible();
     }
 
     public void updatePosition(int position) {

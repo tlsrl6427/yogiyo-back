@@ -20,7 +20,7 @@ public class MenuGroupController {
 
     @GetMapping("/shop/{shopId}")
     public MenuGroupsGetResponse getMenuGroups(@PathVariable Long shopId) {
-        List<MenuGroup> menuGroups = menuGroupRepository.findAllWithMenuByShopId(shopId);
+        List<MenuGroup> menuGroups = menuGroupRepository.findAllSellableWithMenuByShopId(shopId);
         return MenuGroupsGetResponse.from(menuGroups);
     }
 }

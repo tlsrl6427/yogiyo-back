@@ -7,6 +7,8 @@ import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
+import toy.yogiyo.core.menuoption.dto.MenuOptionSearchRequest;
+import toy.yogiyo.core.menuoption.dto.MenuOptionSearchResponse;
 import toy.yogiyo.core.menuoption.repository.MenuOptionGroupRepository;
 import toy.yogiyo.core.menuoption.repository.MenuOptionRepository;
 
@@ -72,6 +74,11 @@ public class MenuOptionService {
     public void updateVisible(Long menuOptionId, Visible visible) {
         MenuOption menuOption = get(menuOptionId);
         menuOption.updateVisible(visible);
+    }
+
+    @Transactional(readOnly = true)
+    public MenuOptionSearchResponse search(MenuOptionSearchRequest request) {
+        return MenuOptionSearchResponse.from(menuOptionRepository.search(request.getShopId(), request.getKeyword()));
     }
 
 }

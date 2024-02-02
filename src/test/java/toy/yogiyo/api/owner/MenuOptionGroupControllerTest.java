@@ -40,6 +40,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.OPTION_TYPE;
@@ -165,14 +166,14 @@ class MenuOptionGroupControllerTest {
         void findAll() throws Exception {
             // given
             List<MenuOption> menuOptions1 = Arrays.asList(
-                    MenuOption.builder().id(1L).content("옵션1").price(1000).position(1).build(),
-                    MenuOption.builder().id(2L).content("옵션2").price(1000).position(2).build(),
-                    MenuOption.builder().id(3L).content("옵션3").price(1000).position(3).build()
+                    MenuOption.builder().id(1L).content("옵션1").price(1000).visible(Visible.SHOW).position(1).build(),
+                    MenuOption.builder().id(2L).content("옵션2").price(1000).visible(Visible.HIDE).position(2).build(),
+                    MenuOption.builder().id(3L).content("옵션3").price(1000).visible(Visible.SHOW).position(3).build()
             );
             List<MenuOption> menuOptions2 = Arrays.asList(
-                    MenuOption.builder().id(4L).content("옵션1").price(1000).position(1).build(),
-                    MenuOption.builder().id(5L).content("옵션2").price(1000).position(2).build(),
-                    MenuOption.builder().id(6L).content("옵션3").price(1000).position(3).build()
+                    MenuOption.builder().id(4L).content("옵션1").price(1000).visible(Visible.SHOW).position(1).build(),
+                    MenuOption.builder().id(5L).content("옵션2").price(1000).visible(Visible.SHOW).position(2).build(),
+                    MenuOption.builder().id(6L).content("옵션3").price(1000).visible(Visible.SHOW).position(3).build()
             );
             List<OptionGroupLinkMenu> menus = Arrays.asList(
                     OptionGroupLinkMenu.builder().menu(Menu.builder().name("메뉴1").build()).build(),
@@ -185,6 +186,7 @@ class MenuOptionGroupControllerTest {
                     .count(4)
                     .isPossibleCount(false)
                     .optionType(OptionType.REQUIRED)
+                    .visible(Visible.SHOW)
                     .menuOptions(menuOptions1)
                     .linkMenus(menus)
                     .build();
@@ -195,6 +197,7 @@ class MenuOptionGroupControllerTest {
                     .count(5)
                     .isPossibleCount(true)
                     .optionType(OptionType.OPTIONAL)
+                    .visible(Visible.SHOW)
                     .menuOptions(menuOptions2)
                     .linkMenus(menus)
                     .build();
@@ -224,11 +227,13 @@ class MenuOptionGroupControllerTest {
                                     fieldWithPath("menuOptionGroups[].count").type(JsonFieldType.NUMBER).description("옵션 선택 가능 개수"),
                                     fieldWithPath("menuOptionGroups[].isPossibleCount").type(JsonFieldType.BOOLEAN).description("수량조절 가능여부"),
                                     fieldWithPath("menuOptionGroups[].optionType").type(JsonFieldType.STRING).description(generateLinkCode(OPTION_TYPE)),
+                                    fieldWithPath("menuOptionGroups[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE)),
                                     fieldWithPath("menuOptionGroups[].menuOptions").type(JsonFieldType.ARRAY).description("옵션 리스트"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].id").type(JsonFieldType.NUMBER).description("옵션 ID"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].content").type(JsonFieldType.STRING).description("옵션명"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].price").type(JsonFieldType.NUMBER).description("옵션 가격"),
                                     fieldWithPath("menuOptionGroups[].menuOptions[].position").type(JsonFieldType.NUMBER).description("옵션 정렬 순서"),
+                                    fieldWithPath("menuOptionGroups[].menuOptions[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE)),
                                     fieldWithPath("menuOptionGroups[].menus").type(JsonFieldType.ARRAY).description("연결메뉴")
                             )
                     ));
@@ -569,6 +574,42 @@ class MenuOptionGroupControllerTest {
                             ),
                             requestFields(
                                     fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
+                            )
+                    ));
+        }
+
+        @Test
+        @DisplayName("옵션 검색")
+        void search() throws Exception {
+            // given
+            given(menuOptionService.search(any())).willReturn(
+                    MenuOptionSearchResponse.from(List.of(
+                            MenuOption.builder().id(1L).content("옵션1").price(1000).position(1).visible(Visible.SHOW).build(),
+                            MenuOption.builder().id(2L).content("옵션2").price(1000).position(2).visible(Visible.SHOW).build(),
+                            MenuOption.builder().id(3L).content("옵션3").price(1000).position(3).visible(Visible.HIDE).build()
+                    ))
+            );
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/menu-option-group/search")
+                    .param("shopId", "1")
+                    .param("keyword", "옵션"));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andDo(document("menu-option-group/search",
+                            requestParameters(
+                                    parameterWithName("shopId").description("가게 ID")
+                                            .attributes(key("constraints").value("Not Null")),
+                                    parameterWithName("keyword").description("검색 키워드")
+                                            .attributes(key("constraints").value("Not Blank"))
+                            ),
+                            responseFields(
+                                    fieldWithPath("menuOptions[].id").type(JsonFieldType.NUMBER).description("옵션 ID"),
+                                    fieldWithPath("menuOptions[].content").type(JsonFieldType.STRING).description("옵션명"),
+                                    fieldWithPath("menuOptions[].price").type(JsonFieldType.NUMBER).description("옵션 가격"),
+                                    fieldWithPath("menuOptions[].position").type(JsonFieldType.NUMBER).description("옵션 정렬 순서"),
+                                    fieldWithPath("menuOptions[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }

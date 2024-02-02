@@ -123,4 +123,9 @@ public class MenuOptionGroupController {
     public void updateOptionVisible(@PathVariable Long menuOptionId, @Validated @RequestBody MenuOptionUpdateVisibleRequest request) {
         menuOptionService.updateVisible(menuOptionId, request.getVisible());
     }
+
+    @GetMapping("/search")
+    public MenuOptionSearchResponse searchOption(@Validated @ModelAttribute MenuOptionSearchRequest request) {
+        return menuOptionService.search(request);
+    }
 }

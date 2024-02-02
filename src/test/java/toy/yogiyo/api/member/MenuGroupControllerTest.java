@@ -78,7 +78,7 @@ class MenuGroupControllerTest {
                 MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").menus(menus1).build(),
                 MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").menus(menus2).build()
         );
-        given(menuGroupRepository.findAllWithMenuByShopId(anyLong())).willReturn(menuGroups);
+        given(menuGroupRepository.findAllSellableWithMenuByShopId(anyLong())).willReturn(menuGroups);
 
         // when
         ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/member/menu-group/shop/{shopId}", 1));

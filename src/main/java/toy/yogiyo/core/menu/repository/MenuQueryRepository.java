@@ -4,6 +4,8 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
+import toy.yogiyo.core.menu.dto.MenuSearchRequest;
+import toy.yogiyo.core.menu.dto.MenuSearchResponse;
 import toy.yogiyo.core.menu.dto.member.MenuDetailsGetResponse;
 
 import javax.persistence.EntityManager;
@@ -11,9 +13,11 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static toy.yogiyo.core.menu.domain.QMenu.menu;
+import static toy.yogiyo.core.menu.domain.QMenuGroup.menuGroup;
 import static toy.yogiyo.core.menuoption.domain.QMenuOption.menuOption;
 import static toy.yogiyo.core.menuoption.domain.QMenuOptionGroup.menuOptionGroup;
 import static toy.yogiyo.core.menuoption.domain.QOptionGroupLinkMenu.optionGroupLinkMenu;
+import static toy.yogiyo.core.shop.domain.QShop.shop;
 
 @Repository
 public class MenuQueryRepository {
@@ -61,5 +65,25 @@ public class MenuQueryRepository {
         response.setOptionGroups(optionGroups);
 
         return response;
+    }
+
+    public MenuSearchResponse searchMenu(MenuSearchRequest request) {
+        List<MenuSearchResponse.MenuDto> result = queryFactory.select(Projections.fields(MenuSearchResponse.MenuDto.class,
+                        menu.id,
+                        menu.name,
+                        menu.content,
+                        menu.picture,
+                        menu.price,
+                        menu.visible
+                ))
+                .from(menu)
+                .join(menu.menuGroup, menuGroup)
+                .join(menuGroup.shop, shop)
+                .where(shop.id.eq(request.getShopId()).and(menu.name.contains(request.getKeyword())))
+                .fetch();
+
+        return MenuSearchResponse.builder()
+                .menus(result)
+                .build();
     }
 }

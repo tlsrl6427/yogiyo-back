@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.dto.*;
+import toy.yogiyo.core.menu.repository.MenuQueryRepository;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuGroupController {
 
+    private final MenuQueryRepository menuQueryRepository;
     private final MenuGroupService menuGroupService;
     private final MenuService menuService;
 
@@ -136,6 +138,11 @@ public class MenuGroupController {
     @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
     public void updateMenuVisible(@PathVariable Long menuId, @Validated @RequestBody MenuVisibleUpdateRequest request) {
         menuService.updateHide(menuId, request.getVisible());
+    }
+
+    @GetMapping("/search")
+    public MenuSearchResponse searchMenu(@Validated @ModelAttribute MenuSearchRequest request) {
+        return menuQueryRepository.searchMenu(request);
     }
 
 }

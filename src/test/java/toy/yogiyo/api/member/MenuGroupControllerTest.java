@@ -48,6 +48,7 @@ class MenuGroupControllerTest {
 
     ObjectMapper objectMapper;
 
+    
     @BeforeEach
     void beforeEach(WebApplicationContext context, RestDocumentationContextProvider restDocumentationContextProvider) {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)

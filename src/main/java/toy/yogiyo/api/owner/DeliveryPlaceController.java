@@ -74,4 +74,18 @@ public class DeliveryPlaceController {
         return DeliveryPriceResponse.from(deliveryPlace);
     }
 
+    @PatchMapping("/shop/{shopId}/delivery-price/adjustment")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
+    public void adjustmentDeliveryPrice(@PathVariable Long shopId, @Validated @RequestBody DeliveryPlaceAdjustmentRequest request) {
+        deliveryPlaceService.adjustmentDeliveryPrice(shopId, request);
+    }
+
+    @PatchMapping("/shop/{shopId}/order-price/adjustment")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@shopPermissionEvaluator.hasWritePermission(authentication, #shopId)")
+    public void adjustmentOrderPrice(@PathVariable Long shopId, @Validated @RequestBody DeliveryPlaceAdjustmentRequest request) {
+        deliveryPlaceService.adjustmentOrderPrice(shopId, request);
+    }
+
 }

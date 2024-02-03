@@ -70,6 +70,10 @@ public class EnumDocumentationTest {
                 customResponseFields("enum-response", beneathPath("visible").withSubsectionId("visible"),
                         attributes(key("title").value("노출 유형")),
                         enumConvertFieldDescriptor(response.getVisible())
+                ),
+                customResponseFields("enum-response", beneathPath("adjustmentType").withSubsectionId("adjustmentType"),
+                        attributes(key("title").value("조정 유형")),
+                        enumConvertFieldDescriptor(response.getAdjustmentType())
                 )
         ));
     }

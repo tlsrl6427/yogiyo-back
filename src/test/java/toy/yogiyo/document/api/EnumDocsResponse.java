@@ -13,4 +13,5 @@ public class EnumDocsResponse {
     Map<String, String> days;
     Map<String, String> optionType;
     Map<String, String> visible;
+    Map<String, String> adjustmentType;
 }

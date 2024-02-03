@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +20,9 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.security.WithLoginOwner;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPriceInfo;
+import toy.yogiyo.core.deliveryplace.dto.*;
 import toy.yogiyo.core.deliveryplace.service.DeliveryPlaceService;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPlaceAddRequest;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceDto;
-import toy.yogiyo.core.deliveryplace.dto.DeliveryPriceUpdateRequest;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.List;
@@ -46,6 +44,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(DeliveryPlaceController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -238,6 +237,64 @@ class DeliveryPlaceControllerTest {
                                 fieldWithPath("deliveryPrices").type(JsonFieldType.ARRAY).description("배달 요금 리스트"),
                                 fieldWithPath("deliveryPrices[].orderPrice").type(JsonFieldType.NUMBER).description("주문 금액"),
                                 fieldWithPath("deliveryPrices[].deliveryPrice").type(JsonFieldType.NUMBER).description("배달 요금")
+                        )
+                ));
+    }
+    
+    @Test
+    @DisplayName("배달 요금 인상/인하")
+    void adjustmentDeliveryPrice() throws Exception {
+        // given
+        doNothing().when(deliveryPlaceService).adjustmentDeliveryPrice(anyLong(), any());
+        DeliveryPlaceAdjustmentRequest request = DeliveryPlaceAdjustmentRequest.builder()
+                .adjustmentType(AdjustmentType.INCREASE)
+                .value(1000)
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/delivery-place/shop/{shopId}/delivery-price/adjustment", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(request)));
+
+        // then
+        ConstrainedFields fields = new ConstrainedFields(DeliveryPlaceAdjustmentRequest.class);
+        result.andExpect(status().isNoContent())
+                .andDo(document("delivery-place/adjustment-delivery-price",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fields.withPath("adjustmentType").type(JsonFieldType.STRING).description(generateLinkCode(DocumentLinkGenerator.DocUrl.ADJUSTMENT_TYPE)),
+                                fields.withPath("value").type(JsonFieldType.NUMBER).description("조정 값")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("주문 금액 인상/인하")
+    void adjustmentOrderPrice() throws Exception {
+        // given
+        doNothing().when(deliveryPlaceService).adjustmentDeliveryPrice(anyLong(), any());
+        DeliveryPlaceAdjustmentRequest request = DeliveryPlaceAdjustmentRequest.builder()
+                .adjustmentType(AdjustmentType.INCREASE)
+                .value(1000)
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/delivery-place/shop/{shopId}/order-price/adjustment", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(request)));
+
+        // then
+        ConstrainedFields fields = new ConstrainedFields(DeliveryPlaceAdjustmentRequest.class);
+        result.andExpect(status().isNoContent())
+                .andDo(document("delivery-place/adjustment-order-price",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fields.withPath("adjustmentType").type(JsonFieldType.STRING).description(generateLinkCode(DocumentLinkGenerator.DocUrl.ADJUSTMENT_TYPE)),
+                                fields.withPath("value").type(JsonFieldType.NUMBER).description("조정 값")
                         )
                 ));
     }

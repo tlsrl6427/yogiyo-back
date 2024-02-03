@@ -25,3 +25,13 @@ operation::delivery-place/update-all-delivery-price[snippets='http-request,http-
 `GET /owner/delivery-place/{deliveryPlaceId}/delivery-price`
 
 operation::delivery-place/get-delivery-price[snippets='http-request,http-response,path-parameters,response-fields']
+
+=== 배달 요금 인상/인하
+`PATCH /owner/delivery-place/shop/{shop id}/delivery-price/adjustment`
+
+operation::delivery-place/adjustment-delivery-price[snippets='http-request,http-response,path-parameters,request-fields']
+
+=== 주문 요금 인상/인하
+`PATCH /owner/delivery-place/shop/{shop id}/order-price/adjustment`
+
+operation::delivery-place/adjustment-order-price[snippets='http-request,http-response,path-parameters,request-fields']

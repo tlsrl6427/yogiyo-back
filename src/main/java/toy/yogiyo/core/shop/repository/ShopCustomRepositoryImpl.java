@@ -94,6 +94,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                         getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
                         deliveryPlace.minOrderPrice,
                         deliveryPlace.minDeliveryPrice,
+                        deliveryPlace.deliveryTime,
                         ExpressionUtils.as(JPAExpressions
                                 .selectOne()
                                 .from(like)

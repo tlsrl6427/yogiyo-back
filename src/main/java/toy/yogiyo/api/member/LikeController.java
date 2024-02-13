@@ -26,13 +26,6 @@ public class LikeController {
         likeService.toggleLike(member, shopId);
     }
 
-    //List Scroll 현재 사용안함
-    @GetMapping("/scroll")
-    @ResponseStatus(HttpStatus.OK)
-    public Scroll<LikeResponse> getLikes(@LoginUser Member member, @ModelAttribute LikeScrollRequest request){
-        return likeService.getLikes(member, request);
-    }
-
     @GetMapping("/list")
     @ResponseStatus(HttpStatus.OK)
     public List<LikeResponse> getLikes(@LoginUser Member member){

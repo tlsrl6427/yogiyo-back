@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
+import toy.yogiyo.core.deliveryplace.dto.DeliveryPlaceAdjustmentRequest;
 import toy.yogiyo.core.deliveryplace.repository.DeliveryPlaceRepository;
 import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
 import toy.yogiyo.core.shop.domain.Shop;
@@ -74,5 +75,29 @@ public class DeliveryPlaceService {
     @Transactional
     public void deleteAll(Long shopId) {
         deliveryPlaceRepository.deleteAllByShopId(shopId);
+    }
+
+    @Transactional
+    public void adjustmentDeliveryPrice(Long shopId, DeliveryPlaceAdjustmentRequest request) {
+        switch (request.getAdjustmentType()) {
+            case INCREASE:
+                deliveryPlaceRepository.bulkAdjustmentDeliveryPrice(shopId, request.getValue());
+                break;
+            case DECREASE:
+                deliveryPlaceRepository.bulkAdjustmentDeliveryPrice(shopId, -request.getValue());
+                break;
+        }
+    }
+
+    @Transactional
+    public void adjustmentOrderPrice(Long shopId, DeliveryPlaceAdjustmentRequest request) {
+        switch (request.getAdjustmentType()) {
+            case INCREASE:
+                deliveryPlaceRepository.bulkAdjustmentOrderPrice(shopId, request.getValue());
+                break;
+            case DECREASE:
+                deliveryPlaceRepository.bulkAdjustmentOrderPrice(shopId, -request.getValue());
+                break;
+        }
     }
 }

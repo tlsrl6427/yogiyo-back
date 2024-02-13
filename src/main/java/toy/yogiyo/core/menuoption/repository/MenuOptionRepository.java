@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import toy.yogiyo.core.menuoption.domain.MenuOption;
+import toy.yogiyo.core.menuoption.dto.MenuOptionSearchResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MenuOptionRepository extends JpaRepository<MenuOption, Long> {
 
@@ -19,4 +21,11 @@ public interface MenuOptionRepository extends JpaRepository<MenuOption, Long> {
     @Modifying
     @Query("delete MenuOption mo where mo.menuOptionGroup.id = :menuOptionGroupId")
     int deleteAllByGroupId(@Param("menuOptionGroupId") Long menuOptionGroupId);
+
+    @Query("select mo from MenuOption mo" +
+            " join mo.menuOptionGroup mog" +
+            " join mog.shop s" +
+            " where s.id = :shopId" +
+            "   and mo.content like %:keyword%")
+    List<MenuOption> search(@Param("shopId") Long shopId, @Param("keyword") String keyword);
 }

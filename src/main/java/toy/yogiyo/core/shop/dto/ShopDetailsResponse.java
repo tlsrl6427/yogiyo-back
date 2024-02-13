@@ -22,5 +22,6 @@ public class ShopDetailsResponse {
     private Double distance;
     private Integer minOrderPrice;
     private Integer minDeliveryPrice;
+    private Integer deliveryTime;
     private Boolean isLike;
 }

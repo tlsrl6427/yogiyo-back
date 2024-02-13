@@ -8,9 +8,10 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseScrollRequest {
+public class ScrollRequest {
 
-    private long offset;
+    private Object cursor;
+    private Object subCursor;
     @Builder.Default
     private long limit = 10;
 

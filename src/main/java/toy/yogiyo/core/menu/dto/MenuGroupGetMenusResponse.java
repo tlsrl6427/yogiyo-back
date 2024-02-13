@@ -2,6 +2,7 @@ package toy.yogiyo.core.menu.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menu.domain.Menu;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class MenuGroupGetMenusResponse {
         private String content;
         private String picture;
         private int price;
+        private Visible visible;
 
         public MenuDto(Menu menu) {
             this.id = menu.getId();
@@ -36,6 +38,7 @@ public class MenuGroupGetMenusResponse {
             this.content = menu.getContent();
             this.picture = menu.getPicture();
             this.price = menu.getPrice();
+            this.visible = menu.getVisible();
         }
     }
 }

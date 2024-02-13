@@ -20,14 +20,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
 import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.dto.*;
+import toy.yogiyo.core.menu.repository.MenuQueryRepository;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.MenuService;
 import toy.yogiyo.core.shop.domain.Shop;
+import toy.yogiyo.document.utils.DocumentLinkGenerator;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.util.Arrays;
@@ -42,6 +45,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 
 @WebMvcTest(MenuGroupController.class)
@@ -50,6 +55,9 @@ class MenuGroupControllerTest {
 
     @MockBean
     MenuService menuService;
+
+    @MockBean
+    MenuQueryRepository menuQueryRepository;
 
     @MockBean
     MenuGroupService menuGroupService;
@@ -125,19 +133,19 @@ class MenuGroupControllerTest {
         void getMenuGroups() throws Exception {
             // given
             List<Menu> menus1 = Arrays.asList(
-                    Menu.builder().id(1L).name("메뉴 1").content("메뉴 1 설명").picture("image.png").price(10000).position(1).build(),
-                    Menu.builder().id(2L).name("메뉴 2").content("메뉴 2 설명").picture("image.png").price(10000).position(2).build(),
-                    Menu.builder().id(3L).name("메뉴 3").content("메뉴 3 설명").picture("image.png").price(10000).position(3).build()
+                    Menu.builder().id(1L).name("메뉴 1").content("메뉴 1 설명").picture("image.png").price(10000).position(1).visible(Visible.SHOW).build(),
+                    Menu.builder().id(2L).name("메뉴 2").content("메뉴 2 설명").picture("image.png").price(10000).position(2).visible(Visible.SHOW).build(),
+                    Menu.builder().id(3L).name("메뉴 3").content("메뉴 3 설명").picture("image.png").price(10000).position(3).visible(Visible.SOLD_OUT).build()
             );
             List<Menu> menus2 = Arrays.asList(
-                    Menu.builder().id(4L).name("메뉴 4").content("메뉴 4 설명").picture("image.png").price(10000).position(1).build(),
-                    Menu.builder().id(5L).name("메뉴 5").content("메뉴 5 설명").picture("image.png").price(10000).position(2).build(),
-                    Menu.builder().id(6L).name("메뉴 6").content("메뉴 6 설명").picture("image.png").price(10000).position(3).build()
+                    Menu.builder().id(4L).name("메뉴 4").content("메뉴 4 설명").picture("image.png").price(10000).position(1).visible(Visible.SHOW).build(),
+                    Menu.builder().id(5L).name("메뉴 5").content("메뉴 5 설명").picture("image.png").price(10000).position(2).visible(Visible.SHOW).build(),
+                    Menu.builder().id(6L).name("메뉴 6").content("메뉴 6 설명").picture("image.png").price(10000).position(3).visible(Visible.HIDE).build()
             );
 
             List<MenuGroup> menuGroups = Arrays.asList(
-                    MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").menus(menus1).build(),
-                    MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").menus(menus2).build()
+                    MenuGroup.builder().id(1L).name("메뉴 그룹1").content("메뉴 그룹1 설명").visible(Visible.SHOW).menus(menus1).build(),
+                    MenuGroup.builder().id(2L).name("메뉴 그룹2").content("메뉴 그룹2 설명").visible(Visible.SHOW).menus(menus2).build()
             );
             given(menuGroupService.getMenuGroups(anyLong())).willReturn(menuGroups);
 
@@ -163,12 +171,14 @@ class MenuGroupControllerTest {
                                     fieldWithPath("menuGroups[].id").type(JsonFieldType.NUMBER).description("메뉴 그룹 ID"),
                                     fieldWithPath("menuGroups[].name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
                                     fieldWithPath("menuGroups[].content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fieldWithPath("menuGroups[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE)),
                                     fieldWithPath("menuGroups[].menus").type(JsonFieldType.ARRAY).description("메뉴 Array"),
                                     fieldWithPath("menuGroups[].menus[].id").type(JsonFieldType.NUMBER).description("메뉴 ID"),
                                     fieldWithPath("menuGroups[].menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     fieldWithPath("menuGroups[].menus[].content").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fieldWithPath("menuGroups[].menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
-                                    fieldWithPath("menuGroups[].menus[].picture").type(JsonFieldType.STRING).description("메뉴 사진")
+                                    fieldWithPath("menuGroups[].menus[].picture").type(JsonFieldType.STRING).description("메뉴 사진"),
+                                    fieldWithPath("menuGroups[].menus[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }
@@ -178,7 +188,7 @@ class MenuGroupControllerTest {
         void getMenuGroup() throws Exception {
             // given
             Shop shop = Shop.builder().id(1L).build();
-            MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").build();
+            MenuGroup menuGroup = MenuGroup.builder().id(1L).shop(shop).name("메뉴 그룹1").content("메뉴 그룹1 설명").visible(Visible.SHOW).build();
             given(menuGroupService.get(anyLong())).willReturn(menuGroup);
 
             // when
@@ -197,7 +207,8 @@ class MenuGroupControllerTest {
                             responseFields(
                                     fieldWithPath("id").type(JsonFieldType.NUMBER).description("메뉴 그룹 ID"),
                                     fieldWithPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
+                                    fieldWithPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fieldWithPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }
@@ -208,7 +219,9 @@ class MenuGroupControllerTest {
             // given
             MenuGroupUpdateRequest updateRequest = MenuGroupUpdateRequest.builder()
                     .name("메뉴 그룹명 수정")
-                    .content("메뉴 그룹 설명 수정").build();
+                    .content("메뉴 그룹 설명 수정")
+                    .visible(Visible.SHOW)
+                    .build();
             doNothing().when(menuGroupService).update(any());
 
             // when
@@ -230,7 +243,8 @@ class MenuGroupControllerTest {
                             ),
                             requestFields(
                                     fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 그룹 이름"),
-                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명")
+                                    fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 그룹 설명"),
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }
@@ -292,6 +306,34 @@ class MenuGroupControllerTest {
                             )
                     ));
         }
+        
+        @Test
+        @DisplayName("메뉴 그룹 노출 설정")
+        void visible() throws Exception {
+            // given
+            doNothing().when(menuGroupService).updateVisible(anyLong(), any());
+            MenuGroupVisibleUpdateRequest request = MenuGroupVisibleUpdateRequest.builder()
+                    .visible(Visible.HIDE)
+                    .build();
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/menu-group/{menuGroupId}/visible", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuGroupVisibleUpdateRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/visible",
+                            pathParameters(
+                                    parameterWithName("menuGroupId").description("메뉴 그룹 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
+                            )
+                    ));
+        }
     }
 
     @Nested
@@ -350,9 +392,9 @@ class MenuGroupControllerTest {
         void getMenus() throws Exception {
             // given
             List<Menu> menus = Arrays.asList(
-                Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).build(),
-                Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).build(),
-                Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).build()
+                Menu.builder().id(1L).name("메뉴1").content("메뉴1 설명").picture("image.png").price(10000).visible(Visible.SHOW).build(),
+                Menu.builder().id(2L).name("메뉴2").content("메뉴2 설명").picture("image.png").price(10000).visible(Visible.SHOW).build(),
+                Menu.builder().id(3L).name("메뉴3").content("메뉴3 설명").picture("image.png").price(10000).visible(Visible.SHOW).build()
             );
 
             given(menuService.getMenus(anyLong())).willReturn(menus);
@@ -378,7 +420,8 @@ class MenuGroupControllerTest {
                                     fieldWithPath("menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     fieldWithPath("menus[].content").type(JsonFieldType.STRING).description("메뉴 설명"),
                                     fieldWithPath("menus[].picture").type(JsonFieldType.STRING).description("메뉴 사진"),
-                                    fieldWithPath("menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격")
+                                    fieldWithPath("menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격"),
+                                    fieldWithPath("menus[].visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }
@@ -392,6 +435,7 @@ class MenuGroupControllerTest {
                     .name("치킨")
                     .content("치킨 설명")
                     .price(19000)
+                    .visible(Visible.SHOW)
                     .build();
 
             MockMultipartFile picture = new MockMultipartFile("picture", "image.png", MediaType.IMAGE_PNG_VALUE, "<<image png>>".getBytes());
@@ -421,7 +465,8 @@ class MenuGroupControllerTest {
                             requestPartFields("menuData",
                                     fields.withPath("name").type(JsonFieldType.STRING).description("메뉴 이름"),
                                     fields.withPath("content").type(JsonFieldType.STRING).description("메뉴 설명"),
-                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격")
+                                    fields.withPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }
@@ -477,6 +522,35 @@ class MenuGroupControllerTest {
                             ),
                             requestFields(
                                     fields.withPath("menuIds").type(JsonFieldType.ARRAY).description("메뉴 ID Array, 순서대로 메뉴가 정렬됨")
+                            )
+                    ));
+        }
+
+
+        @Test
+        @DisplayName("메뉴 그룹 메뉴 노출 설정")
+        void visible() throws Exception {
+            // given
+            doNothing().when(menuGroupService).updateVisible(anyLong(), any());
+            MenuVisibleUpdateRequest request = MenuVisibleUpdateRequest.builder()
+                    .visible(Visible.HIDE)
+                    .build();
+
+            // when
+            ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/menu-group/visible-menu/{menuId}", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(request)));
+
+            // then
+            ConstrainedFields fields = new ConstrainedFields(MenuVisibleUpdateRequest.class);
+            result.andExpect(status().isNoContent())
+                    .andDo(print())
+                    .andDo(document("menu-group/menu-visible",
+                            pathParameters(
+                                    parameterWithName("menuId").description("메뉴 ID")
+                            ),
+                            requestFields(
+                                    fields.withPath("visible").type(JsonFieldType.STRING).description(generateLinkCode(VISIBLE))
                             )
                     ));
         }

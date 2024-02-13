@@ -19,6 +19,14 @@ public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
             " order by mg.position, m.position")
     List<MenuGroup> findAllWithMenuByShopId(@Param("shopId") Long shopId);
 
+    @Query("select distinct mg from MenuGroup mg" +
+            " left join fetch mg.menus m" +
+            " where mg.shop.id = :shopId" +
+            "   and mg.visible != toy.yogiyo.common.dto.Visible.HIDE" +
+            "   and m.visible != toy.yogiyo.common.dto.Visible.HIDE" +
+            " order by mg.position, m.position")
+    List<MenuGroup> findAllSellableWithMenuByShopId(@Param("shopId") Long shopId);
+
     @Query("select max(mg.position) from MenuGroup mg where mg.shop.id = :shopId")
     Integer findMaxOrder(@Param("shopId") Long shopId);
 

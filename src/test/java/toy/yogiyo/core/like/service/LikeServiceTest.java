@@ -85,26 +85,4 @@ class LikeServiceTest {
         );
     }
 
-    @Test
-    void getLikes() {
-        LikeScrollRequest request = new LikeScrollRequest(0L, 5L);
-
-        List<LikeResponse> shops = new ArrayList<>();
-        for(int i=5; i>=0; i--){
-            LikeResponse lr = LikeResponse.builder()
-                    .shopId((long) i)
-                    .build();
-            shops.add(lr);
-        }
-
-        given(shopRepository.scrollLikes(any(), any())).willReturn(shops);
-        Scroll<LikeResponse> likes = likeService.getLikes(member, request);
-
-        assertAll(
-                () -> verify(shopRepository).scrollLikes(any(), any()),
-                () -> assertThat(likes.isHasNext()).isTrue(),
-                () -> assertThat(likes.getNextOffset()).isEqualTo(5L),
-                () -> assertThat(likes.getContent().size()).isEqualTo(5)
-        );
-    }
 }

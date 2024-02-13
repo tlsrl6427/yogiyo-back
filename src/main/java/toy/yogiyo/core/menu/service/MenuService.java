@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.common.exception.EntityNotFoundException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
+import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 import toy.yogiyo.core.menu.repository.MenuRepository;
 
@@ -74,6 +76,13 @@ public class MenuService {
         }
 
         menuRepository.delete(menu);
+    }
+
+
+    @Transactional
+    public void updateHide(Long menuId, Visible visible) {
+        Menu menu = get(menuId);
+        menu.updateVisible(visible);
     }
 
     private boolean hasPicture(String picture) {

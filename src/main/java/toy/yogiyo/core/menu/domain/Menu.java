@@ -3,6 +3,7 @@ package toy.yogiyo.core.menu.domain;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 
 import javax.persistence.*;
@@ -29,6 +30,9 @@ public class Menu {
     private Integer price;
 
     private Integer position;
+    @ColumnDefault("'SHOW'")
+    @Enumerated(EnumType.STRING)
+    private Visible visible;
 
     private long reviewNum;
 
@@ -48,6 +52,7 @@ public class Menu {
         this.name = updateParam.getName();
         this.content = updateParam.getContent();
         this.price = updateParam.getPrice();
+        this.visible = updateParam.getVisible();
     }
 
     public void updatePosition(int position) {
@@ -65,5 +70,9 @@ public class Menu {
 
     public void increaseReviewNum() {
         this.reviewNum++;
+    }
+
+    public void updateVisible(Visible visible) {
+        this.visible = visible;
     }
 }

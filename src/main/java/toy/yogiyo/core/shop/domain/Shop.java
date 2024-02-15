@@ -1,17 +1,19 @@
 package toy.yogiyo.core.shop.domain;
 
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import toy.yogiyo.common.converter.StringArrayConverter;
 import toy.yogiyo.common.domain.BaseTimeEntity;
-import toy.yogiyo.core.deliveryplace.domain.DeliveryPlace;
+import toy.yogiyo.common.exception.EntityNotFoundException;
+import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.category.domain.CategoryShop;
 import toy.yogiyo.core.owner.domain.Owner;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +133,21 @@ public class Shop extends BaseTimeEntity {
 
     public void increaseLikeNum() {
         this.likeNum++;
+    }
+
+    public LocalDateTime getOpenTime(LocalDateTime dateTime) {
+        Days tomorrowDays = Days.valueOf(dateTime.getDayOfWeek().name());
+
+        LocalTime tomorrowOpenTime = this.getBusinessHours().stream()
+                .filter((hours) -> hours.getDayOfWeek() == Days.EVERYDAY || hours.getDayOfWeek() == tomorrowDays)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.BUSINESSHOURS_NOT_FOUND))
+                .getOpenTime();
+
+        return dateTime
+                .withHour(tomorrowOpenTime.getHour())
+                .withMinute(tomorrowOpenTime.getMinute())
+                .withSecond(tomorrowOpenTime.getSecond());
     }
 }
 

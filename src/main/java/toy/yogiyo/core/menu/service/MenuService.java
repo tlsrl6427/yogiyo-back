@@ -1,6 +1,7 @@
 package toy.yogiyo.core.menu.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,10 +12,11 @@ import toy.yogiyo.common.exception.FileIOException;
 import toy.yogiyo.common.file.ImageFileHandler;
 import toy.yogiyo.common.file.ImageFileUtil;
 import toy.yogiyo.core.menu.domain.Menu;
-import toy.yogiyo.core.menu.domain.MenuGroup;
 import toy.yogiyo.core.menu.repository.MenuGroupRepository;
 import toy.yogiyo.core.menu.repository.MenuRepository;
+import toy.yogiyo.core.shop.repository.ShopRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,6 +26,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ImageFileHandler imageFileHandler;
+    private final ShopRepository shopRepository;
 
     @Transactional
     public Long create(Menu menu, MultipartFile picture) {
@@ -80,9 +83,23 @@ public class MenuService {
 
 
     @Transactional
-    public void updateHide(Long menuId, Visible visible) {
+    public void updateVisible(Long menuId, Visible visible) {
         Menu menu = get(menuId);
-        menu.updateVisible(visible);
+        LocalDateTime soldOutUntil = null;
+
+        if(visible == Visible.SOLD_OUT) {
+            soldOutUntil = shopRepository.findByMenu(menuId)
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND))
+                    .getOpenTime(LocalDateTime.now().plusDays(1));
+        }
+
+        menu.updateVisible(visible, soldOutUntil);
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0/10 * * * *")
+    public void soldOutCheck() {
+        menuRepository.updateAllSoldOutFinishByDateTime(LocalDateTime.now());
     }
 
     private boolean hasPicture(String picture) {

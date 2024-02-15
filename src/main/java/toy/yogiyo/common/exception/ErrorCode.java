@@ -30,6 +30,8 @@ public enum ErrorCode {
     SHOP_ACCESS_DENIED(403, "SH_002", "가게에 대한 권한이 없습니다."),
     SHOP_ALREADY_EXIST(409, "SH_003", "이미 존재하는 가게명 입니다."),
 
+    BUSINESSHOURS_NOT_FOUND(404, "BH_001", "영업 시간이 존재하지 않습니다."),
+
     CATEGORY_NOT_FOUND(404, "C_001", "카테고리를 찾을 수 없습니다."),
     CATEGORY_ALREADY_EXIST(409, "C_002", "이미 존재하는 카테고리명 입니다."),
 

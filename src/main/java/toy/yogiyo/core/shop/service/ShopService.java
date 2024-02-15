@@ -2,6 +2,7 @@ package toy.yogiyo.core.shop.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ import toy.yogiyo.core.shop.dto.*;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -186,18 +188,6 @@ public class ShopService {
     }
 
 
-    private void validateDuplicateName(String name) {
-        if (shopRepository.existsByName(name)) {
-            throw new EntityExistsException(ErrorCode.SHOP_ALREADY_EXIST);
-        }
-    }
-
-    private void validatePermission(Owner owner, Shop shop) {
-        if (!Objects.equals(shop.getOwner().getId(), owner.getId())) {
-            throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
-        }
-    }
-
     public ShopScrollListResponse getList(ShopScrollListRequest request) {
         List<ShopScrollResponse> shops = shopRepository.scrollShopList(request);
 
@@ -219,6 +209,38 @@ public class ShopService {
                 .nextSubCursor(nextSubCursor)
                 .hasNext(hasNext)
                 .build();
+    }
+
+    @Transactional
+    public void tempClose(Long shopId, Owner owner, ShopTempCloseRequest request) {
+        Shop shop = shopRepository.findById(shopId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        validatePermission(owner, shop);
+
+        if (request.getToday() != null && request.getToday()) {
+            LocalDateTime tomorrowOpenTime = shop.getOpenTime(LocalDateTime.now().plusDays(1));
+            shop.updateCloseUntil(tomorrowOpenTime);
+        } else {
+            shop.updateCloseUntil(request.getCloseUntil());
+        }
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0/10 * * * *")
+    public void tempCloseCheck() {
+        shopRepository.updateAllTempCloseFinishByDateTime(LocalDateTime.now());
+    }
+
+    private void validateDuplicateName(String name) {
+        if (shopRepository.existsByName(name)) {
+            throw new EntityExistsException(ErrorCode.SHOP_ALREADY_EXIST);
+        }
+    }
+
+    private void validatePermission(Owner owner, Shop shop) {
+        if (!Objects.equals(shop.getOwner().getId(), owner.getId())) {
+            throw new AccessDeniedException(ErrorCode.SHOP_ACCESS_DENIED);
+        }
     }
 
     private BigDecimal getCursor(ShopScrollListRequest.SortOption sortOption, ShopScrollResponse shop) {

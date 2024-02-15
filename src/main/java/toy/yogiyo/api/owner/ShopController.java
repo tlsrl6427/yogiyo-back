@@ -92,6 +92,15 @@ public class ShopController {
         shopService.updateCloseDays(shopId, owner, request);
     }
 
+    @PatchMapping("/{shopId}/temp-close")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void tempClose(@LoginOwner Owner owner,
+                          @PathVariable Long shopId,
+                          @Validated @RequestBody ShopTempCloseRequest request) {
+
+        shopService.tempClose(shopId, owner, request);
+    }
+
 
     @DeleteMapping("/{shopId}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)

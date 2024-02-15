@@ -64,6 +64,8 @@ public class Shop extends BaseTimeEntity {
     private Double longitude;
     private Double latitude;
 
+    private LocalDateTime closeUntil;
+
     @Builder.Default
     @OneToMany(mappedBy = "shop", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryShop> categoryShop = new ArrayList<>();
@@ -148,6 +150,10 @@ public class Shop extends BaseTimeEntity {
                 .withHour(tomorrowOpenTime.getHour())
                 .withMinute(tomorrowOpenTime.getMinute())
                 .withSecond(tomorrowOpenTime.getSecond());
+    }
+
+    public void updateCloseUntil(LocalDateTime closeUntil) {
+        this.closeUntil = closeUntil;
     }
 }
 

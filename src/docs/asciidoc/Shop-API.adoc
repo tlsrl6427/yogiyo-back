@@ -76,3 +76,8 @@ operation::shop/details[snippets='http-request,http-response,request-parameters,
 `GET /member/shop/{shop id}/info`
 
 operation::member/shop/info[snippets='http-request,http-response,path-parameters,request-parameters,response-fields']
+
+=== 가게 일시중지
+`PATCH /owner/shop/{shop id}/temp-close`
+
+operation::shop/temp-close[snippets='http-request,http-response,path-parameters,request-fields']

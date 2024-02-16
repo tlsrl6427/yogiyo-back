@@ -137,7 +137,7 @@ public class MenuGroupController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@menuPermissionEvaluator.hasWritePermission(authentication, #menuId)")
     public void updateMenuVisible(@PathVariable Long menuId, @Validated @RequestBody MenuVisibleUpdateRequest request) {
-        menuService.updateHide(menuId, request.getVisible());
+        menuService.updateVisible(menuId, request.getVisible());
     }
 
     @GetMapping("/search")

@@ -1,6 +1,8 @@
 package toy.yogiyo.api.owner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,7 @@ import toy.yogiyo.core.shop.service.ShopService;
 import toy.yogiyo.util.ConstrainedFields;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +51,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,6 +82,8 @@ class ShopControllerTest {
                 .build();
 
         objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
 
@@ -473,6 +479,34 @@ class ShopControllerTest {
                         ),
                         pathParameters(
                                 parameterWithName("shopId").description("가게 ID")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("가게 일시중지")
+    void tempClose() throws Exception {
+        // given
+        doNothing().when(shopService).tempClose(anyLong(), any(), any());
+        ShopTempCloseRequest request = ShopTempCloseRequest.builder()
+                .closeUntil(LocalDateTime.of(2024, 2, 10, 22, 0, 0))
+                .build();
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.patch("/owner/shop/{shopId}/temp-close", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(request)));
+
+        // then
+        ConstrainedFields fields = new ConstrainedFields(ShopTempCloseRequest.class);
+        result.andExpect(status().isNoContent())
+                .andDo(document("shop/temp-close",
+                        pathParameters(
+                                parameterWithName("shopId").description("가게 ID")
+                        ),
+                        requestFields(
+                                fields.withPath("closeUntil").type(JsonFieldType.STRING).description("일시중지 종료 시간").optional(),
+                                fields.withPath("today").type(JsonFieldType.BOOLEAN).description("오늘 하루 일시중지").optional()
                         )
                 ));
     }

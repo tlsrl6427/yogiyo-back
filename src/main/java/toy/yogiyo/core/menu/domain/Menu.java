@@ -7,6 +7,7 @@ import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.menuoption.domain.OptionGroupLinkMenu;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class Menu {
     @ColumnDefault("'SHOW'")
     @Enumerated(EnumType.STRING)
     private Visible visible;
+    private LocalDateTime soldOutUntil;
 
     private long reviewNum;
 
@@ -72,7 +74,8 @@ public class Menu {
         this.reviewNum++;
     }
 
-    public void updateVisible(Visible visible) {
+    public void updateVisible(Visible visible, LocalDateTime soldOutUntil) {
         this.visible = visible;
+        this.soldOutUntil = soldOutUntil;
     }
 }

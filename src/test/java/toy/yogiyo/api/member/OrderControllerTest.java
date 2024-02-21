@@ -101,6 +101,7 @@ class OrderControllerTest {
                 .totalPrice(20000)
                 .deliveryPrice(1000)
                 .totalPaymentPrice(21000)
+                .code("1171010200")
                 .build();
 
         doNothing().when(orderService).createOrder(any(), any());
@@ -146,7 +147,8 @@ class OrderControllerTest {
                                         fieldWithPath("paymentType").type(JsonFieldType.STRING).description("결제방식"),
                                         fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총 금액"),
                                         fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액"),
-                                        fieldWithPath("totalPaymentPrice").type(JsonFieldType.NUMBER).description("총 결제금액")
+                                        fieldWithPath("totalPaymentPrice").type(JsonFieldType.NUMBER).description("총 결제금액"),
+                                        fieldWithPath("code").type(JsonFieldType.STRING).description("법정동 코드")
                                 )
                         )
                 );

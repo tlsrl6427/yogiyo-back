@@ -28,5 +28,6 @@ public class OrderCreateRequest {
     private int totalPrice;
     private int deliveryPrice;
     private int totalPaymentPrice;
+    private String code;
 
 }

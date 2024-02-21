@@ -42,6 +42,7 @@ public class Order extends BaseTimeEntity {
     private boolean requestDoor;
     private boolean requestSpoon;
     private Status status;
+    private String code;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -55,7 +56,7 @@ public class Order extends BaseTimeEntity {
     private Shop shop;
 
     @Builder
-    public Order(Long id, String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, List<OrderItem> orderItems, Member member, Shop shop) {
+    public Order(Long id, String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, String code, List<OrderItem> orderItems, Member member, Shop shop) {
         this.id = id;
         this.orderNumber = orderNumber;
         this.totalPrice = totalPrice;
@@ -69,6 +70,7 @@ public class Order extends BaseTimeEntity {
         this.requestDoor = requestDoor;
         this.requestSpoon = requestSpoon;
         this.status = status;
+        this.code = code;
         this.orderItems = orderItems;
         this.member = member;
         this.shop = shop;
@@ -100,6 +102,7 @@ public class Order extends BaseTimeEntity {
                 .requestDoor(request.isRequestDoor())
                 .requestSpoon(request.isRequestSpoon())
                 .status(Status.DONE)
+                .code(request.getCode())
                 .orderItems(request.getOrderItems())
                 .member(member)
                 .shop(shop)

@@ -90,6 +90,8 @@ public class Order extends BaseTimeEntity {
 
         String temp = second+month+hour+"_"+year+minute;
 
+        List<OrderItem> orderItems = request.convertOrderItemsToEntity();
+
         Order order = Order.builder()
                 .orderNumber(temp)
                 .totalPrice(request.getTotalPrice())
@@ -103,21 +105,19 @@ public class Order extends BaseTimeEntity {
                 .requestSpoon(request.isRequestSpoon())
                 .status(Status.DONE)
                 .code(request.getCode())
-                .orderItems(request.getOrderItems())
+                .orderItems(orderItems)
                 .member(member)
                 .shop(shop)
                 .build();
 
         // OrderItem-OrderItemOption 연관관계 추가
-        request.getOrderItems()
-                .forEach(
-                        orderItem -> orderItem.getOrderItemOptions()
-                                .forEach(orderItemOption -> orderItemOption.setOrderItem(orderItem))
-                );
+        orderItems.forEach(
+                orderItem -> orderItem.getOrderItemOptions()
+                        .forEach(orderItemOption -> orderItemOption.setOrderItem(orderItem))
+        );
 
         // Order-OrderItem 연관관계 추가
-        request.getOrderItems()
-                .forEach(orderItem -> orderItem.setOrder(order));
+        orderItems.forEach(orderItem -> orderItem.setOrder(order));
 
         return order;
     }

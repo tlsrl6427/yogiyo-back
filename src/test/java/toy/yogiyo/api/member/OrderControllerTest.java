@@ -14,7 +14,6 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.member.OrderController;
 import toy.yogiyo.core.address.domain.Address;
 import toy.yogiyo.core.order.domain.*;
 import toy.yogiyo.core.order.dto.*;
@@ -73,24 +72,19 @@ class OrderControllerTest {
                 .address(new Address("다산로 4길 57", "장미아파트 8동"))
                 .orderItems(
                         List.of(
-                            OrderItem.builder()
-                                    .price(12000)
-                                    .quantity(1)
-                                    .menuId(2L)
-                                    .menuName("후라이드치킨")
-                                    .orderItemOptions(
-                                            List.of(
-                                                OrderItemOption.builder()
-                                                        .optionName("양념추가")
-                                                        .price(500)
-                                                        .build()
-                                            )
-                                    ).build()
-                           /* new OrderItem(1L, 12000, 1, "후라이드치킨", null,
-                                    List.of(
-                                            new OrderItemOption(1L, "양념추가", 500, null)
-                                    )
-                            )*/
+                                OrderCreateRequest.OrderItemDto.builder()
+                                        .price(12000)
+                                        .quantity(1)
+                                        .menuId(2L)
+                                        .menuName("후라이드치킨")
+                                        .orderItemOptions(
+                                                List.of(
+                                                        OrderCreateRequest.OrderItemOptionDto.builder()
+                                                                .optionName("양념추가")
+                                                                .price(500)
+                                                                .build()
+                                                )
+                                        ).build()
                         )
                 )
                 .requestMsg("요청사항 없음")
@@ -125,20 +119,13 @@ class OrderControllerTest {
                                         fieldWithPath("address.street").type(JsonFieldType.STRING).description("도로명 주소"),
                                         fieldWithPath("address.detail").type(JsonFieldType.STRING).description("상세주소"),
 
-                                        //subsectionWithPath("orderItems[]").type(JsonFieldType.ARRAY).description("오더 아이템"),
-                                        fieldWithPath("orderItems[].id").ignored(),
-                                        fieldWithPath("orderItems[].createdAt").ignored(),
-                                        fieldWithPath("orderItems[].updatedAt").ignored(),
                                         fieldWithPath("orderItems[].menuId").type(JsonFieldType.NUMBER).description("메뉴 ID"),
                                         fieldWithPath("orderItems[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
                                         fieldWithPath("orderItems[].price").type(JsonFieldType.NUMBER).description("가격"),
                                         fieldWithPath("orderItems[].quantity").type(JsonFieldType.NUMBER).description("개수"),
-//                                        fieldWithPath("orderItems[].order").ignored(),
 
-                                        fieldWithPath("orderItems[].orderItemOptions[].id").ignored(),
                                         fieldWithPath("orderItems[].orderItemOptions[].optionName").type(JsonFieldType.STRING).description("옵션 이름"),
                                         fieldWithPath("orderItems[].orderItemOptions[].price").type(JsonFieldType.NUMBER).description("가격"),
-//                                        fieldWithPath("orderItems[].orderItemOptions[].orderItem").ignored(),
 
                                         fieldWithPath("requestMsg").type(JsonFieldType.STRING).description("요청사항"),
                                         fieldWithPath("requestDoor").type(JsonFieldType.BOOLEAN).description("문 앞에 두기 여부"),

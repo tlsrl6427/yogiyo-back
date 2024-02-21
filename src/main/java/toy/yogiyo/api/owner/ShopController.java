@@ -107,4 +107,10 @@ public class ShopController {
     public void delete(@LoginOwner Owner owner, @PathVariable("shopId") Long shopId) {
         shopService.delete(shopId, owner);
     }
+
+
+    @GetMapping
+    public List<OwnerShopResponse> getShops(@LoginOwner Owner owner) {
+        return shopService.getOwnerShops(owner);
+    }
 }

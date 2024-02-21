@@ -81,3 +81,8 @@ operation::member/shop/info[snippets='http-request,http-response,path-parameters
 `PATCH /owner/shop/{shop id}/temp-close`
 
 operation::shop/temp-close[snippets='http-request,http-response,path-parameters,request-fields']
+
+=== 점주 가게 목록 조회
+`GET /owner/shop`
+
+operation::shop/owner-shops[snippets='http-request,http-response,response-fields']

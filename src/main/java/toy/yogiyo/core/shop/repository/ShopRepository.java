@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import toy.yogiyo.core.owner.domain.Owner;
 import toy.yogiyo.core.shop.domain.Shop;
 
 import javax.persistence.LockModeType;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ShopRepository extends JpaRepository<Shop, Long>, ShopCustomRepository {
@@ -28,4 +30,6 @@ public interface ShopRepository extends JpaRepository<Shop, Long>, ShopCustomRep
     @Modifying
     @Query("update Shop s set s.closeUntil = null where s.closeUntil <= :datetime")
     void updateAllTempCloseFinishByDateTime(@Param("datetime") LocalDateTime dateTime);
+
+    List<Shop> findByOwner(Owner owner);
 }

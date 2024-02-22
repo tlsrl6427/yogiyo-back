@@ -29,8 +29,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static toy.yogiyo.core.shop.domain.QShop.shop;
 
 @Service
 @RequiredArgsConstructor
@@ -223,6 +223,18 @@ public class ShopService {
         } else {
             shop.updateCloseUntil(request.getCloseUntil());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<OwnerShopResponse> getOwnerShops(Owner owner) {
+        if(owner.getId() == null) {
+            throw new AuthenticationException(ErrorCode.OWNER_UNAUTHORIZATION);
+        }
+
+        List<Shop> shops = shopRepository.findByOwner(owner);
+        return shops.stream()
+                .map(OwnerShopResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional

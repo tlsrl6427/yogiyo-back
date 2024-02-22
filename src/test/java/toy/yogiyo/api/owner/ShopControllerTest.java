@@ -51,7 +51,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -507,6 +506,29 @@ class ShopControllerTest {
                         requestFields(
                                 fields.withPath("closeUntil").type(JsonFieldType.STRING).description("일시중지 종료 시간").optional(),
                                 fields.withPath("today").type(JsonFieldType.BOOLEAN).description("오늘 하루 일시중지").optional()
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("점주가 소유한 가게 목록 조회")
+    void getOwnerShops() throws Exception {
+        // given
+        when(shopService.getOwnerShops(any())).thenReturn(
+                List.of(OwnerShopResponse.builder().id(1L).name("가게 1").icon("/images/image.jpg").build(),
+                        OwnerShopResponse.builder().id(2L).name("가게 1").icon("/images/image.jpg").build())
+        );
+
+        // when
+        ResultActions result = mockMvc.perform(RestDocumentationRequestBuilders.get("/owner/shop"));
+
+        // then
+        result.andExpect(status().isOk())
+                .andDo(document("shop/owner-shops",
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("가게 ID"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("가게명"),
+                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("아이콘")
                         )
                 ));
     }

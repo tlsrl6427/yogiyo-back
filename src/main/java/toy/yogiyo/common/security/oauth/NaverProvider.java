@@ -31,12 +31,13 @@ public class NaverProvider implements OAuthProvider{
     private final String BEARER = "Bearer ";
     private final RestTemplate restTemplate = new RestTemplate();
     private final OAuthNaverProperties naverProperties;
+    private final OAuthNaver2Properties naver2Properties;
     private final MemberRepository memberRepository;
     private final OwnerRepository ownerRepository;
 
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
-        String accessToken = getAccessToken(request.getAuthCode());
+        String accessToken = getAccessToken(request.getAuthCode(), 0);
         OAuthIdTokenResponse oAuthIdTokenResponse = getUserInfo(accessToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.NAVER)
                 .orElseGet(() -> autoJoin_member(oAuthIdTokenResponse));
@@ -45,7 +46,7 @@ public class NaverProvider implements OAuthProvider{
 
     @Override
     public LoginResponse getOwnerInfo(LoginRequest request) {
-        String accessToken = getAccessToken(request.getAuthCode());
+        String accessToken = getAccessToken(request.getAuthCode(), 1);
         OAuthIdTokenResponse oAuthIdTokenResponse = getUserInfo(accessToken);
         Owner owner = ownerRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.NAVER)
                 .orElseGet(() -> autoJoin_owner(oAuthIdTokenResponse));
@@ -75,12 +76,12 @@ public class NaverProvider implements OAuthProvider{
                 .build();
     }
 
-    private String getAccessToken(String authCode) {
+    private String getAccessToken(String authCode, int num) {
         // body 설정
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("code", authCode);
-        multiValueMap.add("client_id", naverProperties.getClientId());
-        multiValueMap.add("client_secret", naverProperties.getClientSecret());
+        multiValueMap.add("client_id", num==0 ? naverProperties.getClientId() : naver2Properties.getClientId());
+        multiValueMap.add("client_secret", num==0 ? naverProperties.getClientSecret() : naver2Properties.getClientSecret());
         multiValueMap.add("grant_type", "authorization_code");
 
         HttpHeaders headers = new HttpHeaders();

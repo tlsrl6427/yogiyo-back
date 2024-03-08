@@ -15,5 +15,6 @@ public class OAuthKakaoProperties {
     private String clientId;
     private String clientSecret;
     private String redirectUri;
+    private String redirectUri2;
     private List<String> scope;
 }

@@ -37,7 +37,7 @@ public class KakaoProvider implements OAuthProvider {
     private final OwnerRepository ownerRepository;
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
-        String idToken = getIdToken(request.getAuthCode());
+        String idToken = getIdToken(request.getAuthCode(), 0);
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
                 .orElseGet(() -> autoJoin_member(oAuthIdTokenResponse));
@@ -46,7 +46,7 @@ public class KakaoProvider implements OAuthProvider {
 
     @Override
     public LoginResponse getOwnerInfo(LoginRequest request) {
-        String idToken = getIdToken(request.getAuthCode());
+        String idToken = getIdToken(request.getAuthCode(), 1);
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
         Owner owner = ownerRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
                 .orElseGet(() -> autoJoin_owner(oAuthIdTokenResponse));
@@ -76,13 +76,14 @@ public class KakaoProvider implements OAuthProvider {
         return OAuthIdTokenResponse.from(kakaoUser);
     }
 
-    private String getIdToken(String authCode) {
+    private String getIdToken(String authCode, int num) {
+
         // body 설정
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("code", authCode);
         multiValueMap.add("client_id", kakaoProperties.getClientId());
         multiValueMap.add("client_secret", kakaoProperties.getClientSecret());
-        multiValueMap.add("redirect_uri", kakaoProperties.getRedirectUri());
+        multiValueMap.add("redirect_uri", num==0 ? kakaoProperties.getRedirectUri() : kakaoProperties.getRedirectUri2());
         multiValueMap.add("grant_type", "authorization_code");
 
         HttpHeaders headers = new HttpHeaders();

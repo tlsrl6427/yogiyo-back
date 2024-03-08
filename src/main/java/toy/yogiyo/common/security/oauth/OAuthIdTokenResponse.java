@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import lombok.*;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
+import toy.yogiyo.core.owner.domain.Owner;
 
 @Getter
 @Builder
@@ -31,6 +32,14 @@ public class OAuthIdTokenResponse {
 
     public Member toMember(ProviderType providerType){
         return Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .providerType(providerType)
+                .build();
+    }
+
+    public Owner toOwner(ProviderType providerType){
+        return Owner.builder()
                 .email(email)
                 .nickname(nickname)
                 .providerType(providerType)

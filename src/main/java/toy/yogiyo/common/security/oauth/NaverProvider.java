@@ -16,6 +16,8 @@ import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.member.repository.MemberRepository;
+import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.owner.repository.OwnerRepository;
 
 import java.util.Map;
 
@@ -30,18 +32,32 @@ public class NaverProvider implements OAuthProvider{
     private final RestTemplate restTemplate = new RestTemplate();
     private final OAuthNaverProperties naverProperties;
     private final MemberRepository memberRepository;
+    private final OwnerRepository ownerRepository;
 
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
         String accessToken = getAccessToken(request.getAuthCode());
         OAuthIdTokenResponse oAuthIdTokenResponse = getUserInfo(accessToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.NAVER)
-                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
+                .orElseGet(() -> autoJoin_member(oAuthIdTokenResponse));
         return LoginResponse.of(member);
     }
 
-    private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {
+    @Override
+    public LoginResponse getOwnerInfo(LoginRequest request) {
+        String accessToken = getAccessToken(request.getAuthCode());
+        OAuthIdTokenResponse oAuthIdTokenResponse = getUserInfo(accessToken);
+        Owner owner = ownerRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.NAVER)
+                .orElseGet(() -> autoJoin_owner(oAuthIdTokenResponse));
+        return LoginResponse.of(owner);
+    }
+
+    private Member autoJoin_member(OAuthIdTokenResponse oAuthIdTokenResponse) {
         return memberRepository.save(oAuthIdTokenResponse.toMember(ProviderType.NAVER));
+    }
+
+    private Owner autoJoin_owner(OAuthIdTokenResponse oAuthIdTokenResponse) {
+        return ownerRepository.save(oAuthIdTokenResponse.toOwner(ProviderType.NAVER));
     }
 
     private OAuthIdTokenResponse getUserInfo(String accessToken) {
@@ -76,10 +92,5 @@ public class NaverProvider implements OAuthProvider{
 
 
         return result.getBody().get("access_token");
-    }
-
-    @Override
-    public LoginResponse getOwnerInfo(LoginRequest request) {
-        return null;
     }
 }

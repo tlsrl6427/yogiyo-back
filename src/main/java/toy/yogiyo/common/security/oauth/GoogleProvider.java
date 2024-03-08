@@ -17,6 +17,8 @@ import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.member.repository.MemberRepository;
+import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.owner.repository.OwnerRepository;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -32,24 +34,34 @@ public class GoogleProvider implements OAuthProvider {
     private final RestTemplate restTemplate = new RestTemplate();
     private final OAuthGoogleProperties googleProperties;
     private final MemberRepository memberRepository;
+    private final OwnerRepository ownerRepository;
 
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
         String idToken = getIdToken(request.getAuthCode());
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.GOOGLE)
-                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
+                .orElseGet(() -> autoJoin_member(oAuthIdTokenResponse));
         return LoginResponse.of(member);
     }
 
     @Override
     public LoginResponse getOwnerInfo(LoginRequest request) {
-        return null;
+        String idToken = getIdToken(request.getAuthCode());
+        OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
+        Owner owner = ownerRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.GOOGLE)
+                .orElseGet(() -> autoJoin_owner(oAuthIdTokenResponse));
+        return LoginResponse.of(owner);
     }
 
-    private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {
+    private Member autoJoin_member(OAuthIdTokenResponse oAuthIdTokenResponse) {
         return memberRepository.save(oAuthIdTokenResponse.toMember(ProviderType.GOOGLE));
     }
+
+    private Owner autoJoin_owner(OAuthIdTokenResponse oAuthIdTokenResponse) {
+        return ownerRepository.save(oAuthIdTokenResponse.toOwner(ProviderType.GOOGLE));
+    }
+
 
     private OAuthIdTokenResponse decodeIdToken(String idToken) {
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance())

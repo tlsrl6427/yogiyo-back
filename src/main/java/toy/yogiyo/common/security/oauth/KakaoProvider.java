@@ -19,6 +19,8 @@ import toy.yogiyo.common.login.dto.LoginResponse;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
 import toy.yogiyo.core.member.repository.MemberRepository;
+import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.owner.repository.OwnerRepository;
 
 import java.util.Base64;
 import java.util.Map;
@@ -32,18 +34,31 @@ public class KakaoProvider implements OAuthProvider {
     private final RestTemplate restTemplate = new RestTemplate();
     private final OAuthKakaoProperties kakaoProperties;
     private final MemberRepository memberRepository;
-
+    private final OwnerRepository ownerRepository;
     @Override
     public LoginResponse getMemberInfo(LoginRequest request) {
         String idToken = getIdToken(request.getAuthCode());
         OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
         Member member = memberRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
-                .orElseGet(() -> autoJoin(oAuthIdTokenResponse));
+                .orElseGet(() -> autoJoin_member(oAuthIdTokenResponse));
         return LoginResponse.of(member);
     }
 
-    private Member autoJoin(OAuthIdTokenResponse oAuthIdTokenResponse) {
+    @Override
+    public LoginResponse getOwnerInfo(LoginRequest request) {
+        String idToken = getIdToken(request.getAuthCode());
+        OAuthIdTokenResponse oAuthIdTokenResponse = decodeIdToken(idToken);
+        Owner owner = ownerRepository.findByEmailAndProvider(oAuthIdTokenResponse.getEmail(), ProviderType.KAKAO)
+                .orElseGet(() -> autoJoin_owner(oAuthIdTokenResponse));
+        return LoginResponse.of(owner);
+    }
+
+    private Member autoJoin_member(OAuthIdTokenResponse oAuthIdTokenResponse) {
         return memberRepository.save(oAuthIdTokenResponse.toMember(ProviderType.KAKAO));
+    }
+
+    private Owner autoJoin_owner(OAuthIdTokenResponse oAuthIdTokenResponse) {
+        return ownerRepository.save(oAuthIdTokenResponse.toOwner(ProviderType.KAKAO));
     }
 
     private OAuthIdTokenResponse decodeIdToken(String idToken){
@@ -79,10 +94,5 @@ public class KakaoProvider implements OAuthProvider {
 
 
         return result.getBody().get("id_token");
-    }
-
-    @Override
-    public LoginResponse getOwnerInfo(LoginRequest request) {
-        return null;
     }
 }

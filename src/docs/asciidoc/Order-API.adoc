@@ -5,7 +5,7 @@
 === 주문 생성
 `POST /member/order/create`
 
-operation::order/create[snippets='http-request,http-response,request-headers,request-fields']
+operation::order/create[snippets='http-request,http-response,request-headers,request-fields,response-fields']
 
 [[Order-scroll]]
 === 주문내역 조회

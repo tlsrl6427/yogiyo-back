@@ -98,7 +98,7 @@ class OrderControllerTest {
                 .code("1171010200")
                 .build();
 
-        doNothing().when(orderService).createOrder(any(), any());
+        given(orderService.createOrder(any(), any())).willReturn(new OrderCreateResponse(1L));
 
         mockMvc.perform(
                     post("/member/order/create")
@@ -136,6 +136,9 @@ class OrderControllerTest {
                                         fieldWithPath("deliveryPrice").type(JsonFieldType.NUMBER).description("배달 금액"),
                                         fieldWithPath("totalPaymentPrice").type(JsonFieldType.NUMBER).description("총 결제금액"),
                                         fieldWithPath("code").type(JsonFieldType.STRING).description("법정동 코드")
+                                ),
+                                responseFields(
+                                        fieldWithPath("orderId").type(JsonFieldType.NUMBER).description("오더 ID")
                                 )
                         )
                 );

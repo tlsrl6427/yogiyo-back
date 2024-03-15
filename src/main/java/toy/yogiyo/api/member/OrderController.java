@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.order.dto.OrderCreateRequest;
+import toy.yogiyo.core.order.dto.OrderCreateResponse;
 import toy.yogiyo.core.order.dto.OrderDetailResponse;
 import toy.yogiyo.core.order.dto.OrderHistoryResponse;
 import toy.yogiyo.core.order.service.*;
@@ -21,8 +22,8 @@ public class OrderController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createOrder(@LoginUser Member member, @Valid @RequestBody OrderCreateRequest orderCreateRequest){
-        orderService.createOrder(member, orderCreateRequest);
+    public OrderCreateResponse createOrder(@LoginUser Member member, @Valid @RequestBody OrderCreateRequest orderCreateRequest){
+        return orderService.createOrder(member, orderCreateRequest);
     }
 
     @GetMapping("/scroll")

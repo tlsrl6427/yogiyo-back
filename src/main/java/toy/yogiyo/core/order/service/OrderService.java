@@ -26,14 +26,17 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ShopRepository shopRepository;
 
-    public void createOrder(Member member, OrderCreateRequest orderCreateRequest){
+    public OrderCreateResponse createOrder(Member member, OrderCreateRequest orderCreateRequest){
         if (member.getClass().equals(EmptyMember.class)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
         Shop findShop = shopRepository.findById(orderCreateRequest.getShopId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
         Order order = Order.createOrder(member, findShop, orderCreateRequest);
 
         findShop.increaseOrderNum();
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        return OrderCreateResponse.builder()
+                .orderId(savedOrder.getId())
+                .build();
     }
 
     public OrderHistoryResponse getOrderHistory(Member member, Long lastId){

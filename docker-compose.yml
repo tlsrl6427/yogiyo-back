@@ -5,7 +5,7 @@ services:
   spring:
     image: "tlsrl6427/yogiyo"
     ports:
-      - "8080:8080"
+      - "443:443"
     restart: always
     volumes:
       - /home/ec2-user/image-store:/image-store

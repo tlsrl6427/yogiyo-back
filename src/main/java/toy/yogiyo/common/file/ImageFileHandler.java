@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.util.UUID;
 
 @Component
-@Slf4j
 public class ImageFileHandler {
 
     @Value("${file.dir}")
@@ -26,14 +25,10 @@ public class ImageFileHandler {
 
         try {
             String originalFilename = multipartFile.getOriginalFilename();
-            log.info(originalFilename);
             String storeFileName = createStoreFileName(originalFilename);
-            log.info(storeFileName);
             multipartFile.transferTo(new File(getFullPath(storeFileName)));
-            log.info("before return");
             return storeFileName;
         } catch (IOException e) {
-            log.info(e.toString());
             throw new FileIOException(ErrorCode.FILE_NOT_SAVED);
         }
     }

@@ -33,7 +33,7 @@ public class ImageFileHandler {
             log.info("before return");
             return storeFileName;
         } catch (IOException e) {
-            log.debug(e.toString());
+            log.info(e.toString());
             throw new FileIOException(ErrorCode.FILE_NOT_SAVED);
         }
     }

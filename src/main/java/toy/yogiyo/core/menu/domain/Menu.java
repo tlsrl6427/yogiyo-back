@@ -26,7 +26,7 @@ public class Menu {
 
     private String name;
     private String content;
-    @ColumnDefault("/images/default.jpg")
+    @ColumnDefault("'/images/default.jpg'")
     private String picture;
     private Integer price;
 

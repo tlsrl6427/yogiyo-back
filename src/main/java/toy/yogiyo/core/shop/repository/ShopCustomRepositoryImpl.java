@@ -24,6 +24,7 @@ import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.LocalTime.now;
 import static toy.yogiyo.core.category.domain.QCategory.category;
@@ -44,8 +45,8 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
     @Override
     public ShopInfoResponse info(Long shopId, String code) {
         ShopInfoResponse result = jpaQueryFactory.from(shop)
-                .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id))
-                .join(deliveryPriceInfo).on(deliveryPriceInfo.deliveryPlace.id.eq(deliveryPlace.id).and(deliveryPlace.code.eq(code)))
+                .leftJoin(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id).and(deliveryPlace.code.eq(code)))
+                .leftJoin(deliveryPriceInfo).on(deliveryPriceInfo.deliveryPlace.id.eq(deliveryPlace.id))
                 .where(shop.id.eq(shopId))
                 .transform(GroupBy.groupBy(shop.id).list(
                         Projections.fields(ShopInfoResponse.class,
@@ -77,13 +78,16 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                 .fetch();
 
         result.setBusinessHours(bh);
+        result.setDeliveryPriceInfos(result.getDeliveryPriceInfos().stream()
+                .filter(d -> d.getId() != null)
+                .collect(Collectors.toList()));
 
         return result;
     }
 
     @Override
     public ShopDetailsResponse details(Long memberId, ShopDetailsRequest request) {
-        return jpaQueryFactory.select(Projections.fields(ShopDetailsResponse.class,
+        ShopDetailsResponse shopDetails = jpaQueryFactory.select(Projections.fields(ShopDetailsResponse.class,
                         shop.id,
                         shop.name,
                         shop.reviewNum,
@@ -103,9 +107,15 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                                 .exists(), "isLike")
                 ))
                 .from(shop)
-                .join(deliveryPlace).on(shop.id.eq(deliveryPlace.shop.id).and(deliveryPlace.code.eq(request.getCode())))
+                .leftJoin(deliveryPlace).on(shop.id.eq(deliveryPlace.shop.id).and(deliveryPlace.code.eq(request.getCode())))
                 .where(shop.id.eq(request.getShopId()))
                 .fetchOne();
+
+        if (shopDetails != null) {
+            shopDetails.setAvailableDelivery(shopDetails.getDeliveryTime() != null);
+        }
+
+        return shopDetails;
     }
 
     @Override
@@ -123,7 +133,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                 .where(like.member.id.eq(memberId),
                         lastIdLt(request.getOffset()))
                 .orderBy(like.id.desc())
-                .limit(request.getLimit()==null ? 6L: request.getLimit()+1)
+                .limit(request.getLimit() == null ? 6L : request.getLimit() + 1)
                 .fetch();
     }
 
@@ -147,8 +157,8 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                 .from(shop)
                 .join(deliveryPlace).on(deliveryPlace.shop.id.eq(shop.id));
 
-        if(!request.getCategory().getCategoryKoreanName().equals("전체")
-                && !request.getCategory().getCategoryKoreanName().equals("신규맛집")){
+        if (!request.getCategory().getCategoryKoreanName().equals("전체")
+                && !request.getCategory().getCategoryKoreanName().equals("신규맛집")) {
             query.join(categoryShop).on(categoryShop.shop.id.eq(shop.id))
                     .join(category).on(categoryShop.category.id.eq(category.id));
         }
@@ -168,19 +178,23 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
     }
 
     private BooleanExpression getCursorLt(ShopScrollListRequest request) {
-        switch (request.getSortOption()){
-            case REVIEW : return request.getCursor()==null ?
-                    shop.reviewNum.lt(Long.MAX_VALUE)
-                    : shop.reviewNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.reviewNum.lt(request.getCursor().longValue()));
-            case SCORE : return request.getCursor()==null ?
-                    shop.totalScore.lt(5.1)
-                    : shop.totalScore.eq(request.getCursor()).and(shop.id.lt(request.getSubCursor())).or(shop.totalScore.lt(request.getCursor()));
-            case CLOSEST: return request.getCursor()==null ?
-                    getShopDistance(request.getLatitude(), request.getLongitude()).gt(0)
-                    : getShopDistance(request.getLatitude(), request.getLongitude()).gt(request.getCursor());
-            default: return request.getCursor()==null ?
-                    shop.orderNum.lt(Long.MAX_VALUE)
-                    : shop.orderNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.orderNum.lt(request.getCursor().longValue()));
+        switch (request.getSortOption()) {
+            case REVIEW:
+                return request.getCursor() == null ?
+                        shop.reviewNum.lt(Long.MAX_VALUE)
+                        : shop.reviewNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.reviewNum.lt(request.getCursor().longValue()));
+            case SCORE:
+                return request.getCursor() == null ?
+                        shop.totalScore.lt(5.1)
+                        : shop.totalScore.eq(request.getCursor()).and(shop.id.lt(request.getSubCursor())).or(shop.totalScore.lt(request.getCursor()));
+            case CLOSEST:
+                return request.getCursor() == null ?
+                        getShopDistance(request.getLatitude(), request.getLongitude()).gt(0)
+                        : getShopDistance(request.getLatitude(), request.getLongitude()).gt(request.getCursor());
+            default:
+                return request.getCursor() == null ?
+                        shop.orderNum.lt(Long.MAX_VALUE)
+                        : shop.orderNum.eq(request.getCursor().longValue()).and(shop.id.lt(request.getSubCursor())).or(shop.orderNum.lt(request.getCursor().longValue()));
         }
 //        if(request.getSortOption().name().equals("REVIEW")){
 //            return request.getCursor()==null ?
@@ -199,11 +213,15 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
     }
 
     private OrderSpecifier<?> getOrderSpecifier(ShopScrollListRequest request) {
-        switch (request.getSortOption()){
-            case REVIEW: return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
-            case SCORE: return new OrderSpecifier<>(Order.DESC, shop.totalScore);
-            case CLOSEST: return new OrderSpecifier<>(Order.ASC, getShopDistance(request.getLatitude(), request.getLongitude()));
-            default: return new OrderSpecifier<>(Order.DESC, shop.orderNum);
+        switch (request.getSortOption()) {
+            case REVIEW:
+                return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
+            case SCORE:
+                return new OrderSpecifier<>(Order.DESC, shop.totalScore);
+            case CLOSEST:
+                return new OrderSpecifier<>(Order.ASC, getShopDistance(request.getLatitude(), request.getLongitude()));
+            default:
+                return new OrderSpecifier<>(Order.DESC, shop.orderNum);
         }
 //        if(sortOption.equals("REVIEW")){
 //            return new OrderSpecifier<>(Order.DESC, shop.reviewNum);
@@ -216,7 +234,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
     }
 
     private BooleanExpression isNewShop(String category) {
-        if(category == null || category.isEmpty()) return null;
+        if (category == null || category.isEmpty()) return null;
         return category.equals("신규맛집") ? getNewShop().loe(999) : null;
     }
 
@@ -258,9 +276,9 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
         );
     }
 
-    private BooleanExpression categoryNameEq(String categoryName){
-        if(categoryName == null) return null;
-        return categoryName.equals("전체") | categoryName.equals("신규맛집")  ? null : category.name.eq(categoryName);
+    private BooleanExpression categoryNameEq(String categoryName) {
+        if (categoryName == null) return null;
+        return categoryName.equals("전체") | categoryName.equals("신규맛집") ? null : category.name.eq(categoryName);
     }
 
     private static BooleanExpression lastIdLt(Long lastId) {
@@ -268,7 +286,7 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
     }
 
     private BooleanExpression codeEq(String code) {
-        if(code == null) return null;
+        if (code == null) return null;
         return deliveryPlace.code.eq(code);
     }
 }

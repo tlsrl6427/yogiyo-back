@@ -21,7 +21,6 @@ public class ShopInfoResponse {
     private String noticeTitle;
     private String ownerNotice;
     private List<String> noticeImages;
-//    private String noticeImages;
     private String callNumber;
     private String address;
     private List<DeliveryPriceInfoDto> deliveryPriceInfos;
@@ -29,6 +28,10 @@ public class ShopInfoResponse {
 
     public void setBusinessHours(List<BusinessHoursDto> businessHours) {
         this.businessHours = businessHours;
+    }
+
+    public void setDeliveryPriceInfos(List<DeliveryPriceInfoDto> deliveryPriceInfos) {
+        this.deliveryPriceInfos = deliveryPriceInfos;
     }
 
     @Getter

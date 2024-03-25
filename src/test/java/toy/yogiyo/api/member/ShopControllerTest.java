@@ -198,6 +198,7 @@ class ShopControllerTest {
                         .minDeliveryPrice(3000)
                         .deliveryTime(50)
                         .isLike(true)
+                        .isAvailableDelivery(true)
                         .build()
         );
 
@@ -235,7 +236,8 @@ class ShopControllerTest {
                                 fieldWithPath("minOrderPrice").type(JsonFieldType.NUMBER).description("최소 주문 금액"),
                                 fieldWithPath("minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달 금액"),
                                 fieldWithPath("deliveryTime").type(JsonFieldType.NUMBER).description("배달 시간"),
-                                fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("찜 여부")
+                                fieldWithPath("isLike").type(JsonFieldType.BOOLEAN).description("찜 여부"),
+                                fieldWithPath("isAvailableDelivery").type(JsonFieldType.BOOLEAN).description("배달 가능 여부")
                         )
                 ));
     }

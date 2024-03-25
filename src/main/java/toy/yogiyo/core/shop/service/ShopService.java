@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import toy.yogiyo.core.deliveryplace.service.DeliveryPlaceService;
+import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.menu.service.MenuGroupService;
 import toy.yogiyo.core.menu.service.SignatureMenuService;
 import toy.yogiyo.core.menuoption.service.MenuOptionGroupService;
@@ -209,6 +210,12 @@ public class ShopService {
                 .nextSubCursor(nextSubCursor)
                 .hasNext(hasNext)
                 .build();
+    }
+
+    public List<ShopScrollResponse> getRecentList(Member member, ShopRecentRequest request) {
+        if(member.getId() == null) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+
+        return shopRepository.recentOrder(member.getId(), request);
     }
 
     @Transactional

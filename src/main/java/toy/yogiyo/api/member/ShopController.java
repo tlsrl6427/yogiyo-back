@@ -8,13 +8,16 @@ import toy.yogiyo.common.login.LoginUser;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
+import toy.yogiyo.core.shop.dto.ShopRecentRequest;
 import toy.yogiyo.core.shop.dto.member.ShopInfoResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListResponse;
+import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
 import toy.yogiyo.core.shop.repository.ShopRepository;
 import toy.yogiyo.core.shop.service.ShopService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -41,6 +44,11 @@ public class ShopController {
     @GetMapping("/{shopId}/info")
     public ShopInfoResponse getInfo(@PathVariable Long shopId, @RequestParam String code) {
         return shopRepository.info(shopId, code);
+    }
+
+    @GetMapping("/recentOrder")
+    public List<ShopScrollResponse> getRecent(@LoginUser Member member, @Valid @ModelAttribute ShopRecentRequest request){
+        return shopService.getRecentList(member, request);
     }
 
 }

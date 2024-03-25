@@ -15,9 +15,11 @@ import toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace;
 import toy.yogiyo.core.deliveryplace.domain.QDeliveryPriceInfo;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
+import toy.yogiyo.core.order.domain.QOrder;
 import toy.yogiyo.core.shop.domain.QBusinessHours;
 import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsResponse;
+import toy.yogiyo.core.shop.dto.ShopRecentRequest;
 import toy.yogiyo.core.shop.dto.member.ShopInfoResponse;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollListRequest;
 import toy.yogiyo.core.shop.dto.scroll.ShopScrollResponse;
@@ -32,6 +34,7 @@ import static toy.yogiyo.core.category.domain.QCategoryShop.categoryShop;
 import static toy.yogiyo.core.deliveryplace.domain.QDeliveryPlace.deliveryPlace;
 import static toy.yogiyo.core.deliveryplace.domain.QDeliveryPriceInfo.deliveryPriceInfo;
 import static toy.yogiyo.core.like.domain.QLike.like;
+import static toy.yogiyo.core.order.domain.QOrder.*;
 import static toy.yogiyo.core.shop.domain.QBusinessHours.businessHours;
 import static toy.yogiyo.core.shop.domain.QShop.shop;
 
@@ -116,6 +119,29 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
         }
 
         return shopDetails;
+    }
+
+    public List<ShopScrollResponse> recentOrder(Long memberId, ShopRecentRequest request){
+
+        return jpaQueryFactory.selectDistinct(Projections.fields(ShopScrollResponse.class,
+                        shop.id.as("shopId"),
+                        shop.name.as("shopName"),
+                        shop.totalScore,
+                        shop.orderNum,
+                        shop.reviewNum,
+                        getShopDistance(request.getLatitude(), request.getLongitude()).as("distance"),
+                        deliveryPlace.deliveryTime,
+                        deliveryPlace.minDeliveryPrice,
+                        deliveryPlace.maxDeliveryPrice,
+                        shop.icon
+                ))
+                .from(shop)
+                .join(order).on(order.shop.id.eq(shop.id))
+                .leftJoin(deliveryPlace).on(shop.id.eq(deliveryPlace.shop.id).and(deliveryPlace.code.eq(request.getCode())))
+                .where(order.member.id.eq(memberId))
+                .orderBy(order.id.desc())
+                .limit(20)
+                .fetch();
     }
 
     @Override

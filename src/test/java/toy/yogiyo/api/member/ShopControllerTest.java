@@ -376,4 +376,81 @@ class ShopControllerTest {
                 ));
     }
 
+    @DisplayName("내가 주문한 맛집 리스트 조회")
+    @Test
+    void getRecentOrder() throws Exception {
+        List<ShopScrollResponse> responses = List.of(
+                ShopScrollResponse.builder()
+                        .shopId(35235L)
+                        .shopName("노구단")
+                        .orderNum(311L)
+                        .reviewNum(122L)
+                        .deliveryTime(null)
+                        .minDeliveryPrice(null)
+                        .maxDeliveryPrice(null)
+                        .totalScore(BigDecimal.valueOf(2.21))
+                        .distance(6633.238573237275)
+                        .icon("/images/yogiyo-logo.jpg")
+                        .build(),
+                ShopScrollResponse.builder()
+                        .shopId(3L)
+                        .shopName("두루미평화타운")
+                        .orderNum(69L)
+                        .reviewNum(187L)
+                        .deliveryTime(null)
+                        .minDeliveryPrice(null)
+                        .maxDeliveryPrice(null)
+                        .totalScore(BigDecimal.valueOf(1.93))
+                        .distance(9008.432534893913)
+                        .icon("/images/yogiyo-logo.jpg")
+                        .build(),
+                ShopScrollResponse.builder()
+                        .shopId(1L)
+                        .shopName("상구맥주")
+                        .orderNum(608L)
+                        .reviewNum(438L)
+                        .deliveryTime(60)
+                        .minDeliveryPrice(1000)
+                        .maxDeliveryPrice(4500)
+                        .totalScore(BigDecimal.valueOf(3.34))
+                        .distance(7029.004547478632)
+                        .icon("/images/yogiyo-logo.jpg")
+                        .build()
+        );
+
+        given(shopService.getRecentList(any(), any())).willReturn(responses);
+
+        mockMvc.perform(get("/member/shop/recentOrder")
+                        .param("code", "4373031030")
+                        .param("latitude","37.512464")
+                        .param("longitude","127.102543")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("shop/recentOrder",
+                        requestParameters(
+                                parameterWithName("longitude").description("경도")
+                                        .attributes(key("constraints").value("Not Null")),
+                                parameterWithName("latitude").description("위도")
+                                        .attributes(key("constraints").value("Not Null")),
+                                parameterWithName("code").description("법정동코드")
+                                        .attributes(key("constraints").value("Not Null"))
+                        ),
+                        responseFields(
+                                fieldWithPath("[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                fieldWithPath("[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                fieldWithPath("[].orderNum").type(JsonFieldType.NUMBER).description("주문수"),
+                                fieldWithPath("[].reviewNum").type(JsonFieldType.NUMBER).description("리뷰수"),
+                                fieldWithPath("[].deliveryTime").type(JsonFieldType.NUMBER).description("배달시간").optional(),
+                                fieldWithPath("[].minDeliveryPrice").type(JsonFieldType.NUMBER).description("최소 배달금액").optional(),
+                                fieldWithPath("[].maxDeliveryPrice").type(JsonFieldType.NUMBER).description("최대 배달금액").optional(),
+                                fieldWithPath("[].totalScore").type(JsonFieldType.NUMBER).description("총 점수"),
+                                fieldWithPath("[].distance").type(JsonFieldType.NUMBER).description("거리"),
+                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("아이콘 URL")
+                        )
+                ));
+
+        verify(shopService).getRecentList(any(), any());
+    }
+
 }

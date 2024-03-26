@@ -16,6 +16,10 @@ operation::shop/get-info[snippets='http-request,http-response,path-parameters,re
 
 operation::shop/list[snippets='http-request,http-response,request-parameters,response-fields']
 
+=== 내가 주문한 맛집 조회
+`GET /member/shop/recentOrder`
+
+operation::shop/recentOrder[snippets='http-request,http-response,request-parameters,response-fields']
 
 === 사장님 공지 조회
 `GET /owner/shop/{shop id}/notice`

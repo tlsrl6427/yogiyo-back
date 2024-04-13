@@ -20,7 +20,7 @@ operation::order/scroll[snippets='http-request,http-response,request-parameters,
 operation::order/details[snippets='http-request,http-response,request-parameters,response-fields']
 
 [[Order-writableReview]]
-=== 주문내역 조회
+=== 작성 가능한 리뷰 조회
 `GET /member/order/writableReview`
 
 operation::order/writableReview[snippets='http-request,http-response,request-parameters,response-fields']

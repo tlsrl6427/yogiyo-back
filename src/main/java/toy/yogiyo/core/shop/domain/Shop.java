@@ -12,6 +12,7 @@ import toy.yogiyo.core.owner.domain.Owner;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -123,10 +124,10 @@ public class Shop extends BaseTimeEntity {
 
     public void addReview(Review review) {
         this.reviewNum++;
-        this.tasteScore = (this.tasteScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTasteScore())).divide(BigDecimal.valueOf(reviewNum));
-        this.quantityScore = (this.quantityScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getQuantityScore())).divide(BigDecimal.valueOf(reviewNum));
-        this.deliveryScore = (this.deliveryScore .multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getDeliveryScore())).divide(BigDecimal.valueOf(reviewNum));
-        this.totalScore = (this.totalScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTotalScore())).divide(BigDecimal.valueOf(reviewNum));
+        this.tasteScore = (this.tasteScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTasteScore())).divide(BigDecimal.valueOf(reviewNum), 2, RoundingMode.HALF_UP);
+        this.quantityScore = (this.quantityScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getQuantityScore())).divide(BigDecimal.valueOf(reviewNum), 2, RoundingMode.HALF_UP);
+        this.deliveryScore = (this.deliveryScore .multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getDeliveryScore())).divide(BigDecimal.valueOf(reviewNum), 2, RoundingMode.HALF_UP);
+        this.totalScore = (this.totalScore.multiply(BigDecimal.valueOf(this.reviewNum-1)).add(review.getTotalScore())).divide(BigDecimal.valueOf(reviewNum), 2, RoundingMode.HALF_UP);
     }
 
     public void decreaseLikeNum() {

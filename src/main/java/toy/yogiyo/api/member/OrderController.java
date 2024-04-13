@@ -37,4 +37,10 @@ public class OrderController {
     public OrderDetailResponse getOrderDetails(@LoginUser Member member, @RequestParam Long orderId){
         return orderService.getOrderDetail(member, orderId);
     }
+
+    @GetMapping("/writableReview")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderHistoryResponse getWritableReviews(@LoginUser Member member, @RequestParam(required = false) Long lastId){
+        return orderService.getWritableReview(member, lastId);
+    }
 }

@@ -39,6 +39,7 @@ public class ReviewService {
         Review review = request.toReview(member, order);
         Shop shop = shopRepository.findById(request.getShopId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND));
+        order.setExistsReview(true);
         shop.addReview(review);
 
         Long[] menuIds = order.getOrderItems().stream()

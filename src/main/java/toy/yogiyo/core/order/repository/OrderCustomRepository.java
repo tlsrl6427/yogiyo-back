@@ -7,4 +7,5 @@ import java.util.List;
 public interface OrderCustomRepository {
 
     List<Order> scrollOrders(Long memberId, Long lastId);
+    List<Order> scrollWritableReviews(Long memberId, Long lastId);
 }

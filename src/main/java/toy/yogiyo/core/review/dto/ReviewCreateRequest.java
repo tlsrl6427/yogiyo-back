@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Getter
 @Builder
@@ -33,7 +34,7 @@ public class ReviewCreateRequest {
                 .tasteScore(tasteScore)
                 .quantityScore(quantityScore)
                 .deliveryScore(deliveryScore)
-                .totalScore(tasteScore.add(quantityScore).add(deliveryScore).divide(BigDecimal.valueOf(3)))
+                .totalScore(tasteScore.add(quantityScore).add(deliveryScore).divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP))
                 .content(content)
                 .shopId(shopId)
                 .shopName(shopName)

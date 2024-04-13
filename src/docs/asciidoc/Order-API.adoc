@@ -5,16 +5,22 @@
 === 주문 생성
 `POST /member/order/create`
 
-operation::order/create[snippets='http-request,http-response,request-headers,request-fields,response-fields']
+operation::order/create[snippets='http-request,http-response,request-fields,response-fields']
 
 [[Order-scroll]]
 === 주문내역 조회
 `GET /member/order/scroll`
 
-operation::order/scroll[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
+operation::order/scroll[snippets='http-request,http-response,request-parameters,response-fields']
 
 [[Order-detail]]
 === 상세 주문내역 조회
 `GET /member/order/details`
 
-operation::order/details[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
+operation::order/details[snippets='http-request,http-response,request-parameters,response-fields']
+
+[[Order-writableReview]]
+=== 주문내역 조회
+`GET /member/order/writableReview`
+
+operation::order/writableReview[snippets='http-request,http-response,request-parameters,response-fields']

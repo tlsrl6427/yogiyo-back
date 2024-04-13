@@ -103,16 +103,12 @@ class OrderControllerTest {
         mockMvc.perform(
                     post("/member/order/create")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", jwt)
                     .content(objectMapper.writeValueAsString(orderCreateRequest))
                 )
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(
                         document("order/create",
-                                requestHeaders(
-                                        headerWithName("Authorization").description("Access Token")
-                                ),
                                 requestFields(
                                         fieldWithPath("shopId").type(JsonFieldType.NUMBER).description("음식점 ID")
                                                 .attributes(key("constraints").value("Not Null")),
@@ -163,6 +159,7 @@ class OrderControllerTest {
                                         .menuName("후라이드 치킨")
                                         .menuCount(2)
                                         .totalMenuCount(3)
+                                        .existsReview(true)
                                         .build()
                         )
                 )
@@ -175,7 +172,6 @@ class OrderControllerTest {
         mockMvc.perform(
                     get("/member/order/scroll")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", jwt)
                     .param("lastId", "1")
                 )
                 .andExpect(status().isOk())
@@ -185,9 +181,6 @@ class OrderControllerTest {
                 .andDo(print())
                 .andDo(
                         document("order/scroll",
-                                requestHeaders(
-                                        headerWithName("Authorization").description("Access Token")
-                                ),
                                 requestParameters(
                                         parameterWithName("lastId").description("마지막 주문 ID")
                                 ),
@@ -203,6 +196,7 @@ class OrderControllerTest {
                                         fieldWithPath("orderHistories[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
                                         fieldWithPath("orderHistories[].menuCount").type(JsonFieldType.NUMBER).description("메뉴 개수"),
                                         fieldWithPath("orderHistories[].totalMenuCount").type(JsonFieldType.NUMBER).description("총 메뉴 개수"),
+                                        fieldWithPath("orderHistories[].existsReview").type(JsonFieldType.BOOLEAN).description("리뷰 작성 여부"),
                                         fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("마지막 주문 ID"),
                                         fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
                                 )
@@ -259,15 +253,11 @@ class OrderControllerTest {
         mockMvc.perform(
                     get("/member/order/details")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", jwt)
                     .param("orderId", "1")
                 )
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("order/details",
-                            requestHeaders(
-                                headerWithName("Authorization").description("Access Token")
-                            ),
                             requestParameters(
                                 parameterWithName("orderId").description("주문 ID")
                             ),
@@ -308,5 +298,70 @@ class OrderControllerTest {
                 );
 
         verify(orderService).getOrderDetail(any(), any());
+    }
+
+    @DisplayName("작성 가능한 리뷰 조회_스크롤")
+    @Test
+    void scrollWritableReviews() throws Exception {
+        OrderHistoryResponse orderHistoryResponse = OrderHistoryResponse.builder()
+                .orderHistories(
+                        List.of(
+                                OrderHistory.builder()
+                                        .orderId(1L)
+                                        .orderTime(LocalDateTime.now())
+                                        .orderType(OrderType.DELIVERY)
+                                        .status(Status.DONE)
+                                        .shopId(1L)
+                                        .shopName("BHC 행당점")
+                                        .shopImg("img.jpg")
+                                        .menuName("후라이드 치킨")
+                                        .menuCount(2)
+                                        .totalMenuCount(3)
+                                        .existsReview(true)
+                                        .build()
+                        )
+                )
+                .lastId(5L)
+                .hasNext(true)
+                .build();
+
+        given(orderService.getWritableReview(any(), any())).willReturn(orderHistoryResponse);
+
+        mockMvc.perform(
+                        get("/member/order/writableReview")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .param("lastId", "1")
+                )
+                .andExpect(status().isOk())
+                //.andExpect(jsonPath("orderHistories").value(orderHistoryResponse.getOrderHistories()))
+                .andExpect(jsonPath("lastId").value(orderHistoryResponse.getLastId()))
+                .andExpect(jsonPath("hasNext").value(orderHistoryResponse.isHasNext()))
+                .andDo(print())
+                .andDo(
+                        document("order/writableReview",
+                                requestParameters(
+                                        parameterWithName("lastId").description("마지막 주문 ID")
+                                ),
+                                responseFields(
+                                        //subsectionWithPath("orderHistories[]").type(JsonFieldType.ARRAY).description("오더 히스토리"),
+                                        fieldWithPath("orderHistories[].orderId").type(JsonFieldType.NUMBER).description("주문 ID"),
+                                        fieldWithPath("orderHistories[].orderTime").type(JsonFieldType.STRING).description("주문시간"),
+                                        fieldWithPath("orderHistories[].orderType").type(JsonFieldType.STRING).description("주문타입"),
+                                        fieldWithPath("orderHistories[].status").type(JsonFieldType.STRING).description("주문상태"),
+                                        fieldWithPath("orderHistories[].shopId").type(JsonFieldType.NUMBER).description("음식점 ID"),
+                                        fieldWithPath("orderHistories[].shopName").type(JsonFieldType.STRING).description("음식점 이름"),
+                                        fieldWithPath("orderHistories[].shopImg").type(JsonFieldType.STRING).description("음식점 아이콘 URI"),
+                                        fieldWithPath("orderHistories[].menuName").type(JsonFieldType.STRING).description("메뉴 이름"),
+                                        fieldWithPath("orderHistories[].menuCount").type(JsonFieldType.NUMBER).description("메뉴 개수"),
+                                        fieldWithPath("orderHistories[].totalMenuCount").type(JsonFieldType.NUMBER).description("총 메뉴 개수"),
+                                        fieldWithPath("orderHistories[].existsReview").type(JsonFieldType.BOOLEAN).description("리뷰 작성 여부"),
+                                        fieldWithPath("lastId").type(JsonFieldType.NUMBER).description("마지막 주문 ID"),
+                                        fieldWithPath("hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 존재여부")
+                                )
+                        )
+                )
+        ;
+
+        verify(orderService).getWritableReview(any(), any());
     }
 }

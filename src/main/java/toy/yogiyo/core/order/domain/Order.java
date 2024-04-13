@@ -44,6 +44,8 @@ public class Order extends BaseTimeEntity {
     private Status status;
     private String code;
 
+    private boolean existsReview;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -56,7 +58,7 @@ public class Order extends BaseTimeEntity {
     private Shop shop;
 
     @Builder
-    public Order(Long id, String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, String code, List<OrderItem> orderItems, Member member, Shop shop) {
+    public Order(Long id, String orderNumber, int totalPrice, int deliveryPrice, int totalPaymentPrice, Address address, String phoneNumber, OrderType orderType, PaymentType paymentType, String requestMsg, boolean requestDoor, boolean requestSpoon, Status status, String code, List<OrderItem> orderItems, Member member, Shop shop, boolean existsReview) {
         this.id = id;
         this.orderNumber = orderNumber;
         this.totalPrice = totalPrice;
@@ -74,6 +76,7 @@ public class Order extends BaseTimeEntity {
         this.orderItems = orderItems;
         this.member = member;
         this.shop = shop;
+        this.existsReview = existsReview;
     }
 
     public void addOrderItem(OrderItem orderItem){
@@ -108,6 +111,7 @@ public class Order extends BaseTimeEntity {
                 .orderItems(orderItems)
                 .member(member)
                 .shop(shop)
+                .existsReview(false)
                 .build();
 
         // OrderItem-OrderItemOption 연관관계 추가
@@ -124,5 +128,9 @@ public class Order extends BaseTimeEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setExistsReview(boolean bool){
+        this.existsReview = bool;
     }
 }

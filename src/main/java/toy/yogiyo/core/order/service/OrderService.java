@@ -68,4 +68,20 @@ public class OrderService {
         if(member.getId() != order.getMember().getId()) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
     }
 
+    public OrderHistoryResponse getWritableReview(Member member, Long lastId) {
+        if (member.getClass().equals(EmptyMember.class)) throw new AuthenticationException(ErrorCode.MEMBER_UNAUTHORIZATION);
+        List<Order> orders = orderRepository.scrollWritableReviews(member.getId(), lastId);
+        boolean hasNext = orders.size() >= 6;
+        if(hasNext) orders.remove(orders.size()-1);
+        List<OrderHistory> orderHistoryList = orders.stream()
+                .map(OrderHistory::from)
+                .collect(Collectors.toList());
+        Long nextLastId = orders.size()==0 ? null : orders.get(orders.size() - 1).getId();
+
+        return OrderHistoryResponse.builder()
+                .orderHistories(orderHistoryList)
+                .lastId(nextLastId)
+                .hasNext(hasNext)
+                .build();
+    }
 }

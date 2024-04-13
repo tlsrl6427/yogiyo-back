@@ -29,6 +29,17 @@ public class OrderCustomRepositoryImpl implements OrderCustomRepository{
                 .limit(6L).fetch();
     }
 
+    @Override
+    public List<Order> scrollWritableReviews(Long memberId, Long lastId) {
+        return jpaQueryFactory
+                .selectFrom(order)
+                .where(order.member.id.eq(memberId),
+                        order.existsReview.eq(false),
+                        lastIdLt(lastId))
+                .orderBy(order.id.desc())
+                .limit(6L).fetch();
+    }
+
     private static BooleanExpression lastIdLt(Long lastId) {
         return lastId == null ? null : order.id.lt(lastId);
     }

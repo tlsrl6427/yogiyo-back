@@ -23,6 +23,7 @@ public class OrderHistory {
     private String menuName;
     private int menuCount;
     private int totalMenuCount;
+    private boolean existsReview;
 
     public static OrderHistory from(Order order){
         return OrderHistory.builder()
@@ -36,6 +37,7 @@ public class OrderHistory {
                 .menuName(order.getOrderItems().get(0).getMenuName())
                 .menuCount(order.getOrderItems().get(0).getQuantity())
                 .totalMenuCount(order.getOrderItems().size())
+                .existsReview(order.isExistsReview())
                 .build();
     }
 

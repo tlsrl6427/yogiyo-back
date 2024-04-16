@@ -1,7 +1,6 @@
 package toy.yogiyo.common.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.elasticsearch.common.recycler.Recycler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

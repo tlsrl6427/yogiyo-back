@@ -28,6 +28,7 @@ public class WebSecurityConfig {
                     .authorizeRequests()
                     .antMatchers("/member/join", "/member/login").permitAll()
                     .antMatchers("/owner/join", "/owner/login").permitAll()
+                    .antMatchers("/re-issue").permitAll()
                     .antMatchers(HttpMethod.GET, "/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/**").authenticated()
                     .antMatchers(HttpMethod.PATCH, "/**").authenticated()

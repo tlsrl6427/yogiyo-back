@@ -23,6 +23,7 @@ public enum ErrorCode {
     JWT_MALFORMED(401, "J_003", "잘못된 형식의 토큰입니다"),
     JWT_SIGNATURE_FAILED(401, "J_004", "서명 검증에 실패하였습니다"),
     JWT_ILLEGAL_ARGUMENT(401, "J_005", "잘못된 인자입니다"),
+    REFRESH_TOKEN_INVALID(401, "RT_001", "유효하지 않은 리프레시 토큰입니다"),
 
     OAUTH_PROVIDER_NOT_FOUND(404, "OA_001", "OAuth 공급자를 찾을 수 없습니다."),
 

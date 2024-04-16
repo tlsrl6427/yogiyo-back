@@ -30,7 +30,7 @@ public class MenuGroupService {
             throw new EntityNotFoundException(ErrorCode.SHOP_NOT_FOUND);
         }
 
-        Integer maxOrder = menuGroupRepository.findMaxOrder(menuGroup.getId());
+        Integer maxOrder = menuGroupRepository.findMaxOrder(menuGroup.getShop().getId());
         menuGroup.updatePosition(maxOrder == null ? 1 : maxOrder + 1);
 
         menuGroupRepository.save(menuGroup);

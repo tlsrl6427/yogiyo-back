@@ -25,6 +25,12 @@ operation::owner/social/login[snippets='http-request,http-response,request-field
 
 operation::owner/default/logout[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
 
+[[Owner-reissue]]
+=== 점주 리프레시 토큰 재발급
+`POST /re-issue`
+
+operation::owner/re-issue[snippets='http-request,http-response,response-headers,response-body']
+
 [[Owner-mypage]]
 === 점주 마이페이지 조회
 `GET /owner/mypage`

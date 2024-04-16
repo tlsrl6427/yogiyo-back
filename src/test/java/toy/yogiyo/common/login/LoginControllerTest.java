@@ -1,6 +1,7 @@
 package toy.yogiyo.common.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.common.recycler.Recycler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,20 @@ import toy.yogiyo.common.login.service.LoginService;
 import toy.yogiyo.common.security.jwt.JwtProvider;
 import toy.yogiyo.core.member.domain.Member;
 import toy.yogiyo.core.member.domain.ProviderType;
+import toy.yogiyo.core.member.repository.MemberRepository;
 import toy.yogiyo.core.owner.domain.Owner;
+import toy.yogiyo.core.owner.repository.OwnerRepository;
+import toy.yogiyo.core.refreshToken.domain.RefreshToken;
+import toy.yogiyo.core.refreshToken.service.RefreshTokenService;
 
 
+import javax.servlet.http.Cookie;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -53,7 +61,13 @@ class LoginControllerTest {
     LoginService loginService;
     @MockBean
     JwtProvider jwtProvider;
+    @MockBean
+    RefreshTokenService refreshTokenService;
 
+    @MockBean
+    MemberRepository memberRepository;
+    @MockBean
+    OwnerRepository ownerRepository;
     ObjectMapper objectMapper;
     MockMvc mockMvc;
 
@@ -314,5 +328,77 @@ class LoginControllerTest {
                                 )
                         )
                 );
+    }
+
+    @DisplayName("리프레시 토큰 재발급-멤버")
+    @Test
+    void reIssue_member() throws Exception {
+
+        RefreshToken findRefreshToken = RefreshToken.builder()
+                .token("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkyNDB9.IG_f2awRzq8UY6l9TO7a9ePIOv8JgItJcChIAfB-6yE")
+                .userType(UserType.Member)
+                .build();
+        Member member = Member.builder().id(1L).build();
+
+        String newRefreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkzMzl9.dU9c-cUyma4wefAjQ3VK7sJ5sqBv8SIzUBsZx8iE1EA";
+        String newAccessToken ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZW1iZXIxQHRlc3QuY29tIiwicHJvdmlkZXJUeXBlIjoiREVGQVVMVCIsInVzZXJUeXBlIjoiTWVtYmVyIiwiZXhwIjoxNzEzMjcxNTM5fQ.PkVximzfljTf9MS-3SucfWamww7RyHsPjuZQTyOucdU";
+        given(refreshTokenService.reIssueRefreshToken(any())).willReturn(findRefreshToken);
+        given(memberRepository.findById(any())).willReturn(Optional.ofNullable(member));
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(newAccessToken);
+        given(jwtProvider.createRefreshToken()).willReturn(newRefreshToken);
+        doNothing().when(refreshTokenService).saveNewRefreshToken(any(), any());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/re-issue")
+                        .cookie(new Cookie("refreshToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkyNDB9.IG_f2awRzq8UY6l9TO7a9ePIOv8JgItJcChIAfB-6yE")))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("member/re-issue",
+                                responseHeaders(
+                                        headerWithName("Set-Cookie").description("액세스 토큰"),
+                                        headerWithName("Set-Cookie").description("리프레시 토큰")
+                                )
+                        )
+                );
+
+        verify(refreshTokenService).reIssueRefreshToken(any());
+        verify(jwtProvider).createRefreshToken();
+        verify(refreshTokenService).saveNewRefreshToken(any(), any());
+    }
+
+    @DisplayName("리프레시 토큰 재발급-오너")
+    @Test
+    void reIssue_owner() throws Exception {
+
+        RefreshToken findRefreshToken = RefreshToken.builder()
+                .token("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkyNDB9.IG_f2awRzq8UY6l9TO7a9ePIOv8JgItJcChIAfB-6yE")
+                .userType(UserType.Owner)
+                .build();
+        Owner owner = Owner.builder().id(1L).build();
+
+        String newRefreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkzMzl9.dU9c-cUyma4wefAjQ3VK7sJ5sqBv8SIzUBsZx8iE1EA";
+        String newAccessToken ="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZW1iZXIxQHRlc3QuY29tIiwicHJvdmlkZXJUeXBlIjoiREVGQVVMVCIsInVzZXJUeXBlIjoiTWVtYmVyIiwiZXhwIjoxNzEzMjcxNTM5fQ.PkVximzfljTf9MS-3SucfWamww7RyHsPjuZQTyOucdU";
+        given(refreshTokenService.reIssueRefreshToken(any())).willReturn(findRefreshToken);
+        given(ownerRepository.findById(any())).willReturn(Optional.ofNullable(owner));
+        given(jwtProvider.createToken(any(), any(), any())).willReturn(newAccessToken);
+        given(jwtProvider.createRefreshToken()).willReturn(newRefreshToken);
+        doNothing().when(refreshTokenService).saveNewRefreshToken(any(), any());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/re-issue")
+                        .cookie(new Cookie("refreshToken", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyZWZyZXNoVG9rZW4iLCJleHAiOjE3MTQ0NzkyNDB9.IG_f2awRzq8UY6l9TO7a9ePIOv8JgItJcChIAfB-6yE")))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(
+                        document("owner/re-issue",
+                                responseHeaders(
+                                        headerWithName("Set-Cookie").description("액세스 토큰"),
+                                        headerWithName("Set-Cookie").description("리프레시 토큰")
+                                )
+                        )
+                );
+
+        verify(refreshTokenService).reIssueRefreshToken(any());
+        verify(jwtProvider).createRefreshToken();
+        verify(refreshTokenService).saveNewRefreshToken(any(), any());
     }
 }

@@ -25,6 +25,12 @@ operation::social/login[snippets='http-request,http-response,request-fields,resp
 
 operation::default/logout[snippets='http-request,http-response,request-headers,path-parameters,response-headers']
 
+[[Member-reissue]]
+=== 멤버 리프레시 토큰 재발급
+`POST /re-issue`
+
+operation::member/re-issue[snippets='http-request,http-response,response-headers,response-body']
+
 [[Member-mypage]]
 === 멤버 마이페이지 조회
 `GET /member/mypage`

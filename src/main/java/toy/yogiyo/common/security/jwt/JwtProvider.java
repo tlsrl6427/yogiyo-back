@@ -25,12 +25,20 @@ public class JwtProvider{
     private final JwtProperties jwtProperties;
     private final LoginService loginService;
 
-    public String createToken(String email, ProviderType providerType, UserType userType){
+    public String createToken(String email, ProviderType providerType, UserType userType) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("providerType", providerType)
                 .claim("userType", userType)
-                .setExpiration(new Date(System.currentTimeMillis()+jwtProperties.getExpired()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpired()))
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
+                .compact();
+    }
+
+    public String createRefreshToken() {
+        return Jwts.builder()
+                .setSubject("refreshToken")
+                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshExpired()))
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
                 .compact();
     }

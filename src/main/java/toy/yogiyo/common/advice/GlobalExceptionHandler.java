@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import toy.yogiyo.common.exception.BaseException;
+import toy.yogiyo.common.exception.DuplicateReIssueException;
 import toy.yogiyo.common.exception.ErrorCode;
 import toy.yogiyo.common.exception.ErrorResponse;
 

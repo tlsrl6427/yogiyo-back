@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.review.dto.ReplyRequest;
 import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
-import toy.yogiyo.core.review.dto.ReviewManagementResponse;
+import toy.yogiyo.core.review.dto.ReviewResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
 import toy.yogiyo.core.review.service.ReviewManagementService;
@@ -22,8 +22,8 @@ public class ReviewManagementController {
     private final ReviewManagementService reviewManagementService;
 
     @GetMapping("/shop/{shopId}")
-    public Scroll<ReviewManagementResponse> getShopReviews(@PathVariable Long shopId,
-                                                           @Validated @ModelAttribute ReviewQueryCondition condition) {
+    public Scroll<ReviewResponse> getShopReviews(@PathVariable Long shopId,
+                                                 @Validated @ModelAttribute ReviewQueryCondition condition) {
 
         return reviewQueryRepository.shopReviewScroll(shopId, condition);
     }

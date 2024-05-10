@@ -74,6 +74,14 @@ public class EnumDocumentationTest {
                 customResponseFields("enum-response", beneathPath("adjustmentType").withSubsectionId("adjustmentType"),
                         attributes(key("title").value("조정 유형")),
                         enumConvertFieldDescriptor(response.getAdjustmentType())
+                ),
+                customResponseFields("enum-response", beneathPath("reviewSort").withSubsectionId("reviewSort"),
+                        attributes(key("title").value("리뷰 정렬 기준")),
+                        enumConvertFieldDescriptor(response.getReviewSort())
+                ),
+                customResponseFields("enum-response", beneathPath("reviewStatus").withSubsectionId("reviewStatus"),
+                        attributes(key("title").value("리뷰 답변 상태")),
+                        enumConvertFieldDescriptor(response.getReviewStatus())
                 )
         ));
     }

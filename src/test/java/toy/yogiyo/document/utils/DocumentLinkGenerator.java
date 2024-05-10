@@ -14,7 +14,9 @@ public class DocumentLinkGenerator {
         DAYS("days", "영업 요일"),
         OPTION_TYPE("optionType", "옵션 유형"),
         VISIBLE("visible", "노출 유형"),
-        ADJUSTMENT_TYPE("adjustmentType", "조정 유형")
+        ADJUSTMENT_TYPE("adjustmentType", "조정 유형"),
+        REVIEW_SORT("reviewSort", "리뷰 정렬 기준"),
+        REVIEW_STATUS("reviewStatus", "리뷰 답변 상태")
         ;
 
         private final String pageId;

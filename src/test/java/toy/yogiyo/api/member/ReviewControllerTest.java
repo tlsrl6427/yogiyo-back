@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import toy.yogiyo.api.member.ReviewController;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.review.domain.Review;
 import toy.yogiyo.core.review.domain.ReviewImage;
@@ -24,7 +23,6 @@ import toy.yogiyo.core.review.repository.ReviewQueryRepository;
 import toy.yogiyo.core.review.service.ReviewService;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +41,11 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.REVIEW_SORT;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ReviewController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -242,7 +241,7 @@ class ReviewControllerTest {
                 .andDo(document("review/shopReview",
                         requestParameters(
                                 parameterWithName("shopId").description("가게 ID"),
-                                parameterWithName("sort").description("정렬 기준"),
+                                parameterWithName("sort").description(generateLinkCode(REVIEW_SORT)),
                                 parameterWithName("cursor").description("다음 스크롤 커서").optional(),
                                 parameterWithName("limit").description("데이터 개수")
                         ),

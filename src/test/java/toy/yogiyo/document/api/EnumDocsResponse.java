@@ -14,4 +14,6 @@ public class EnumDocsResponse {
     Map<String, String> optionType;
     Map<String, String> visible;
     Map<String, String> adjustmentType;
+    Map<String, String> reviewSort;
+    Map<String, String> reviewStatus;
 }

@@ -41,6 +41,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.REVIEW_SORT;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.REVIEW_STATUS;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ReviewManagementController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -115,7 +118,6 @@ class ReviewManagementControllerTest {
                 .param("endDate", condition.getEndDate().toString())
                 .param("status", condition.getStatus().name())
                 .param("cursor", condition.getCursor().toString())
-//                .param("subCursor", condition.getSubCursor().toString())
                 .param("limit", String.valueOf(condition.getLimit())));
 
         // then
@@ -126,10 +128,10 @@ class ReviewManagementControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestParameters(
-                                parameterWithName("sort").description("정렬 기준"),
+                                parameterWithName("sort").description(generateLinkCode(REVIEW_SORT)),
                                 parameterWithName("startDate").description("조회 시작 날짜"),
                                 parameterWithName("endDate").description("조회 끝 날짜"),
-                                parameterWithName("status").description("답변 상태"),
+                                parameterWithName("status").description(generateLinkCode(REVIEW_STATUS)),
                                 parameterWithName("cursor").description("다음 스크롤 커서").optional(),
                                 parameterWithName("subCursor").description("다음 스크롤 서브 커서").optional(),
                                 parameterWithName("limit").description("데이터 개수")

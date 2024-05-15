@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.core.review.dto.ReplyRequest;
 import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
-import toy.yogiyo.core.review.dto.ReviewManagementResponse;
+import toy.yogiyo.core.review.dto.ReviewResponse;
 import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.review.repository.ReviewQueryRepository;
 import toy.yogiyo.core.review.service.ReviewManagementService;
@@ -41,6 +41,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.REVIEW_SORT;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.DocUrl.REVIEW_STATUS;
+import static toy.yogiyo.document.utils.DocumentLinkGenerator.generateLinkCode;
 
 @WebMvcTest(ReviewManagementController.class)
 @ExtendWith(RestDocumentationExtension.class)
@@ -75,9 +78,9 @@ class ReviewManagementControllerTest {
     @DisplayName("리뷰 확인")
     void getShopReviews() throws Exception {
         // given
-        List<ReviewManagementResponse> response = new ArrayList<>();
+        List<ReviewResponse> response = new ArrayList<>();
         for (int i = 11; i <= 20; i++) {
-            ReviewManagementResponse review = ReviewManagementResponse.builder()
+            ReviewResponse review = ReviewResponse.builder()
                     .id((long) i)
                     .tasteScore(BigDecimal.valueOf(5.0))
                     .deliveryScore(BigDecimal.valueOf(5.0))
@@ -88,9 +91,9 @@ class ReviewManagementControllerTest {
                     .createdAt(LocalDateTime.of(2023, 10, 21, 0, 0, 0))
                     .reviewImages(List.of("images/image1.png","images/image2.png","images/image3.png"))
                     .menus(List.of(
-                            new ReviewManagementResponse.MenuDto("메뉴 1", 1),
-                            new ReviewManagementResponse.MenuDto("메뉴 2", 1),
-                            new ReviewManagementResponse.MenuDto("메뉴 3", 2)
+                            new ReviewResponse.MenuDto("메뉴 1", 1, 10000),
+                            new ReviewResponse.MenuDto("메뉴 2", 1, 12000),
+                            new ReviewResponse.MenuDto("메뉴 3", 2, 10000)
                     ))
                     .build();
             response.add(review);
@@ -115,7 +118,6 @@ class ReviewManagementControllerTest {
                 .param("endDate", condition.getEndDate().toString())
                 .param("status", condition.getStatus().name())
                 .param("cursor", condition.getCursor().toString())
-//                .param("subCursor", condition.getSubCursor().toString())
                 .param("limit", String.valueOf(condition.getLimit())));
 
         // then
@@ -126,10 +128,10 @@ class ReviewManagementControllerTest {
                                 parameterWithName("shopId").description("가게 ID")
                         ),
                         requestParameters(
-                                parameterWithName("sort").description("정렬 기준"),
+                                parameterWithName("sort").description(generateLinkCode(REVIEW_SORT)),
                                 parameterWithName("startDate").description("조회 시작 날짜"),
                                 parameterWithName("endDate").description("조회 끝 날짜"),
-                                parameterWithName("status").description("답변 상태"),
+                                parameterWithName("status").description(generateLinkCode(REVIEW_STATUS)),
                                 parameterWithName("cursor").description("다음 스크롤 커서").optional(),
                                 parameterWithName("subCursor").description("다음 스크롤 서브 커서").optional(),
                                 parameterWithName("limit").description("데이터 개수")
@@ -149,7 +151,8 @@ class ReviewManagementControllerTest {
                                 fieldWithPath("content[].createdAt").type(JsonFieldType.STRING).description("리뷰 작성 날짜"),
                                 fieldWithPath("content[].reviewImages").type(JsonFieldType.ARRAY).description("리뷰 사진 Array"),
                                 fieldWithPath("content[].menus[].name").type(JsonFieldType.STRING).description("메뉴 이름"),
-                                fieldWithPath("content[].menus[].quantity").type(JsonFieldType.NUMBER).description("메뉴 개수")
+                                fieldWithPath("content[].menus[].quantity").type(JsonFieldType.NUMBER).description("메뉴 개수"),
+                                fieldWithPath("content[].menus[].price").type(JsonFieldType.NUMBER).description("메뉴 가격")
                         )
                 ));
     }
@@ -161,7 +164,7 @@ class ReviewManagementControllerTest {
         given(reviewQueryRepository.findReviewSummary(anyLong())).willReturn(
                 ReviewGetSummaryResponse.builder()
                         .totalCount(3L)
-                        .totalNoReplyCount(2L)
+                        .totalOwnerReplyCount(2L)
                         .avgTotalScore(2.4)
                         .avgTasteScore(2.1)
                         .avgQuantityScore(2.3)
@@ -181,6 +184,7 @@ class ReviewManagementControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("totalCount").type(JsonFieldType.NUMBER).description("총 리뷰 수"),
+                                fieldWithPath("totalOwnerReplyCount").type(JsonFieldType.NUMBER).description("답변 리뷰 수"),
                                 fieldWithPath("totalNoReplyCount").type(JsonFieldType.NUMBER).description("미답변 리뷰 수"),
                                 fieldWithPath("avgTotalScore").type(JsonFieldType.NUMBER).description("총 점수"),
                                 fieldWithPath("avgTasteScore").type(JsonFieldType.NUMBER).description("맛 점수"),

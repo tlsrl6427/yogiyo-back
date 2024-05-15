@@ -7,6 +7,7 @@ import toy.yogiyo.common.domain.DocsEnumType;
 import toy.yogiyo.common.dto.Visible;
 import toy.yogiyo.core.deliveryplace.dto.AdjustmentType;
 import toy.yogiyo.core.menuoption.domain.OptionType;
+import toy.yogiyo.core.review.dto.ReviewQueryCondition;
 import toy.yogiyo.core.shop.domain.Days;
 
 import java.util.Arrays;
@@ -23,6 +24,8 @@ public class EnumDocsController {
                 .optionType(getDocs(OptionType.values()))
                 .visible(getDocs(Visible.values()))
                 .adjustmentType(getDocs(AdjustmentType.values()))
+                .reviewSort(getDocs(ReviewQueryCondition.Sort.values()))
+                .reviewStatus(getDocs(ReviewQueryCondition.Status.values()))
                 .build()
         );
     }

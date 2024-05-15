@@ -13,3 +13,16 @@ operation::review/write[snippets='http-request,http-response,request-headers,req
 
 operation::review/memberReview[snippets='http-request,http-response,request-headers,request-parameters,response-fields']
 
+[[Review-shopReview]]
+=== 가게 리뷰 조회
+`GET /member/review/shop-review`
+
+operation::review/shopReview[snippets='http-request,http-response,request-parameters,response-fields']
+
+[[Review-shopReviewSummary]]
+=== 가게 리뷰 요약
+`GET /member/review/shop-review-summary`
+
+operation::review/shopReviewSummary[snippets='http-request,http-response,request-parameters,response-fields']
+
+

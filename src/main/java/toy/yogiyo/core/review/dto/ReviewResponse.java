@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewManagementResponse {
+public class ReviewResponse {
 
     private Long id;
 
@@ -44,8 +44,8 @@ public class ReviewManagementResponse {
         this.menus.add(menu);
     }
 
-    public static ReviewManagementResponse from(Review review) {
-        return ReviewManagementResponse.builder()
+    public static ReviewResponse from(Review review) {
+        return ReviewResponse.builder()
                 .id(review.getId())
                 .tasteScore(review.getTasteScore())
                 .quantityScore(review.getQuantityScore())
@@ -66,6 +66,7 @@ public class ReviewManagementResponse {
     public static class MenuDto {
         private String name;
         private int quantity;
+        private int price;
     }
 
 }

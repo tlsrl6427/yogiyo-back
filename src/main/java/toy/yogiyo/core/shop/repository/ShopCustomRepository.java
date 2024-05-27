@@ -1,5 +1,6 @@
 package toy.yogiyo.core.shop.repository;
 
+import org.springframework.data.repository.query.Param;
 import toy.yogiyo.core.like.dto.LikeResponse;
 import toy.yogiyo.core.like.dto.LikeScrollRequest;
 import toy.yogiyo.core.shop.dto.ShopDetailsRequest;
@@ -20,4 +21,6 @@ public interface ShopCustomRepository {
     ShopInfoResponse info(Long shopId, String code);
 
     List<ShopScrollResponse> recentOrder(Long memberId, ShopRecentRequest request);
+
+//    List<ShopScrollResponse> getSearchShops(ShopScrollListRequest request);
 }

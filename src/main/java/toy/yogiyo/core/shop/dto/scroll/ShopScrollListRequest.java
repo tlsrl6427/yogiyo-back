@@ -27,7 +27,7 @@ public class ShopScrollListRequest {
     private Double latitude;
     @NotNull
     private String code;
-
+    private String name;
     private BigDecimal cursor;
     private Long subCursor;
     private Long size;

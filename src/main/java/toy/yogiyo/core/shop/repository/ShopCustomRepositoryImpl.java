@@ -196,11 +196,16 @@ public class ShopCustomRepositoryImpl implements ShopCustomRepository {
                         deliveryPriceLt(request.getDeliveryPrice()),
                         leastOrderPriceLt(request.getLeastOrderPrice()),
                         isNewShop(request.getCategory().getCategoryKoreanName()),
-                        cursorLt
+                        cursorLt,
+                        nameEq(request.getName())
                 )
                 .orderBy(orderSpecifier)
                 .limit(request.getSize() == null ? 11L : request.getSize() + 1)
                 .fetch();
+    }
+
+    private BooleanExpression nameEq(String name) {
+        return name==null || name.isEmpty() ? null : shop.name.contains(name);
     }
 
     private BooleanExpression getCursorLt(ShopScrollListRequest request) {

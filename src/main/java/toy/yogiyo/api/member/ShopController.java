@@ -51,4 +51,13 @@ public class ShopController {
         return shopService.getRecentList(member, request);
     }
 
+    @GetMapping("/search/{code}/{shopName}")
+    public List<String> getSearchShopNames(@PathVariable String code, @PathVariable String shopName){
+        return shopRepository.getSearchShopNames(code, shopName);
+    }
+
+//    @GetMapping("/search")
+//    public List<ShopScrollResponse> getSearchShops(@Valid @ModelAttribute ShopScrollListRequest request){
+//        return shopRepository.getSearchShops(request);
+//    }
 }

@@ -32,4 +32,10 @@ public interface ShopRepository extends JpaRepository<Shop, Long>, ShopCustomRep
     void updateAllTempCloseFinishByDateTime(@Param("datetime") LocalDateTime dateTime);
 
     List<Shop> findByOwner(Owner owner);
+
+    @Query("select s.name from Shop s" +
+            " join DeliveryPlace dp on dp.shop.id=s.id" +
+            " where dp.code=:code" +
+            " and s.name like %:shopName%")
+    List<String> getSearchShopNames(@Param("code") String code, @Param("shopName") String shopName);
 }

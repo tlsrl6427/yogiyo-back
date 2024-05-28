@@ -243,6 +243,7 @@ class ReviewControllerTest {
                                 parameterWithName("shopId").description("가게 ID"),
                                 parameterWithName("sort").description(generateLinkCode(REVIEW_SORT)),
                                 parameterWithName("cursor").description("다음 스크롤 커서").optional(),
+                                parameterWithName("nextSubCursor").description("다음 스크롤 서브 커서").optional(),
                                 parameterWithName("limit").description("데이터 개수")
                         ),
                         responseFields(

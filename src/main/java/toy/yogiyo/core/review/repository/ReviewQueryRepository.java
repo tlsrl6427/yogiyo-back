@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import toy.yogiyo.common.dto.scroll.Scroll;
 import toy.yogiyo.common.util.OrderByNull;
 import toy.yogiyo.core.review.dto.ReviewGetSummaryResponse;
@@ -146,9 +147,11 @@ public class ReviewQueryRepository {
             case LATEST:
                 return review.id.lt(Long.parseLong((String) condition.getCursor()));
             case RATING_HIGH:
+                if(condition.getSubCursor() == null || !StringUtils.hasText((String) condition.getSubCursor())) return null;
                 return review.totalScore.eq(new BigDecimal((String) condition.getCursor())).and(review.id.lt(Long.parseLong((String) condition.getSubCursor())))
                         .or(review.totalScore.lt(new BigDecimal((String) condition.getCursor())));
             case RATING_LOW:
+                if(condition.getSubCursor() == null || !StringUtils.hasText((String) condition.getSubCursor())) return null;
                 return review.totalScore.eq(new BigDecimal((String) condition.getCursor())).and(review.id.gt(Long.parseLong((String) condition.getSubCursor())))
                         .or(review.totalScore.gt(new BigDecimal((String) condition.getCursor())));
         }

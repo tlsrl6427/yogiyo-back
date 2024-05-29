@@ -141,7 +141,7 @@ public class ReviewQueryRepository {
     }
 
     private BooleanExpression cursor(ReviewQueryCondition condition) {
-        if(condition.getSort() == null || condition.getCursor() == null) return null;
+        if(condition.getSort() == null || condition.getCursor() == null || !StringUtils.hasText((String) condition.getCursor())) return null;
 
         switch (condition.getSort()) {
             case LATEST:

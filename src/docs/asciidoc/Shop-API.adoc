@@ -16,6 +16,11 @@ operation::shop/get-info[snippets='http-request,http-response,path-parameters,re
 
 operation::shop/list[snippets='http-request,http-response,request-parameters,response-fields']
 
+=== 상점 이름 검색
+`GET /member/shop/search`
+
+operation::shop/search[snippets='http-request,http-response,path-parameters,response-fields']
+
 === 내가 주문한 맛집 조회
 `GET /member/shop/recentOrder`
 

@@ -31,6 +31,7 @@ import toy.yogiyo.document.utils.DocumentLinkGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
@@ -453,4 +454,48 @@ class ShopControllerTest {
         verify(shopService).getRecentList(any(), any());
     }
 
+    @DisplayName("상점 이름 검색")
+    @Test
+    void getSearchShopNames() throws Exception {
+
+        List<String> response = new ArrayList<>(List.of(
+                "아영이네",
+                "골든아이",
+                "피제리아몬테",
+                "청춘아구& 알곤이찜",
+                "구구족 아산점",
+                "가이아커피(GAIA COFFEE)",
+                "마산아구찜",
+                "해리피아",
+                "아침나무",
+                "티지아이에프(T.G.I.F.)",
+                "아브라함피자",
+                "아빠곰탕",
+                "코리아나경양식",
+                "아구식당",
+                "동아식당",
+                "아우토반",
+                "도아식당",
+                "이오니아"
+        ));
+
+        given(shopRepository.getSearchShopNames(any(), any())).willReturn(response);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/member/shop/search/{code}/{shopName}", "1100000000", "아")
+                )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("shop/search",
+                        pathParameters(
+                                parameterWithName("code").description("법정동 코드"),
+                                parameterWithName("shopName").description("검색 단어")
+                        ),
+                        responseFields(
+                                fieldWithPath("[]").type(JsonFieldType.ARRAY).description("음식점 이름")
+                        )
+                ));
+
+
+        verify(shopRepository).getSearchShopNames(any(), any());
+    }
 }

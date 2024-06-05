@@ -54,6 +54,7 @@ public class ReviewQueryRepository {
                         review.quantityScore,
                         review.deliveryScore,
                         review.content,
+                        review.ownerReply,
                         member.nickname.as("memberName"),
                         review.createdAt
                 ))

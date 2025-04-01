@@ -49,8 +49,8 @@ jobs:
         cd ./src/main/resources # resources 폴더로 이동
         touch ./application-secret.yml # application.yml 생성
         echo "${{ secrets.SECRET_YML }}" > ./application-secret.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
-        touch ./yogiyo-clone-keystore.p12 # ssl 인증서 파일생성
-        echo "${{ secrets.KEY_STORE }}" | base64 --decode > yogiyo-clone-keystore.p12 # base64 디코딩 후 ssl 인증서 파일에 쓰기
+        # touch ./yogiyo-clone-keystore.p12 # ssl 인증서 파일생성
+        # echo "${{ secrets.KEY_STORE }}" | base64 --decode > yogiyo-clone-keystore.p12 # base64 디코딩 후 ssl 인증서 파일에 쓰기
         
     # Gradle Build를 위한 권한 부여
     - name: Grant execute permission for gradlew
@@ -84,16 +84,12 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY }}
   
           script: |
-            rm prometheus.yml
-            touch ./prometheus.yml # prometheus.yml 생성
-            echo "${{ secrets.PROMETHEUS_YML }}" > ./prometheus.yml
-  
-            sudo wget https://raw.githubusercontent.com/ToyProject-yogiyo2/yogiyo-back/main/docker-compose.yml -O docker-compose.yml
-            docker rm -f ec2-user-spring-1
-            docker-compose pull && docker-compose up -d
+            docker rm -f ${{ secrets.PROJECT_NAME }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+            docker run -p 8082:8080 -d -v ./yogiyo-clone-images:/images --name ${{ secrets.PROJECT_NAME }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker image prune -a -f

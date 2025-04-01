@@ -91,5 +91,5 @@ jobs:
           script: |
             docker rm -f ${{ secrets.PROJECT_NAME }}
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            docker run -p 8081:8080 -d -v ./yogiyo-clone-images:/images --name ${{ secrets.PROJECT_NAME }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
+            docker run -p 8082:8080 -d -v ./yogiyo-clone-images:/images --name ${{ secrets.PROJECT_NAME }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker image prune -a -f

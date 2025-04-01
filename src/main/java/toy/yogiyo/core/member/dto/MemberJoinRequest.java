@@ -22,7 +22,7 @@ public class MemberJoinRequest {
     @Email
     private String email;
     @NotBlank
-    @Size(min = 8, message = "비밀번호는 8~16자 사이입니다.")
+    @Size(min = 4, message = "비밀번호는 8~16자 사이입니다.")
     private String password;
     private ProviderType providerType;
 
